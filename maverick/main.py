@@ -1,0 +1,38 @@
+import sys
+from pathlib import Path
+
+# Lets `python maverick/main.py` work from the project root.
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+
+from maverick.agents.files.agent import FileAgent
+from maverick.core.orchestrator import Orchestrator
+
+
+def build() -> Orchestrator:
+    # Register sub-agents here. Order matters: the first agent that understands a request wins.
+    return Orchestrator([FileAgent()])
+
+
+def repl(maverick: Orchestrator) -> None:
+    print("MAVERICK — offline Windows agent. Type 'help' for agents, 'exit' to quit.")
+    while True:
+        try:
+            text = input("\nYou: ")
+        except (EOFError, KeyboardInterrupt):
+            print("\nGoodbye.")
+            return
+        result = maverick.handle(text)
+        print("MAVERICK:", result.message)
+        if result.data.get("exit"):
+            return
+
+
+if __name__ == "__main__":
+    maverick = build()
+    if len(sys.argv) > 1:
+        # The shell already removed the quotes, so put them back around args with spaces.
+        args = [f'"{a}"' if " " in a else a for a in sys.argv[1:]]
+        result = maverick.handle(" ".join(args))
+        print(result.message)
+        sys.exit(0 if result.success else 1)
+    repl(maverick)
