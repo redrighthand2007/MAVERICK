@@ -3,7 +3,10 @@ import shutil
 from pathlib import Path
 
 from maverick.core.agent_base import Result
-from maverick.core.safety import plan_destination, require_existing, require_not_protected
+from maverick.core.safety import SafetyError, plan_destination, require_existing, require_not_protected
+
+# Characters Windows does not allow in a file name.
+INVALID_NAME_CHARS = set('<>:"/\\|?*')
 
 
 def human_size(num_bytes: int) -> str:
@@ -30,6 +33,20 @@ def move(source: str, destination: str) -> Result:
     dest = plan_destination(src, destination)
     shutil.move(src, dest)
     return Result(True, f"Moved {src} -> {dest}", {"output": str(dest)})
+
+
+def rename(source: str, new_name: str) -> Result:
+    src = require_existing(source)
+    require_not_protected(src)
+    new_name = new_name.strip()
+    if INVALID_NAME_CHARS & set(new_name):
+        raise SafetyError(f"'{new_name}' is a path, not a name. Use 'move' to put it in another folder.")
+    target = src.parent / new_name
+    # samefile allows a case-only rename (notes.txt -> Notes.txt), since Windows ignores case.
+    if target.exists() and not target.samefile(src):
+        raise SafetyError(f"{target} already exists; MAVERICK never overwrites.")
+    src.rename(target)
+    return Result(True, f"Renamed {src.name} -> {new_name}", {"output": str(target)})
 
 
 def size(path: str) -> Result:
