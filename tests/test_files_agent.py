@@ -81,3 +81,35 @@ def test_size_of_folder(tmp_path):
     assert result.success
     assert result.data == {"bytes": 1024, "files": 2, "skipped": 0}
     assert "1.00 KB" in result.message
+
+
+def test_parse_rename():
+    intent = FileAgent().parse('rename notes.txt to "my ideas.txt"')
+    assert intent.operation == "rename"
+    assert intent.args == {"source": "notes.txt", "new_name": "my ideas.txt"}
+
+
+def test_rename_file(tmp_path):
+    src = tmp_path / "notes.txt"
+    src.write_text("hi")
+    result = build().handle(f'rename "{src}" to ideas.txt')
+    assert result.success, result.message
+    assert not src.exists()
+    assert (tmp_path / "ideas.txt").read_text() == "hi"
+
+
+def test_rename_never_overwrites(tmp_path):
+    (tmp_path / "a.txt").write_text("a")
+    (tmp_path / "b.txt").write_text("keep me")
+    result = build().handle(f'rename "{tmp_path / "a.txt"}" to b.txt')
+    assert not result.success
+    assert (tmp_path / "b.txt").read_text() == "keep me"
+
+
+def test_rename_with_path_is_blocked(tmp_path):
+    src = tmp_path / "a.txt"
+    src.write_text("a")
+    result = build().handle(rf'rename "{src}" to D:\other\b.txt')
+    assert not result.success
+    assert "Use 'move'" in result.message
+    assert src.exists()
