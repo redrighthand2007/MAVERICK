@@ -1,6 +1,7 @@
 import re
 
 from maverick.agents.files import ops
+from maverick.brain.text import looks_like_path
 from maverick.core.agent_base import Intent, Result, SubAgent
 
 # A token is either "a quoted path with spaces" or a run of non-space characters.
@@ -18,19 +19,26 @@ FILLER_WORDS = {
 KEYWORDS = RENAME_WORDS | MOVE_WORDS | COPY_WORDS | SIZE_WORDS | FILLER_WORDS
 
 
-def split_words_and_paths(text: str) -> tuple[set[str], list[str]]:
-    """Quoted tokens are always paths; unquoted tokens are paths unless they are known words."""
-    words, paths = set(), []
+def split_words_and_paths(text: str) -> tuple[set[str], list[str], list[str]]:
+    """Splits text into known words, sure paths, and possible paths.
+
+    sure paths:     quoted, or path-shaped (D:\\x, notes.txt)
+    possible paths: every token that is not a known word, e.g. "photos" in "size of photos"
+    """
+    words, sure, possible = set(), [], []
     for quoted, plain in TOKEN_RE.findall(text):
         if quoted:
-            paths.append(quoted)
+            sure.append(quoted)
+            possible.append(quoted)
             continue
         cleaned = plain.rstrip("?!.,;")
         if cleaned.lower() in KEYWORDS:
             words.add(cleaned.lower())
         elif cleaned:
-            paths.append(cleaned)
-    return words, paths
+            possible.append(cleaned)
+            if looks_like_path(cleaned):
+                sure.append(cleaned)
+    return words, sure, possible
 
 
 class FileAgent(SubAgent):
@@ -38,7 +46,7 @@ class FileAgent(SubAgent):
     description = 'copy, move, rename, and get the size of files/folders. e.g. copy notes.txt to D:\\backup  |  rename a.txt to b.txt'
 
     def parse(self, text: str) -> Intent | None:
-        words, paths = split_words_and_paths(text)
+        words, _, _ = split_words_and_paths(text)
 
         if words & RENAME_WORDS:
             operation = "rename"
@@ -50,6 +58,13 @@ class FileAgent(SubAgent):
             operation = "size"
         else:
             return None
+        return self.extract(operation, text)
+
+    def extract(self, operation: str, text: str) -> Intent:
+        _, sure, possible = split_words_and_paths(text)
+        # Prefer path-shaped tokens; they survive chatty sentences like "make a duplicate of notes.txt in D:\x".
+        needed = 1 if operation == "size" else 2
+        paths = sure if len(sure) >= needed else possible
 
         if operation == "size":
             return Intent("size", {"path": paths[0] if paths else ""}, [] if paths else ["path"])
