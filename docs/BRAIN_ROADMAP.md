@@ -388,10 +388,15 @@ cases, and a passing brain test.
 
 ## Progress
 
-- [ ] Phase 1: Concepts
-- [ ] Phase 2: Dataset
-- [ ] Phase 3: Naive Bayes from scratch
+- [ ] Phase 1: Concepts (learning in the side chat)
+- [x] Phase 2: Dataset (built, 220 examples + 26 hard cases)
+- [x] Phase 3: Naive Bayes from scratch (built, to be studied)
 - [ ] Phase 4: scikit-learn version
-- [ ] Phase 5: Evaluation
-- [ ] Phase 6: Integration
+- [x] Phase 5: Evaluation (test 82%, hard cases 81%; keyword rules 75% / 46%)
+- [x] Phase 6: Integration (threshold 0.6, rules fallback, inbox logging)
 - [ ] Phase 7: Growing (ongoing)
+
+Note: built first, learned later (user's choice). Phases 2-6 are in the code;
+walk through them in the learning chat. A confident `unknown` still lets
+keyword rules try, so an explicit command like "copy a b" can never be
+blocked by a wrong brain guess.
