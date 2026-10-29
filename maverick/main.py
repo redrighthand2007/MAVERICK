@@ -6,12 +6,24 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from maverick.agents.files.agent import FileAgent
 from maverick.brain import Brain
+from maverick.core.agent_base import Result
 from maverick.core.orchestrator import Orchestrator
 
 
 def build(brain: Brain | None = None) -> Orchestrator:
     # Register sub-agents here. Order matters for keyword rules: the first agent that understands a request wins.
     return Orchestrator([FileAgent()], brain)
+
+
+def ask_if_needed(maverick: Orchestrator, result: Result) -> Result:
+    """If MAVERICK asked a y/n question, get the answer. Anything but y/yes cancels."""
+    if not result.data.get("confirm"):
+        return result
+    try:
+        answer = input(f"MAVERICK: {result.message} (y/n) ")
+    except (EOFError, KeyboardInterrupt):
+        answer = ""
+    return maverick.confirm(answer.strip().lower() in {"y", "yes"})
 
 
 def repl(maverick: Orchestrator) -> None:
@@ -22,7 +34,7 @@ def repl(maverick: Orchestrator) -> None:
         except (EOFError, KeyboardInterrupt):
             print("\nGoodbye.")
             return
-        result = maverick.handle(text)
+        result = ask_if_needed(maverick, maverick.handle(text))
         print("MAVERICK:", result.message)
         if result.data.get("exit"):
             return
@@ -36,7 +48,7 @@ if __name__ == "__main__":
     if len(sys.argv) > 1:
         # The shell already removed the quotes, so put them back around args with spaces.
         args = [f'"{a}"' if " " in a else a for a in sys.argv[1:]]
-        result = maverick.handle(" ".join(args))
+        result = ask_if_needed(maverick, maverick.handle(" ".join(args)))
         print(result.message)
         sys.exit(0 if result.success else 1)
     repl(maverick)

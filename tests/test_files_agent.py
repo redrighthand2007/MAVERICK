@@ -44,7 +44,9 @@ def test_move_folder(tmp_path):
     folder = tmp_path / "data"
     folder.mkdir()
     (folder / "x.txt").write_text("x")
-    result = build().handle(f'move "{folder}" to "{tmp_path / "moved"}"')
+    maverick = build()
+    maverick.handle(f'move "{folder}" to "{tmp_path / "moved"}"')
+    result = maverick.confirm(True)
     assert result.success, result.message
     assert not folder.exists()
     assert (tmp_path / "moved" / "x.txt").exists()
@@ -92,7 +94,9 @@ def test_parse_rename():
 def test_rename_file(tmp_path):
     src = tmp_path / "notes.txt"
     src.write_text("hi")
-    result = build().handle(f'rename "{src}" to ideas.txt')
+    maverick = build()
+    maverick.handle(f'rename "{src}" to ideas.txt')
+    result = maverick.confirm(True)
     assert result.success, result.message
     assert not src.exists()
     assert (tmp_path / "ideas.txt").read_text() == "hi"
