@@ -2,4 +2,6 @@ __pycache__/
 *.pyc
 .pytest_cache/
 .venv/
-*.code-workspace
+maverick/brain/models/
+maverick/brain/data/inbox.tsv
+MAVERICK.code-workspace
