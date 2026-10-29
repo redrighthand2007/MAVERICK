@@ -1,0 +1,29 @@
+# Tricky sentences the brain is NEVER trained on: the honest final exam.
+# Format: label<TAB>sentence
+
+files.copy	could you put a duplicate of budget.xlsx inside D:\finance
+files.copy	move a copy of notes.txt to E:\
+files.copy	backup my thesis.docx to F:\
+files.copy	replicate D:\site over to E:\site
+files.copy	clone the photos folder onto E:\
+files.move	get notes.txt out of here and into D:\archive
+files.move	transfer my pics over to E:\pics
+files.move	shift the logs folder to D:\old
+files.move	relocate thesis.docx to F:\
+files.move	put report.pdf into E:\docs and remove it from the desktop
+files.rename	call this one final-report.pdf
+files.rename	change notes.txt's name to plans.txt
+files.rename	the name of a.txt should become b.txt
+files.rename	rename the movies folder to films
+files.rename	give the screenshot a better name like bug.png
+files.size	how much space is "D:\GAME OF THRONES" eating
+files.size	how big is my steam folder
+files.size	how many gigabytes does E:\backup take
+files.size	whats the weight of video.mp4
+files.size	is D:\movies taking a lot of space
+unknown	delete everything on my drive
+unknown	remove old.txt permanently
+unknown	what's the cpu temperature
+unknown	open the downloads folder
+unknown	good night maverick
+unknown	kill the python script
