@@ -4,12 +4,12 @@
 > happening now, and what comes next. Updated after every finished step.
 
 **Last updated:** 2026-10-29
-**Branches:** `main` and `build` are in sync (both at `7161cf0`)
-**Tests:** 34 passing (`python -m pytest -q`)
+**Branches:** `build` is ahead of `main` (confirmation prompt, progress tracker). Merge when ready.
+**Tests:** 45 passing (`python -m pytest -q`)
 
 ## 👉 You are here
 
-**Next step: Stage 3.1, the confirmation prompt** ("Are you sure? y/n" before risky actions).
+**Stages 1–3 are complete.** Next step: **Stage 4, Hardware agent (#33)**, the first new agent.
 Not started yet.
 
 ---
@@ -32,12 +32,16 @@ Not started yet.
   - Train once per PC: `python -m maverick.brain.train`
 - [ ] Brain Phase 4: scikit-learn version to compare (optional, later)
 
-## Stage 3: Safety net 🔜
+## Stage 3: Safety net ✅
 
-- [ ] **3.1 Confirmation prompt**: ask y/n before move/rename and every future risky action
-- [ ] **3.2 Undo**: reverse the last move or rename
+- [x] **3.1 Confirmation prompt**: move and rename ask `(y/n)` first; anything but y/yes cancels
+  - Safety checks run *before* asking, so blocked actions are never asked about
+  - Checks run again after "yes", in case a file changed while you were deciding
+  - Copy and size don't ask (copy never overwrites, size only reads)
+  - Future agents: list an operation in `risky` and write `describe()` to get this for free
+- [~] **3.2 Undo**: skipped by your choice (can come back later)
 
-## Stage 4: Read-only agents (safe, can't break anything)
+## Stage 4: Read-only agents (safe, can't break anything) 🔜
 
 From the 35-agent plan, Windows versions. Each new agent also adds its sentences to the brain's training data.
 
@@ -93,3 +97,4 @@ From the 35-agent plan, Windows versions. Each new agent also adds its sentences
 | 2026-10-21 | Rename added and tested on real files |
 | 2026-10-23 | Brain roadmap written; brain built and wired in (82% vs 75%) |
 | 2026-10-29 | `build` merged into `main` (PR #2), branches synced; this tracker created |
+| 2026-10-29 | Confirmation prompt (3.1) done; undo (3.2) skipped; Stages 1–3 complete |
