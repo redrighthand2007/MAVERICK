@@ -27,15 +27,21 @@ def copy(source: str, destination: str) -> Result:
     return Result(True, f"Copied {src} -> {dest}", {"output": str(dest)})
 
 
-def move(source: str, destination: str) -> Result:
+def plan_move(source: str, destination: str) -> tuple[Path, Path]:
+    """All safety checks for a move, without touching anything. Returns (source, final destination)."""
     src = require_existing(source)
     require_not_protected(src)
-    dest = plan_destination(src, destination)
+    return src, plan_destination(src, destination)
+
+
+def move(source: str, destination: str) -> Result:
+    src, dest = plan_move(source, destination)
     shutil.move(src, dest)
     return Result(True, f"Moved {src} -> {dest}", {"output": str(dest)})
 
 
-def rename(source: str, new_name: str) -> Result:
+def plan_rename(source: str, new_name: str) -> tuple[Path, Path]:
+    """All safety checks for a rename, without touching anything. Returns (source, new path)."""
     src = require_existing(source)
     require_not_protected(src)
     new_name = new_name.strip()
@@ -45,8 +51,13 @@ def rename(source: str, new_name: str) -> Result:
     # samefile allows a case-only rename (notes.txt -> Notes.txt), since Windows ignores case.
     if target.exists() and not target.samefile(src):
         raise SafetyError(f"{target} already exists; MAVERICK never overwrites.")
+    return src, target
+
+
+def rename(source: str, new_name: str) -> Result:
+    src, target = plan_rename(source, new_name)
     src.rename(target)
-    return Result(True, f"Renamed {src.name} -> {new_name}", {"output": str(target)})
+    return Result(True, f"Renamed {src.name} -> {target.name}", {"output": str(target)})
 
 
 def size(path: str) -> Result:
