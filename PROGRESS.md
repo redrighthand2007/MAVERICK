@@ -7,6 +7,16 @@ Each step shows both: built status first, then learned status. Only mark 🧠 wh
 
 ---
 
+## Start here: basics (learn before Stage 1) · learned 0/5
+
+No prior knowledge assumed. These explain the ideas every stage below is built on.
+
+- 📕 **B.1 What an "agent" is**: a program that takes a request and does one job; MAVERICK's agents are plain Python, not ChatGPT
+- 📕 **B.2 Multi-agent design**: one orchestrator (the manager) hands each request to the right sub-agent (the worker)
+- 📕 **B.3 One request, start to finish**: you type → brain guesses the intent → orchestrator picks the agent → agent pulls out the details → safety checks → action → result
+- 📕 **B.4 Where the "AI" actually is**: only the brain, a small model that learns from example sentences; the rest is normal code
+- 📕 **B.5 Python you need**: functions, classes, modules and imports, running tests with pytest
+
 ## Stage 1: Foundation ✅ · learned 0/7
 
 - ✅ 📕 **1.1 Vision and design rules**: [docs/VISION.md](docs/VISION.md)
@@ -110,13 +120,13 @@ These need Administrator rights or are risky; each explains clearly when admin i
 
 ## Learning track (side chat) · learned 0/7
 
-- ⬜ **L.1** Classification
-- ⬜ **L.2** Bag of words
-- ⬜ **L.3** TF-IDF
-- ⬜ **L.4** Train/test split and accuracy
-- ⬜ **L.5** Overfitting
-- ⬜ **L.6** Confidence scores
-- ⬜ **L.7** Code walkthrough: `text.py` → `naive_bayes.py` → `evaluate.py` → orchestrator
+- 📕 **L.1** Classification
+- 📕 **L.2** Bag of words
+- 📕 **L.3** TF-IDF
+- 📕 **L.4** Train/test split and accuracy
+- 📕 **L.5** Overfitting
+- 📕 **L.6** Confidence scores
+- 📕 **L.7** Code walkthrough: `text.py` → `naive_bayes.py` → `evaluate.py` → orchestrator
 
 ## Small chores
 
