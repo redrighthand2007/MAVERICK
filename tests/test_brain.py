@@ -104,7 +104,10 @@ def test_confident_brain_works_without_keywords(tmp_path):
 def test_unsure_brain_falls_back_to_keyword_rules(tmp_path):
     src = tmp_path / "a.txt"
     src.write_text("x")
-    result = build(FakeBrain("files.move", 0.3)).handle(f'rename "{src}" to b.txt')
+    maverick = build(FakeBrain("files.move", 0.3))
+    question = maverick.handle(f'rename "{src}" to b.txt')
+    assert question.message.startswith("Rename")  # keyword rules picked rename, not the brain's move
+    result = maverick.confirm(True)
     assert result.success, result.message
     assert (tmp_path / "b.txt").exists()
 
