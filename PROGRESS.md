@@ -107,8 +107,8 @@ These need Administrator rights or are risky; each explains clearly when admin i
 
 ## Learning track (side chat)
 
-- ✅ **L.1** Classification
-- ✅ **L.2** Bag of words
+- ⬜ **L.1** Classification
+- ⬜ **L.2** Bag of words
 - ⬜ **L.3** TF-IDF
 - ⬜ **L.4** Train/test split and accuracy
 - ⬜ **L.5** Overfitting
