@@ -44,6 +44,8 @@ def split_words_and_paths(text: str) -> tuple[set[str], list[str], list[str]]:
 class FileAgent(SubAgent):
     name = "files"
     description = 'copy, move, rename, and get the size of files/folders. e.g. copy notes.txt to D:\\backup  |  rename a.txt to b.txt'
+    # Copy never overwrites and size only reads, so only these two ask first.
+    risky = {"move", "rename"}
 
     def parse(self, text: str) -> Intent | None:
         words, _, _ = split_words_and_paths(text)
@@ -72,6 +74,13 @@ class FileAgent(SubAgent):
         second = "new_name" if operation == "rename" else "destination"
         args = {"source": paths[0] if paths else "", second: paths[1] if len(paths) > 1 else ""}
         return Intent(operation, args, [k for k, v in args.items() if not v])
+
+    def describe(self, intent: Intent) -> str:
+        if intent.operation == "move":
+            src, dest = ops.plan_move(**intent.args)
+            return f"Move {src} -> {dest}?"
+        src, target = ops.plan_rename(**intent.args)
+        return f"Rename {src} -> {target.name}?"
 
     def handle(self, intent: Intent) -> Result:
         operation = {"copy": ops.copy, "move": ops.move, "rename": ops.rename, "size": ops.size}[intent.operation]
