@@ -3,7 +3,7 @@
 # Labels: files.copy, files.move, files.rename, files.size,
 #         hardware.ram, hardware.slots, hardware.cpu, hardware.battery, hardware.disks,
 #         process.list, process.origin, process.children, process.end, search.find, search.content,
-#         cleanup.scan, cleanup.recycle, unknown
+#         cleanup.scan, cleanup.recycle, archive.create, archive.list, archive.extract, unknown
 
 # --- files.copy ---
 files.copy	copy notes.txt to D:\backup
@@ -533,9 +533,9 @@ unknown	set volume to 50
 unknown	take a screenshot
 unknown	search google for python tutorials
 unknown	send an email to my friend
-unknown	zip the folder D:\work
-unknown	extract archive.zip
-unknown	encrypt notes.txt
+archive.create	zip the folder D:\work
+archive.extract	extract archive.zip
+archive.create	encrypt notes.txt
 search.find	find all pdf files in D:\
 unknown	list files in D:\docs
 unknown	what's in D:\movies
@@ -560,7 +560,7 @@ unknown	what's my ip address
 unknown	ping google.com
 process.list	show running processes
 unknown	sort my downloads by date
-unknown	compress video.mp4
+archive.create	compress video.mp4
 unknown	schedule a backup every friday
 unknown	format my D: drive
 unknown	defragment drive C:
@@ -578,7 +578,7 @@ unknown	is my gpu working
 unknown	how hot is my laptop
 unknown	open file explorer
 unknown	show hidden files
-unknown	unzip the downloads folder
+archive.extract	unzip the downloads folder
 unknown	share this file on whatsapp
 unknown	upload notes.txt to google drive
 unknown	what's the date today
@@ -695,3 +695,99 @@ cleanup.recycle	delete the zip file archive.zip
 cleanup.recycle	remove report-final-old.pdf please
 cleanup.recycle	delete windows temp junk
 cleanup.recycle	clean temporary internet files
+
+# --- archive.create ---
+archive.create	zip D:\projects
+archive.create	make a zip of my photos folder
+archive.create	compress D:\logs into a zip file
+archive.create	zip notes.txt
+archive.create	create an archive of E:\thesis
+archive.create	zip D:\work with a password
+archive.create	make a password protected zip of D:\private
+archive.create	encrypt the folder D:\secret
+archive.create	pack D:\code into a tar.gz
+archive.create	create a tar of D:\server
+archive.create	compress D:\backup as tar.gz
+archive.create	zip report.docx and slides.pptx
+archive.create	make a zip file of my documents
+archive.create	archive the folder E:\old-projects
+archive.create	zip D:\work into E:\backups
+archive.create	put D:\music in a zip
+archive.create	compress this folder D:\videos
+archive.create	make an encrypted archive of taxes.pdf
+archive.create	lock D:\diary in a zip with a password
+archive.create	bundle D:\site into one zip
+archive.create	create a backup zip of D:\notes
+archive.create	zip up E:\games\saves
+archive.create	compress the logs folder
+archive.create	make a tarball of D:\app
+archive.create	zip and encrypt passwords.txt
+archive.create	archive my thesis folder with aes
+archive.create	zip everything in D:\share
+archive.create	protect D:\bank with a zipped password
+archive.create	compress D:\photos to save space
+archive.create	turn D:\work into a zip file
+
+# --- archive.list ---
+archive.list	what's inside backup.zip
+archive.list	list contents of photos.tar.gz
+archive.list	show what is in archive.zip
+archive.list	what files are in D:\downloads\setup.zip
+archive.list	peek inside old.zip
+archive.list	list the files inside work.tar
+archive.list	what does project.zip contain
+archive.list	show me the contents of logs.tar.gz
+archive.list	is notes.txt inside backup.zip
+archive.list	check what's in E:\archives\2019.zip
+archive.list	open the list of files in data.zip
+archive.list	how many files are in photos.zip
+archive.list	contents of code.tar.gz
+archive.list	what's in the zip file D:\x.zip
+archive.list	show inside music.zip
+archive.list	list what is packed in site.tgz
+archive.list	what did i put in backup-2020.zip
+archive.list	look inside thesis.zip without extracting
+archive.list	show files in the archive game.zip
+archive.list	tell me what's in movies.zip
+archive.list	list items in docs.tar.bz2
+archive.list	inspect backup.zip
+archive.list	what's stored in E:\old\files.zip
+archive.list	display contents of report.zip
+archive.list	see inside the zip D:\work.zip
+archive.list	view the contents of archive.tar.xz
+archive.list	which files does download.zip have
+archive.list	list everything in assets.zip
+archive.list	what's in that zip D:\data.zip
+archive.list	peek into secret.zip
+
+# --- archive.extract ---
+archive.extract	unzip backup.zip
+archive.extract	extract photos.tar.gz
+archive.extract	unzip backup.zip to D:\restore
+archive.extract	unpack D:\downloads\game.zip
+archive.extract	extract E:\archive.zip into E:\files
+archive.extract	decompress logs.tar.gz
+archive.extract	unzip the file setup.zip
+archive.extract	open up project.zip and extract it
+archive.extract	extract all files from data.zip
+archive.extract	untar site.tgz
+archive.extract	unzip secret.zip with my password
+archive.extract	extract the encrypted zip D:\private.zip
+archive.extract	unpack archive.tar into D:\server
+archive.extract	unzip music.zip here
+archive.extract	extract D:\x.zip to D:\y
+archive.extract	decompress backup.tar.bz2
+archive.extract	unzip everything in download.zip
+archive.extract	extract thesis.zip to my desktop
+archive.extract	unpack the tarball app.tar.gz
+archive.extract	get the files out of photos.zip
+archive.extract	unzip old.zip into E:\old
+archive.extract	extract the zip i downloaded D:\Downloads\fonts.zip
+archive.extract	unarchive code.zip
+archive.extract	unzip D:\work.zip to E:\work
+archive.extract	extract files.zip please
+archive.extract	unzip and open notes.zip
+archive.extract	unpack E:\games\mods.zip
+archive.extract	decompress the zip D:\big.zip
+archive.extract	extract the contents of report.zip
+archive.extract	unzip it D:\save.zip
