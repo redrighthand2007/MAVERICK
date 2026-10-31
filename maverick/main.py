@@ -11,6 +11,7 @@ from maverick.agents.files.agent import FileAgent
 from maverick.agents.hardware.agent import HardwareAgent
 from maverick.agents.jobs.agent import JobsAgent
 from maverick.agents.logs.agent import LogsAgent
+from maverick.agents.network.agent import NetworkAgent
 from maverick.agents.power.agent import PowerAgent
 from maverick.agents.process.agent import ProcessAgent
 from maverick.agents.search.agent import SearchAgent
@@ -43,7 +44,7 @@ def build(brain: Brain | None = None, background: Background | None = None) -> O
     # Search before archive: "find zip files" is a search, not "make a zip".
     agents = [
         ProcessAgent(), JobsAgent(background), WatchAgent(background), LogsAgent(background), ServicesAgent(),
-        PowerAgent(), CleanupAgent(), HardwareAgent(), SearchAgent(), ArchiveAgent(), FileAgent(),
+        NetworkAgent(), PowerAgent(), CleanupAgent(), HardwareAgent(), SearchAgent(), ArchiveAgent(), FileAgent(),
     ]
     maverick = Orchestrator(agents, brain)
     maverick.background = background
