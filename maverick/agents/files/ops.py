@@ -4,17 +4,10 @@ from pathlib import Path
 
 from maverick.core.agent_base import Result
 from maverick.core.safety import SafetyError, plan_destination, require_existing, require_not_protected
+from maverick.core.units import human_size
 
 # Characters Windows does not allow in a file name.
 INVALID_NAME_CHARS = set('<>:"/\\|?*')
-
-
-def human_size(num_bytes: int) -> str:
-    size = float(num_bytes)
-    for unit in ("B", "KB", "MB", "GB", "TB"):
-        if size < 1024 or unit == "TB":
-            return f"{size:.0f} {unit}" if unit == "B" else f"{size:.2f} {unit}"
-        size /= 1024
 
 
 def copy(source: str, destination: str) -> Result:

@@ -39,7 +39,7 @@ No prior knowledge assumed. These explain the ideas every stage below is built o
 - ✅ 📕 **2.8 Training + evaluation**: `python -m maverick.brain.train` / `python -m maverick.brain.evaluate`
   - Test accuracy 82% (keyword rules 75%); hard cases 81% (rules 46%)
 - ✅ 📕 **2.9 Brain wired in**: trusted at ≥ 60% confidence, keyword rules otherwise; requests logged to `inbox.tsv`
-- ⬜ 📕 **2.10 scikit-learn version** to compare with your own model (optional)
+- ⬜ 📕 **2.10 scikit-learn version**: moved into Stage 8 as 8.2–8.4
 
 ## Stage 3: Safety net ✅ · learned 0/2
 
@@ -49,39 +49,49 @@ No prior knowledge assumed. These explain the ideas every stage below is built o
   - New agents get it by listing operations in `risky` and writing `describe()`
 - ⏭️ 📕 **3.2 Undo**: skipped for now
 
-## Stage 4: Read-only agents (safe, can't break anything) · learned 0/6
+## Stage 4: Read-only agents (safe, can't break anything) ✅ · learned 0/6
 
 Every agent follows the same recipe:
 **a)** `ops.py` functions → **b)** `agent.py` (keywords, `extract`) → **c)** register in `main.py` →
 **d)** training sentences in `intents.tsv` + hard cases → **e)** retrain, check accuracy → **f)** tests → **g)** try live
 
-- 👉 📕 **4.1 Hardware agent (#33)**
+- ✅ 📕 **4.1 Hardware agent (#33)**: `maverick/agents/hardware/` (uses `psutil` + Windows CIM)
   - RAM: total, used, free
-  - RAM slots: how many, which are empty, type and speed
-  - CPU: model, cores, current usage
+  - RAM slots: how many, which are empty, type and speed, max supported
+  - CPU: model, cores / threads, current usage
   - Battery: percentage, charging or not, time left
-  - Disks: each drive's total and free space
-  - First time the brain has to choose between **two** agents
-- ⬜ 📕 **4.2 Process tree agent (#4)**
-  - List running processes (name, PID, CPU, RAM)
-  - "What started X?": walk up the parent chain
-  - Show children of a process
-- ⬜ 📕 **4.3 File integrity agent (#28)**
+  - Disks: each drive's total and free space, or one drive (`space left on D:`)
+  - Brain now chooses between **two** agents and 10 labels (414 sentences, 42 hard cases)
+  - Brain alone 76% on unseen sentences; **as MAVERICK runs (brain + rules) 87%**; keyword rules alone 79%
+  - `evaluate.py` now reports the combined score; brain-alone test floor lowered 0.80 → 0.75, new combined floors 0.85 / 0.70
+  - Fixed: one-shot mode now accepts the whole request as one quoted sentence
+- ✅ 📕 **4.2 Process tree agent (#4)**: `maverick/agents/process/`
+  - Biggest programs by RAM or CPU, with copies grouped (`chrome.exe x18`)
+  - "What started X?": walks up the parent chain, notices closed parents and reused PIDs, says it in plain words
+  - "What did X start?": direct and total child programs
+  - Find by name (`chrome`, `code.exe`) or PID
+- ⏭️ 📕 **4.3 File integrity agent (#28)**: skipped for now
   - Take a snapshot: SHA-256 of every file in a folder, saved as JSON
   - Compare later: list added, removed, changed files
-- ⬜ 📕 **4.4 Connectivity agent (#20)**
+- ⏭️ 📕 **4.4 Connectivity agent (#20)**: skipped for now
   - Ping a host; check DNS lookup; trace the route
   - Diagnose step by step: adapter → gateway → DNS → internet
-- ⬜ 📕 **4.5 Port viewer agent (#16, view only)**
+- ⏭️ 📕 **4.5 Port viewer agent (#16, view only)**: skipped for now
   - Which app is using port X
   - List all listening ports with their apps
-- ⬜ 📕 **4.6 File search agent (#7)**
-  - By name or pattern (`*.pdf`), by date ("edited yesterday"), by size ("bigger than 1 GB")
-  - Search inside text files for a word
+- ✅ 📕 **4.6 File search agent (#7)**: `maverick/agents/search/`
+  - By name, kind (`pdf`, `videos`, `photos`, `python`, `*.mkv`), date (`today`, `yesterday`, `this week`, `last 3 days`, `older than 2 years`), size (`bigger than 1 gb`, `big files`)
+  - Inside text files, showing the matching line
+  - Where: a typed path, `e drive`, or `in downloads / documents / desktop`; default is your user folder
+  - Skips system and junk folders (Windows, AppData, node_modules, .git); stops after 20 s on huge drives
+- Brain after Stage 4: 15 labels, 564 sentences, 51 hard cases
+  - Brain alone 66%; **as MAVERICK runs 82%** (keyword rules alone 77%); hard cases 73% (rules 49%)
+  - Naive Bayes has hit its limit (ignores word order: "what started chrome" vs "what did chrome start"); Stage 8 brains should lift this
+  - Test floors now: brain alone 0.60, as MAVERICK runs 0.80 / 0.70
 
 ## Stage 5: Action agents (use the 3.1 confirmation) · learned 0/7
 
-- ⬜ 📕 **5.1 Process hunter (#1)**: find heavy processes by CPU/RAM/name; end them after y/n
+- 👉 📕 **5.1 Process hunter (#1)**: find heavy processes by CPU/RAM/name; end them after y/n
 - ⬜ 📕 **5.2 CPU priority and affinity (#3)**: set priority (low/normal/high), pin to cores
 - ⬜ 📕 **5.3 Disk space optimizer (#8)**: find big/old files; delete to the **Recycle Bin** only
 - ⬜ 📕 **5.4 Smart archive (#12)**: zip/tar create, list, extract (Zip Slip guard), AES encryption; port of the Linux project
@@ -117,6 +127,59 @@ These need Administrator rights or are risky; each explains clearly when admin i
 - ⬜ 📕 **7.14 Handle leaks (#6)**: apps holding too many handles
 - ⬜ 📕 **7.15 Admin-rights audit (#25)**: who has admin on this PC (read-only)
 - ❌ **#27 Linux capabilities**: dropped, no Windows equivalent
+
+## Stage 8: AI methods (every technique from the AI Map that MAVERICK can use) · learned 0/28
+
+Not strictly after Stage 7: each step can start once the data or agent it needs exists (noted in brackets).
+Every new brain must beat the current one in `evaluate.py` before it replaces it.
+
+**8A. Better text features**
+- ⬜ 📕 **8.1 N-grams + TF-IDF**: count word pairs and weight telling words (after 4.1)
+
+**8B. More classic models, compared side by side**
+- ⬜ 📕 **8.2 Logistic regression** (scikit-learn): weight per word (after 4.1)
+- ⬜ 📕 **8.3 SVM, k-nearest neighbours, decision tree**: extra comparisons, keep the winner
+- ⬜ 📕 **8.4 Bernoulli Naive Bayes**: variant of the current brain, for short sentences
+- ⬜ 📕 **8.5 Ensemble / voting**: combine the best models' answers
+
+**8C. Better evaluation**
+- ⬜ 📕 **8.6 Cross-validation**: more reliable scores from small data
+- ⬜ 📕 **8.7 Precision, recall, F1 per label**: once labels become unbalanced
+- ⬜ 📕 **8.8 Hyperparameter tuning**: try settings, keep the best
+
+**8D. Neural networks**
+- ⬜ 📕 **8.9 Neural brain (MLP)** from scratch with NumPy: layers, ReLU, softmax, loss, backpropagation, epochs, dropout (after 4.1)
+- ⬜ 📕 **8.10 Word embeddings**: "duplicate" ≈ "copy" without examples (small offline model)
+- ⬜ 📕 **8.11 Sentence embedding model**: match meaning, not exact words (pretrained, offline)
+- ⬜ 📕 **8.12 Small pretrained transformer encoder**: fine-tuned for intent (transfer learning)
+
+**8E. Learning from real use**
+- ⬜ 📕 **8.13 Online learning**: retrain from reviewed `inbox.tsv` lines
+- ⬜ 📕 **8.14 Active learning**: show the least-confident inbox lines first for labelling
+
+**8F. Filling arguments (function calling)**
+- ⬜ 📕 **8.15 Slot filling**: the brain also tags source / destination / name in the sentence
+- ⬜ 📕 **8.16 Multi-label**: one sentence → several actions ("copy and zip")
+
+**8G. Small local LLM (offline)**
+- ⬜ 📕 **8.17 Local LLM setup**: Ollama or llama.cpp, a 1–4B open-weights model at 4-bit (fits RTX 2050)
+- ⬜ 📕 **8.18 LLM tool calling**: describe `ops` functions; the model returns function + arguments as JSON; safety checks still run
+- ⬜ 📕 **8.19 Prompting / few-shot**: tune the instructions given to the local model
+- ⬜ 📕 **8.20 LoRA fine-tune** of a 0.5–1.5B model on `intents.tsv`
+- ⬜ 📕 **8.21 LLM agent loop** for multi-step requests (think → tool → result → repeat)
+
+**8H. Unsupervised and prediction (used inside agents)**
+- ⬜ 📕 **8.22 Anomaly detection** (isolation forest / autoencoder): unusual RAM growth and connections (7.11, 7.13)
+- ⬜ 📕 **8.23 Clustering**: group similar files, e.g. in Downloads (after 4.6)
+- ⬜ 📕 **8.24 Regression / forecasting**: "C: will be full in about 3 weeks" (after 4.1)
+- ⬜ 📕 **8.25 Ranking**: order file-search results by relevance (after 4.6)
+
+**8I. Classic AI for goal requests**
+- ⬜ 📕 **8.26 Planning + utility scoring**: "free up 5 GB" → choose the best files to remove (after 5.3)
+- ⬜ 📕 **8.27 Constraint solving**: scheduled jobs that must not clash (after 6.4)
+
+**8J. Voice**
+- ⬜ 📕 **8.28 Offline speech-to-text** (Whisper): speak commands instead of typing
 
 ## Learning track (side chat) · learned 0/7
 

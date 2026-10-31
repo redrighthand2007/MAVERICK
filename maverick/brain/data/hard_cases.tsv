@@ -23,7 +23,32 @@ files.size	whats the weight of video.mp4
 files.size	is D:\movies taking a lot of space
 unknown	delete everything on my drive
 unknown	remove old.txt permanently
-unknown	what's the cpu temperature
 unknown	open the downloads folder
 unknown	good night maverick
 unknown	kill the python script
+hardware.ram	how much memory have i got in total
+hardware.ram	is my pc short on ram right now
+hardware.ram	what's my memory situation
+hardware.slots	could i put another memory stick in this laptop
+hardware.slots	what speed and type are my ram modules
+hardware.slots	is any ram slot unused
+hardware.cpu	what chip is running this pc
+hardware.cpu	how loaded is the processor
+hardware.cpu	number of cpu cores please
+hardware.battery	will my laptop die soon
+hardware.battery	is the power cable connected
+hardware.battery	how much battery do i have
+hardware.disks	how much room do my drives have left
+hardware.disks	is D: almost full
+hardware.disks	which disk has free space for a 20 gb file
+files.size	how much space does the D:\games folder take
+unknown	what's the cpu temperature
+process.list	what's draining my laptop right now
+process.list	show which apps are open
+process.origin	why is java running on my pc
+process.origin	what made code.exe start
+process.children	what is chrome running underneath
+search.find	where did i put the dune movie
+search.find	videos i downloaded this week
+search.content	which file has my wifi password written in it
+search.content	find notes that talk about exams
