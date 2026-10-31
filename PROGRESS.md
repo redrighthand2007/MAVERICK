@@ -103,9 +103,15 @@ Every agent follows the same recipe:
   - `clear temp files`, `delete D:\old.zip`: always to the **Recycle Bin** (restorable), after y/n
   - Refuses your user folder and its main folders, Windows / Program Files, and whole drives; never empties the bin
   - Brain: 18 labels; alone 75%, as MAVERICK runs 85% test / 62% hard (hard floors lowered to 0.70 / 0.60)
-- 👉 📕 **5.4 Smart archive (#12)**: zip/tar create, list, extract (Zip Slip guard), AES encryption; port of the Linux project
+- ✅ 📕 **5.4 Smart archive (#12)**: `maverick/agents/archive/`, ported from VIT-OS-SMART-ARCHIVE-AGENT
+  - `zip D:\work`, `compress D:\logs as tar.gz`, `zip D:\work into E:\backups`: .zip, .tar, .tar.gz, .tar.bz2, .tar.xz
+  - `zip D:\work with a password`: AES-256 (`pyzipper`, now in requirements.txt); password typed at a hidden prompt, twice
+  - `what's inside backup.zip`: list without extracting; `unzip backup.zip to D:\restore`: extract
+  - Zip Slip guard (`..\..\` names are refused before anything is written); tar links/devices refused
+  - Never overwrites; a wrong password writes nothing
+  - Brain: 21 labels; alone 74%, as MAVERICK runs ~80% across splits (75% on seed 42, floor 0.80 → 0.75)
 - ⏭️ 📕 **5.5 Broken shortcut finder (#10)**: skipped for now
-- ⬜ 📕 **5.6 Power agent (#34)**: switch power plans, set screen brightness
+- 👉 📕 **5.6 Power agent (#34)**: switch power plans, set screen brightness
 - ⬜ 📕 **5.7 Hung app reaper (#2)**: find "Not Responding" apps; end them after y/n
 
 ## Stage 6: Background agents (MAVERICK keeps running) · learned 0/3
