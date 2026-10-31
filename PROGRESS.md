@@ -183,8 +183,11 @@ These need Administrator rights or are risky; each explains clearly when admin i
   - Samples every program's RAM 5 times (10 s by default, up to 5 min) and reports the ones that rose every time
   - Shows growth and MB per minute; ignores wobble under 20 MB; read-only (suggests `kill <name>`)
   - Brain: 36 labels; alone 74%, as MAVERICK runs 80% test / 52% hard
-- 👉 📕 **7.14 Handle leaks (#6)**: apps holding too many handles
-- ⬜ 📕 **7.15 Admin-rights audit (#25)**: who has admin on this PC (read-only)
+- ✅ 📕 **7.14 Handle leaks (#6)**: `handles` command in `maverick/agents/process/`
+  - `which app has the most handles`, `find handle leaks`: top 10 programs by handles in their biggest process
+  - Flags any single process over 10,000 handles as a likely leak; read-only (suggests `kill <name>`)
+  - Brain: 37 labels; alone 75%, as MAVERICK runs 79% test / 51% hard
+- 👉 📕 **7.15 Admin-rights audit (#25)**: who has admin on this PC (read-only)
 - ❌ **#27 Linux capabilities**: dropped, no Windows equivalent
 
 ## Stage 8: AI methods (every technique from the AI Map that MAVERICK can use) · learned 0/28
