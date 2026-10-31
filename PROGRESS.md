@@ -152,10 +152,15 @@ Every agent follows the same recipe:
 
 These need Administrator rights or are risky; each explains clearly when admin is required.
 
-- 👉 📕 **7.1 Services (#31)**: list, start, stop, enable at boot
+- ✅ 📕 **7.1 Services (#31)**: `maverick/agents/services/` + `maverick/core/windows.py`
+  - `show running services`, `is the print spooler running`: read-only, no admin needed
+  - `restart the spooler service`, `stop / start / disable ...`, `enable ... at boot`: y/n, then needs Administrator
+  - Never stops or disables core Windows services (RPC, event log, Defender, firewall, DHCP/DNS, ...)
+  - A name matching several services asks which one; names are safely quoted for PowerShell
+  - Brain: 31 labels; alone 75%, as MAVERICK runs 81% test / 57% hard
 - ⏭️ 📕 **7.2 Event logs (#35)**: skipped for now
 - ⏭️ 📕 **7.3 Login audit (#26)**: skipped for now
-- ⬜ 📕 **7.4 Network adapters (#17)**: Wi-Fi on/off, show IP addresses
+- 👉 📕 **7.4 Network adapters (#17)**: Wi-Fi on/off, show IP addresses
 - ⏭️ 📕 **7.5 Firewall (#18)**: skipped for now
 - ⬜ 📕 **7.6 Drivers (#30)**: restart a device (e.g. webcam)
 - ⏭️ 📕 **7.7 Users and passwords (#23, #24)**: skipped for now
