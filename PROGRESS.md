@@ -98,8 +98,12 @@ Every agent follows the same recipe:
   - Refuses Windows' own processes (svchost, csrss, explorer, ...) and MAVERICK itself
   - Brain: 16 labels; alone 73%, as MAVERICK runs 86% test / 69% hard (hard floor lowered 0.70 → 0.65)
 - ⏭️ 📕 **5.2 CPU priority and affinity (#3)**: skipped for now
-- 👉 📕 **5.3 Disk space optimizer (#8)**: find big/old files; delete to the **Recycle Bin** only
-- ⬜ 📕 **5.4 Smart archive (#12)**: zip/tar create, list, extract (Zip Slip guard), AES encryption; port of the Linux project
+- ✅ 📕 **5.3 Disk space optimizer (#8)**: `maverick/agents/cleanup/`
+  - `free up space (on e drive)`: temp files older than a day, files over 500 MB, downloads untouched for 90+ days
+  - `clear temp files`, `delete D:\old.zip`: always to the **Recycle Bin** (restorable), after y/n
+  - Refuses your user folder and its main folders, Windows / Program Files, and whole drives; never empties the bin
+  - Brain: 18 labels; alone 75%, as MAVERICK runs 85% test / 62% hard (hard floors lowered to 0.70 / 0.60)
+- 👉 📕 **5.4 Smart archive (#12)**: zip/tar create, list, extract (Zip Slip guard), AES encryption; port of the Linux project
 - ⏭️ 📕 **5.5 Broken shortcut finder (#10)**: skipped for now
 - ⬜ 📕 **5.6 Power agent (#34)**: switch power plans, set screen brightness
 - ⬜ 📕 **5.7 Hung app reaper (#2)**: find "Not Responding" apps; end them after y/n
