@@ -70,3 +70,5 @@ process.hung	the app has the spinning wheel and won't react
 process.hung	something locked up, deal with it
 jobs.list	what are you keeping an eye on for me
 jobs.stop	forget about the downloads folder, stop watching it
+watch.start	from now on, any pdf that shows up in downloads goes into documents
+watch.start	tidy my downloads as files come in by moving images to pictures

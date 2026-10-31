@@ -13,6 +13,7 @@ from maverick.agents.jobs.agent import JobsAgent
 from maverick.agents.power.agent import PowerAgent
 from maverick.agents.process.agent import ProcessAgent
 from maverick.agents.search.agent import SearchAgent
+from maverick.agents.watch.agent import WatchAgent
 from maverick.brain import Brain
 from maverick.core.agent_base import Result
 from maverick.core.background import JOBS_PATH, Background
@@ -28,6 +29,8 @@ def build(brain: Brain | None = None, background: Background | None = None) -> O
     # Register sub-agents here. Order matters for keyword rules: the first agent that understands a request wins.
     # Process before jobs: process ignores job words, so "stop job 2" falls through to the jobs agent.
     # Jobs before cleanup: "remove the downloads watcher" stops a job; it doesn't delete a file.
+    # Jobs before watch: "stop watching downloads" ends a watcher instead of starting one.
+    # Watch before files: "move every new pdf in downloads to documents" is a watcher, not a one-off move.
     # Process before hardware: "which programs use the most memory" is about programs, not RAM size.
     # Power before hardware: "turn on battery saver" is a power mode, not a battery reading.
     # Cleanup before hardware: "free up space on D:" wants space back, not "how much is free".
@@ -35,7 +38,7 @@ def build(brain: Brain | None = None, background: Background | None = None) -> O
     # Search before files: "find big files" is a search, not "size of big".
     # Search before archive: "find zip files" is a search, not "make a zip".
     agents = [
-        ProcessAgent(), JobsAgent(background), PowerAgent(), CleanupAgent(), HardwareAgent(),
+        ProcessAgent(), JobsAgent(background), WatchAgent(background), PowerAgent(), CleanupAgent(), HardwareAgent(),
         SearchAgent(), ArchiveAgent(), FileAgent(),
     ]
     maverick = Orchestrator(agents, brain)

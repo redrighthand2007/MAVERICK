@@ -4,7 +4,7 @@
 #         hardware.ram, hardware.slots, hardware.cpu, hardware.battery, hardware.disks,
 #         process.list, process.origin, process.children, process.end, process.hung, search.find, search.content,
 #         cleanup.scan, cleanup.recycle, archive.create, archive.list, archive.extract,
-#         power.plan, power.brightness, jobs.list, jobs.stop, unknown
+#         power.plan, power.brightness, jobs.list, jobs.stop, watch.start, unknown
 
 # --- files.copy ---
 files.copy	copy notes.txt to D:\backup
@@ -952,3 +952,35 @@ jobs.stop	turn off the folder watcher
 jobs.stop	stop rotating app.log
 jobs.stop	remove every background job
 jobs.stop	stop the watcher
+
+# --- watch.start ---
+watch.start	move every new pdf in downloads to documents
+watch.start	watch downloads and move images to pictures
+watch.start	watch D:\inbox for txt files and copy them to E:\backup
+watch.start	move new videos in downloads to videos
+watch.start	whenever a new screenshot lands on my desktop move it to pictures
+watch.start	auto-sort pdfs from downloads into documents
+watch.start	keep an eye on downloads and move zips to D:\archives
+watch.start	monitor my desktop and move new files to D:\desk
+watch.start	every new mp3 in downloads should go to music
+watch.start	automatically move installers from downloads to D:\setups
+watch.start	watch the downloads folder for new photos and copy them to E:\photos
+watch.start	whenever i download a pdf move it to documents
+watch.start	move each new word document from downloads to documents
+watch.start	copy every new file in D:\work to E:\work-backup
+watch.start	watch "D:\scans" and move new pdfs to documents
+watch.start	auto move new movies from downloads to E:\movies
+watch.start	keep watching downloads and put new pictures in pictures
+watch.start	monitor D:\camera and copy new jpgs to E:\photos
+watch.start	when new excel files arrive in downloads move them to documents
+watch.start	sort new downloads automatically into folders
+watch.start	watch my desktop for screenshots and move them to pictures
+watch.start	send any new pdf from desktop to documents
+watch.start	automatically back up new files from documents to E:\backup
+watch.start	move all new zip files from downloads to D:\zips
+watch.start	whenever something lands in downloads copy it to E:\safe
+watch.start	keep an eye on D:\incoming for csv files and move them to D:\data
+watch.start	watch downloads and file away pdfs into documents
+watch.start	auto-copy new photos in pictures to E:\cloud
+watch.start	monitor downloads and send videos to D:\videos
+watch.start	put every new screenshot from desktop into pictures automatically
