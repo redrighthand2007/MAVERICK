@@ -226,7 +226,12 @@ Every new brain must beat the current one in `evaluate.py` before it replaces it
   - `python -m maverick.brain.evaluate` compares every brain kind side by side before one replaces another
 
 **8D. Neural networks**
-- 👉 📕 **8.9 Neural brain (MLP)** from scratch with NumPy: layers, ReLU, softmax, loss, backpropagation, epochs, dropout (after 4.1)
+- ✅ 📕 **8.9 Neural brain (MLP)**: `maverick/brain/mlp.py`, from scratch with NumPy
+  - TF-IDF word pairs -> 128 ReLU neurons (30% dropout) -> softmax; backpropagation, mini-batches of 32, Adam, He init
+  - A test checks backprop against a numeric gradient (nudge one weight, watch the loss)
+  - 5-fold: brain alone 79.5% vs logistic regression 79.4% (a tie); hard as MAVERICK runs 81% vs 76%; 4x slower to train
+  - Lesson: with ~1,200 sentences a deeper model has little extra to learn; more data (8.13) matters more
+  - Kept as an option (`python -m maverick.brain.train mlp`); logistic regression stays the default
 - ⬜ 📕 **8.10 Word embeddings**: "duplicate" ≈ "copy" without examples (small offline model)
 - ⬜ 📕 **8.11 Sentence embedding model**: match meaning, not exact words (pretrained, offline)
 - ⬜ 📕 **8.12 Small pretrained transformer encoder**: fine-tuned for intent (transfer learning)
