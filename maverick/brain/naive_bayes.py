@@ -10,6 +10,8 @@ class NaiveBayes:
     score(label) = log P(label) + sum of log P(word | label)
     The label with the highest score wins.
     """
+    kind = "naive_bayes"
+    threshold = 0.6  # below this confidence MAVERICK falls back to keyword rules (from evaluate.py)
 
     def __init__(self):
         self.label_counts: Counter = Counter()        # how many sentences each label has
@@ -54,6 +56,7 @@ class NaiveBayes:
     def save(self, path: Path) -> None:
         path.parent.mkdir(parents=True, exist_ok=True)
         data = {
+            "kind": self.kind,
             "label_counts": self.label_counts,
             "word_counts": self.word_counts,
             "vocab": sorted(self.vocab),

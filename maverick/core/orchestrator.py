@@ -3,6 +3,7 @@ from maverick.core.safety import SafetyError
 
 EXIT_WORDS = {"exit", "quit", "bye", "goodbye"}
 # Below this, the brain is not trusted and keyword rules decide instead (chosen from `python -m maverick.brain.evaluate`).
+# A brain can bring its own (brain.threshold); this is the fallback.
 CONFIDENCE_THRESHOLD = 0.6
 # Between this and the threshold, MAVERICK suggests its guess; below it, the guess is too weak to mention.
 SUGGEST_THRESHOLD = 0.5
@@ -36,7 +37,7 @@ class Orchestrator:
             return self.help()
 
         guess, confidence = self.brain.predict(text) if self.brain else ("unknown", 0.0)
-        if confidence >= CONFIDENCE_THRESHOLD and guess != "unknown":
+        if confidence >= getattr(self.brain, "threshold", CONFIDENCE_THRESHOLD) and guess != "unknown":
             agent_name, operation = guess.split(".", 1)
             agent = self.by_name.get(agent_name)
             if agent:
