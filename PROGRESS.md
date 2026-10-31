@@ -141,13 +141,18 @@ Every agent follows the same recipe:
   - Stop it with `stop watching downloads` or `stop job 1`
 - ⏭️ 📕 **6.3 Background jobs (#5)**: skipped for now
 - ⏭️ 📕 **6.4 Task scheduler (#32)**: skipped for now
-- 👉 📕 **6.5 Log rotator (#15)**: copy, compress, empty a big log file
+- ✅ 📕 **6.5 Log rotator (#15)**: `maverick/agents/logs/`
+  - `rotate D:\app\server.log`: saves it as `server-20261031-120000.log.gz` beside it, then empties it (after y/n)
+  - Empties in place, so a program that has the log open keeps writing into it
+  - `rotate server.log when it gets bigger than 50 mb`: a 6.1 background job that checks every minute
+  - Old rotated copies are never deleted; `stop rotating server.log` ends the job
+  - Brain: 29 labels; alone 74%, as MAVERICK runs 80% test / 58% hard
 
 ## Stage 7: Admin-level and hard agents (last) · learned 0/6
 
 These need Administrator rights or are risky; each explains clearly when admin is required.
 
-- ⬜ 📕 **7.1 Services (#31)**: list, start, stop, enable at boot
+- 👉 📕 **7.1 Services (#31)**: list, start, stop, enable at boot
 - ⏭️ 📕 **7.2 Event logs (#35)**: skipped for now
 - ⏭️ 📕 **7.3 Login audit (#26)**: skipped for now
 - ⬜ 📕 **7.4 Network adapters (#17)**: Wi-Fi on/off, show IP addresses
