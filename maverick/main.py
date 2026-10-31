@@ -14,6 +14,7 @@ from maverick.agents.logs.agent import LogsAgent
 from maverick.agents.power.agent import PowerAgent
 from maverick.agents.process.agent import ProcessAgent
 from maverick.agents.search.agent import SearchAgent
+from maverick.agents.services.agent import ServicesAgent
 from maverick.agents.watch.agent import WatchAgent
 from maverick.brain import Brain
 from maverick.core.agent_base import Result
@@ -32,6 +33,7 @@ def build(brain: Brain | None = None, background: Background | None = None) -> O
     # Jobs before cleanup: "remove the downloads watcher" stops a job; it doesn't delete a file.
     # Jobs before watch: "stop watching downloads" ends a watcher instead of starting one.
     # Watch before files: "move every new pdf in downloads to documents" is a watcher, not a one-off move.
+    # Services after process: process ignores "service", so "stop the spooler service" reaches services.
     # Logs before cleanup and archive: "empty / compress server.log" rotates a log, it doesn't delete or zip it.
     # Process before hardware: "which programs use the most memory" is about programs, not RAM size.
     # Power before hardware: "turn on battery saver" is a power mode, not a battery reading.
@@ -40,8 +42,8 @@ def build(brain: Brain | None = None, background: Background | None = None) -> O
     # Search before files: "find big files" is a search, not "size of big".
     # Search before archive: "find zip files" is a search, not "make a zip".
     agents = [
-        ProcessAgent(), JobsAgent(background), WatchAgent(background), LogsAgent(background), PowerAgent(),
-        CleanupAgent(), HardwareAgent(), SearchAgent(), ArchiveAgent(), FileAgent(),
+        ProcessAgent(), JobsAgent(background), WatchAgent(background), LogsAgent(background), ServicesAgent(),
+        PowerAgent(), CleanupAgent(), HardwareAgent(), SearchAgent(), ArchiveAgent(), FileAgent(),
     ]
     maverick = Orchestrator(agents, brain)
     maverick.background = background
