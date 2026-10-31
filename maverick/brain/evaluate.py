@@ -2,15 +2,33 @@
 from collections import Counter
 
 from maverick.agents.files.agent import FileAgent
+from maverick.agents.hardware.agent import HardwareAgent
 from maverick.brain.dataset import HARD_CASES_PATH, INTENTS_PATH, load_examples, split
 from maverick.brain.text import tokenize
 from maverick.brain.train import train
+from maverick.core.orchestrator import CONFIDENCE_THRESHOLD
+
+# Same agents, same order as maverick/main.py.
+AGENTS = [HardwareAgent(), FileAgent()]
 
 
 def keyword_rules(sentence: str) -> tuple[str, float]:
-    """Baseline: today's keyword parse(). The brain must beat this to earn its place."""
-    intent = FileAgent().parse(sentence)
-    return (f"files.{intent.operation}" if intent else "unknown"), 1.0
+    """Baseline: every agent's keyword parse(), first match wins. The brain must beat this to earn its place."""
+    for agent in AGENTS:
+        intent = agent.parse(sentence)
+        if intent is not None:
+            return f"{agent.name}.{intent.operation}", 1.0
+    return "unknown", 1.0
+
+
+def as_maverick_runs(model):
+    """What you actually get: the brain when it is confident, keyword rules otherwise."""
+    def predict(sentence):
+        guess, confidence = model.predict(tokenize(sentence))
+        if confidence >= CONFIDENCE_THRESHOLD and guess != "unknown":
+            return guess, confidence
+        return keyword_rules(sentence)
+    return predict
 
 
 def grade(predict, examples) -> list[tuple[str, str, float]]:
@@ -30,14 +48,14 @@ def print_report(name: str, results) -> None:
     for label in labels:
         mine = [r for r in results if r[0] == label]
         if mine:
-            print(f"  {label:<14} {accuracy(mine):.0%}  ({len(mine)})")
+            print(f"  {label:<18} {accuracy(mine):.0%}  ({len(mine)})")
 
     print("Confusion matrix (rows = real, columns = predicted):")
     short = [label.split(".")[-1][:7] for label in labels]
-    print(" " * 16 + " ".join(f"{s:>7}" for s in short))
+    print(" " * 20 + " ".join(f"{s:>7}" for s in short))
     pairs = Counter((real, guess) for real, guess, _ in results)
     for label in labels:
-        print(f"  {label:<14}" + " ".join(f"{pairs[(label, g)]:>7}" for g in labels))
+        print(f"  {label:<18}" + " ".join(f"{pairs[(label, g)]:>7}" for g in labels))
 
 
 def print_thresholds(results) -> None:
@@ -59,6 +77,9 @@ def main() -> None:
     print_report("Brain, hard cases", grade(brain, hard))
     print_report("Keyword rules, test set", grade(keyword_rules, test_set))
     print_report("Keyword rules, hard cases", grade(keyword_rules, hard))
+    combined = as_maverick_runs(model)
+    print(f"\n=== As MAVERICK runs (brain >= {CONFIDENCE_THRESHOLD}, else rules): "
+          f"test {accuracy(grade(combined, test_set)):.0%}, hard cases {accuracy(grade(combined, hard)):.0%} ===")
     print_thresholds(grade(brain, test_set + hard))
 
     misses = [(r, s) for r, s in zip(grade(brain, hard), hard) if r[0] != r[1]]
