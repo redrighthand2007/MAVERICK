@@ -4,6 +4,7 @@ import json
 
 from maverick.brain.dataset import DATA_DIR
 from maverick.brain.logistic_regression import LogisticRegression
+from maverick.brain.mlp import MLP
 from maverick.brain.naive_bayes import NaiveBayes
 from maverick.brain.text import tokenize
 
@@ -12,8 +13,9 @@ MODEL_PATH = MODELS_DIR / "brain.json"
 OLD_MODEL_PATH = MODELS_DIR / "naive_bayes.json"  # what Stages 2-7 saved; still loads until you retrain
 INBOX_PATH = DATA_DIR / "inbox.tsv"
 # Every kind of brain MAVERICK can train; the saved file says which one it is.
-MODELS = {model.kind: model for model in (NaiveBayes, LogisticRegression)}
-DEFAULT_KIND = "logistic_regression"  # won the Stage 8.2 comparison in evaluate.py
+MODELS = {model.kind: model for model in (NaiveBayes, LogisticRegression, MLP)}
+# Won the Stage 8.2 comparison. The 8.9 neural net ties it (79.5% vs 79.4%) but trains 4x slower: not worth it yet.
+DEFAULT_KIND = "logistic_regression"
 
 
 def load_model(path: Path):
