@@ -111,8 +111,13 @@ Every agent follows the same recipe:
   - Never overwrites; a wrong password writes nothing
   - Brain: 21 labels; alone 74%, as MAVERICK runs ~80% across splits (75% on seed 42, floor 0.80 → 0.75)
 - ⏭️ 📕 **5.5 Broken shortcut finder (#10)**: skipped for now
-- 👉 📕 **5.6 Power agent (#34)**: switch power plans, set screen brightness
-- ⬜ 📕 **5.7 Hung app reaper (#2)**: find "Not Responding" apps; end them after y/n
+- ✅ 📕 **5.6 Power agent (#34)**: `maverick/agents/power/`
+  - `what power mode am i on`, `switch to power saver`, `use best performance`, `go to balanced power mode`
+  - Uses Windows 11 power modes (the Settings slider) through `powrprof.dll`; classic plans through `powercfg`
+  - `set brightness to 40`, `make the screen brighter`, `dim the screen`: laptop screens only (WMI)
+  - No y/n: both change instantly and can be switched straight back
+  - Brain: 23 labels; alone 72%, as MAVERICK runs 78% test / 60% hard
+- 👉 📕 **5.7 Hung app reaper (#2)**: find "Not Responding" apps; end them after y/n
 
 ## Stage 6: Background agents (MAVERICK keeps running) · learned 0/3
 
