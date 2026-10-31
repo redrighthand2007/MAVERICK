@@ -3,13 +3,15 @@ from collections import Counter
 
 from maverick.agents.files.agent import FileAgent
 from maverick.agents.hardware.agent import HardwareAgent
+from maverick.agents.process.agent import ProcessAgent
+from maverick.agents.search.agent import SearchAgent
 from maverick.brain.dataset import HARD_CASES_PATH, INTENTS_PATH, load_examples, split
 from maverick.brain.text import tokenize
 from maverick.brain.train import train
 from maverick.core.orchestrator import CONFIDENCE_THRESHOLD
 
 # Same agents, same order as maverick/main.py.
-AGENTS = [HardwareAgent(), FileAgent()]
+AGENTS = [ProcessAgent(), HardwareAgent(), SearchAgent(), FileAgent()]
 
 
 def keyword_rules(sentence: str) -> tuple[str, float]:
