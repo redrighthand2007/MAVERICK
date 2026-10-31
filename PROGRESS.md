@@ -39,7 +39,7 @@ No prior knowledge assumed. These explain the ideas every stage below is built o
 - ✅ 📕 **2.8 Training + evaluation**: `python -m maverick.brain.train` / `python -m maverick.brain.evaluate`
   - Test accuracy 82% (keyword rules 75%); hard cases 81% (rules 46%)
 - ✅ 📕 **2.9 Brain wired in**: trusted at ≥ 60% confidence, keyword rules otherwise; requests logged to `inbox.tsv`
-- ⬜ 📕 **2.10 scikit-learn version** to compare with your own model (optional)
+- ⬜ 📕 **2.10 scikit-learn version**: moved into Stage 8 as 8.2–8.4
 
 ## Stage 3: Safety net ✅ · learned 0/2
 
@@ -117,6 +117,59 @@ These need Administrator rights or are risky; each explains clearly when admin i
 - ⬜ 📕 **7.14 Handle leaks (#6)**: apps holding too many handles
 - ⬜ 📕 **7.15 Admin-rights audit (#25)**: who has admin on this PC (read-only)
 - ❌ **#27 Linux capabilities**: dropped, no Windows equivalent
+
+## Stage 8: AI methods (every technique from the AI Map that MAVERICK can use) · learned 0/28
+
+Not strictly after Stage 7: each step can start once the data or agent it needs exists (noted in brackets).
+Every new brain must beat the current one in `evaluate.py` before it replaces it.
+
+**8A. Better text features**
+- ⬜ 📕 **8.1 N-grams + TF-IDF**: count word pairs and weight telling words (after 4.1)
+
+**8B. More classic models, compared side by side**
+- ⬜ 📕 **8.2 Logistic regression** (scikit-learn): weight per word (after 4.1)
+- ⬜ 📕 **8.3 SVM, k-nearest neighbours, decision tree**: extra comparisons, keep the winner
+- ⬜ 📕 **8.4 Bernoulli Naive Bayes**: variant of the current brain, for short sentences
+- ⬜ 📕 **8.5 Ensemble / voting**: combine the best models' answers
+
+**8C. Better evaluation**
+- ⬜ 📕 **8.6 Cross-validation**: more reliable scores from small data
+- ⬜ 📕 **8.7 Precision, recall, F1 per label**: once labels become unbalanced
+- ⬜ 📕 **8.8 Hyperparameter tuning**: try settings, keep the best
+
+**8D. Neural networks**
+- ⬜ 📕 **8.9 Neural brain (MLP)** from scratch with NumPy: layers, ReLU, softmax, loss, backpropagation, epochs, dropout (after 4.1)
+- ⬜ 📕 **8.10 Word embeddings**: "duplicate" ≈ "copy" without examples (small offline model)
+- ⬜ 📕 **8.11 Sentence embedding model**: match meaning, not exact words (pretrained, offline)
+- ⬜ 📕 **8.12 Small pretrained transformer encoder**: fine-tuned for intent (transfer learning)
+
+**8E. Learning from real use**
+- ⬜ 📕 **8.13 Online learning**: retrain from reviewed `inbox.tsv` lines
+- ⬜ 📕 **8.14 Active learning**: show the least-confident inbox lines first for labelling
+
+**8F. Filling arguments (function calling)**
+- ⬜ 📕 **8.15 Slot filling**: the brain also tags source / destination / name in the sentence
+- ⬜ 📕 **8.16 Multi-label**: one sentence → several actions ("copy and zip")
+
+**8G. Small local LLM (optional, offline)**
+- ⬜ 📕 **8.17 Local LLM setup**: Ollama or llama.cpp, a 1–4B open-weights model at 4-bit (fits RTX 2050)
+- ⬜ 📕 **8.18 LLM tool calling**: describe `ops` functions; the model returns function + arguments as JSON; safety checks still run
+- ⬜ 📕 **8.19 Prompting / few-shot**: tune the instructions given to the local model
+- ⬜ 📕 **8.20 LoRA fine-tune** of a 0.5–1.5B model on `intents.tsv`
+- ⬜ 📕 **8.21 LLM agent loop** for multi-step requests (think → tool → result → repeat)
+
+**8H. Unsupervised and prediction (used inside agents)**
+- ⬜ 📕 **8.22 Anomaly detection** (isolation forest / autoencoder): unusual RAM growth and connections (7.11, 7.13)
+- ⬜ 📕 **8.23 Clustering**: group similar files, e.g. in Downloads (after 4.6)
+- ⬜ 📕 **8.24 Regression / forecasting**: "C: will be full in about 3 weeks" (after 4.1)
+- ⬜ 📕 **8.25 Ranking**: order file-search results by relevance (after 4.6)
+
+**8I. Classic AI for goal requests**
+- ⬜ 📕 **8.26 Planning + utility scoring**: "free up 5 GB" → choose the best files to remove (after 5.3)
+- ⬜ 📕 **8.27 Constraint solving**: scheduled jobs that must not clash (after 6.4)
+
+**8J. Voice (optional)**
+- ⬜ 📕 **8.28 Offline speech-to-text** (Whisper): speak commands instead of typing
 
 ## Learning track (side chat) · learned 0/7
 
