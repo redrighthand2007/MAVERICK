@@ -16,6 +16,8 @@ NOT_END = {"service", "services", "job", "jobs", "watcher", "watching", "watch",
            "device", "bluetooth", "window", "windows"}
 GROW_RE = re.compile(r"\bleak|\b(?:ram|memory)\b.*\b(?:grow|grows|growing|growth|increasing|climbing|creeping|going up)\b"
                      r"|\b(?:grow|grows|growing|keeps growing)\b.*\b(?:ram|memory)\b")
+HANDLES_RE = re.compile(r"\bhandles?\b.*\b(?:leak|leaks|leaking|too many|most|count|counts|open|usage|using|hog)"
+                        r"|\b(?:most|many|top|count|leaking|open)\b.*\bhandles\b")
 DURATION_RE = re.compile(r"\bfor\s+(\d+)\s*(seconds?|secs?|s|minutes?|mins?|m)\b")
 HUNG_RE = re.compile(r"not\s+responding|\bfrozen\b|\bfreez|\bhung\b|\bhanging\b|\bstuck\b|\bunresponsive\b")
 HUNG_FILLER = {"frozen", "freezing", "freezed", "frozen.", "stuck", "hung", "hanging", "unresponsive", "not", "responding",
@@ -48,11 +50,13 @@ class ProcessAgent(SubAgent):
     name = "process"
     description = ("running programs: biggest by RAM or CPU, what started a program, what it started, end a program, "
                    "frozen apps, memory leaks. e.g. what started chrome, kill chrome, end frozen apps, "
-                   "which app is leaking memory")
+                   "which app is leaking memory, which app has the most handles")
     risky = {"end"}
 
     def parse(self, text: str) -> Intent | None:
         words = set(WORD_RE.findall(text.lower()))
+        if HANDLES_RE.search(text.lower()):  # before GROW_RE: a "handle leak" is not a memory leak
+            return self.extract("handles", text)
         if GROW_RE.search(text.lower()):
             return self.extract("growing", text)
         if HUNG_RE.search(text.lower()):
@@ -71,6 +75,8 @@ class ProcessAgent(SubAgent):
         return self.extract(operation, text)
 
     def extract(self, operation: str, text: str) -> Intent:
+        if operation == "handles":
+            return Intent("handles")
         if operation == "growing":
             # "watch for 2 minutes" / "for 30 seconds"; a short default keeps MAVERICK responsive.
             m = DURATION_RE.search(text.lower())
@@ -101,6 +107,8 @@ class ProcessAgent(SubAgent):
         return ops.describe_end(ops.plan_end(**intent.args))
 
     def handle(self, intent: Intent) -> Result:
+        if intent.operation == "handles":
+            return ops.handles()
         if intent.operation == "growing":
             return ops.growing(**intent.args)
         if intent.operation == "hung":
