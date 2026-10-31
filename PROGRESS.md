@@ -133,10 +133,15 @@ Every agent follows the same recipe:
   - `show background jobs`, `stop job 2`, `stop watching downloads`, `cancel all background jobs`
   - One broken job never stops the others
   - Brain: 26 labels; alone 77%, as MAVERICK runs 78% test / 58% hard; floors set once for Stages 6-7 (0.60 / 0.60 / 0.70 / 0.50)
-- 👉 📕 **6.2 Folder watcher (#11)**: e.g. move every new PDF in Downloads to Documents
+- ✅ 📕 **6.2 Folder watcher (#11)**: `maverick/agents/watch/` (a 6.1 background job)
+  - `move every new pdf in downloads to documents`, `watch D:\inbox for txt files and copy them to E:\backup`
+  - Asks y/n once when created; then checks every 3 s while MAVERICK (or `--background`) runs
+  - Only files that arrive after it starts; waits until a file stops growing; skips `.crdownload` / `.part`
+  - Never overwrites (`a.pdf` -> `a (2).pdf`); refuses folders inside each other and protected folders
+  - Stop it with `stop watching downloads` or `stop job 1`
 - ⏭️ 📕 **6.3 Background jobs (#5)**: skipped for now
 - ⏭️ 📕 **6.4 Task scheduler (#32)**: skipped for now
-- ⬜ 📕 **6.5 Log rotator (#15)**: copy, compress, empty a big log file
+- 👉 📕 **6.5 Log rotator (#15)**: copy, compress, empty a big log file
 
 ## Stage 7: Admin-level and hard agents (last) · learned 0/6
 
