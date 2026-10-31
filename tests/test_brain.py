@@ -90,6 +90,7 @@ def test_accuracy_floor_as_maverick_runs(trained):
     ("how much space is left on D:", "hardware.disks"),
     ("what programs are running", "process.list"),
     ("what did explorer start", "process.children"),
+    ("kill chrome", "process.end"),
     ("find pdf files in downloads", "search.find"),
     ("find files containing password", "search.content"),
 ])

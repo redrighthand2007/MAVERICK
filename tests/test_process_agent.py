@@ -1,4 +1,6 @@
 import os
+import subprocess
+import sys
 
 import psutil
 import pytest
@@ -77,3 +79,81 @@ def test_real_pc_list_through_maverick():
 
 def test_only_ending_a_program_asks_for_confirmation():
     assert ProcessAgent.risky == {"end"}
+
+
+@pytest.mark.parametrize("sentence, name", [
+    ("kill chrome", "chrome"),
+    ("close notepad please", "notepad"),
+    ("force close code.exe", "code.exe"),
+    ("end pid 1234", "1234"),
+])
+def test_parse_end_requests(sentence, name):
+    intent = ProcessAgent().parse(sentence)
+    assert (intent.operation, intent.args) == ("end", {"name": name})
+
+
+@pytest.mark.parametrize("sentence", [
+    "stop the print spooler service",  # services agent
+    "stop watching my downloads",      # background jobs
+    "turn off wifi",
+])
+def test_end_leaves_other_agents_alone(sentence):
+    intent = ProcessAgent().parse(sentence)
+    assert intent is None or intent.operation != "end"
+
+
+def test_end_without_a_name_asks_for_it():
+    assert ProcessAgent().parse("close it").missing == ["program name"]
+
+
+@pytest.mark.parametrize("name", ["svchost", "explorer.exe", "csrss"])
+def test_windows_processes_are_never_ended(name):
+    result = build().handle(f"kill {name}")
+    assert result.message.startswith("Blocked for safety")
+
+
+def test_maverick_never_ends_itself():
+    me = psutil.Process()
+    result = build().handle(f"kill pid {me.pid}")
+    assert "MAVERICK itself" in result.message
+
+
+def test_heaviest_skips_protected_programs(monkeypatch):
+    fake = ops.Result(True, "", {"programs": [{"name": "svchost.exe"}, {"name": "definitely-not-running-xyz.exe"}]})
+    monkeypatch.setattr(ops, "top", lambda sort, limit=50: fake)
+    assert ops.heaviest() == ""  # svchost is protected and the other isn't running
+
+
+def test_end_a_real_program_after_yes():
+    child = subprocess.Popen([sys.executable, "-c", "import time; time.sleep(60)"])
+    try:
+        maverick = build()
+        question = maverick.handle(f"kill pid {child.pid}")
+        assert question.data.get("confirm"), question.message
+        assert question.message.startswith("End python")
+        result = maverick.confirm(True)
+        assert result.success, result.message
+        assert child.wait(timeout=5) is not None
+    finally:
+        if child.poll() is None:
+            child.kill()
+
+
+def test_saying_no_keeps_the_program_running():
+    child = subprocess.Popen([sys.executable, "-c", "import time; time.sleep(60)"])
+    try:
+        maverick = build()
+        maverick.handle(f"kill pid {child.pid}")
+        assert not maverick.confirm(False).success
+        assert child.poll() is None
+    finally:
+        child.kill()
+
+
+def test_end_the_heaviest_hunts_by_cpu_or_ram(monkeypatch):
+    asked = []
+    monkeypatch.setattr(ops, "heaviest", lambda sort="memory": asked.append(sort) or "notepad.exe")
+    agent = ProcessAgent()
+    assert agent.parse("kill whatever uses the most cpu").args == {"name": "notepad.exe"}
+    assert agent.parse("end the biggest program").args == {"name": "notepad.exe"}
+    assert asked == ["cpu", "memory"]
