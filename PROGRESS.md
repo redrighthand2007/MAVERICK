@@ -200,10 +200,17 @@ Not strictly after Stage 7: each step can start once the data or agent it needs 
 Every new brain must beat the current one in `evaluate.py` before it replaces it.
 
 **8A. Better text features**
-- 👉 📕 **8.1 N-grams + TF-IDF**: count word pairs and weight telling words (after 4.1)
+- ✅ 📕 **8.1 N-grams + TF-IDF**: `maverick/brain/features.py`
+  - Word pairs (`what_started`, `started_chrome`) so word order counts; TF-IDF makes rare telling words weigh more
+  - Alone in Naive Bayes it didn't help (74% -> 71%: NB double-counts overlapping pairs); it pays off in 8.2
 
 **8B. More classic models, compared side by side**
-- ⬜ 📕 **8.2 Logistic regression** (scikit-learn): weight per word (after 4.1)
+- ✅ 📕 **8.2 Logistic regression**: `maverick/brain/logistic_regression.py`, from scratch with NumPy (no scikit-learn)
+  - Softmax over 38 labels, cross-entropy loss, gradient descent with momentum and L2
+  - 5-fold: brain alone **73% -> 79%**, hard cases 74% -> 82%; as MAVERICK runs 84% -> 83%, hard **60% -> 76%**
+  - Now the default brain; `python -m maverick.brain.train naive_bayes` still trains the old one
+  - Each brain has its own confidence cut-off (logistic regression 0.4, Naive Bayes 0.6)
+  - Fixed: "what started chrome" vs "what did chrome start", "what is eating my memory"
 - ⬜ 📕 **8.3 SVM, k-nearest neighbours, decision tree**: extra comparisons, keep the winner
 - ⬜ 📕 **8.4 Bernoulli Naive Bayes**: variant of the current brain, for short sentences
 - ⬜ 📕 **8.5 Ensemble / voting**: combine the best models' answers
@@ -215,10 +222,11 @@ Every new brain must beat the current one in `evaluate.py` before it replaces it
 - ✅ 📕 **8.7 Precision, recall, F1 per label**: `per_label()` and `macro_f1()` in `evaluate.py`
   - Precision: when the brain says a label, how often it's right; recall: how many of that label it catches
   - Macro F1 (every label counts the same): Naive Bayes 0.73
-- ⬜ 📕 **8.8 Hyperparameter tuning**: try settings, keep the best
+- ✅ 📕 **8.8 Hyperparameter tuning**: epochs, learning rate, L2 and the confidence cut-off picked by 5-fold cross-validation
+  - `python -m maverick.brain.evaluate` compares every brain kind side by side before one replaces another
 
 **8D. Neural networks**
-- ⬜ 📕 **8.9 Neural brain (MLP)** from scratch with NumPy: layers, ReLU, softmax, loss, backpropagation, epochs, dropout (after 4.1)
+- 👉 📕 **8.9 Neural brain (MLP)** from scratch with NumPy: layers, ReLU, softmax, loss, backpropagation, epochs, dropout (after 4.1)
 - ⬜ 📕 **8.10 Word embeddings**: "duplicate" ≈ "copy" without examples (small offline model)
 - ⬜ 📕 **8.11 Sentence embedding model**: match meaning, not exact words (pretrained, offline)
 - ⬜ 📕 **8.12 Small pretrained transformer encoder**: fine-tuned for intent (transfer learning)
