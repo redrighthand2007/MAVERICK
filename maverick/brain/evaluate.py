@@ -1,6 +1,8 @@
-"""Grade the brain honestly.  Run:  python -m maverick.brain.evaluate"""
+"""Grade the brain honestly.  Run:  python -m maverick.brain.evaluate   (or ... evaluate naive_bayes)"""
+import sys
 from collections import Counter
 
+from maverick.brain import DEFAULT_KIND, MODELS
 from maverick.brain.dataset import HARD_CASES_PATH, INTENTS_PATH, folds, load_examples, split
 from maverick.brain.text import tokenize
 from maverick.brain.train import train
@@ -24,7 +26,7 @@ def as_maverick_runs(model):
     """What you actually get: the brain when it is confident, keyword rules otherwise."""
     def predict(sentence):
         guess, confidence = model.predict(tokenize(sentence))
-        if confidence >= CONFIDENCE_THRESHOLD and guess != "unknown":
+        if confidence >= getattr(model, "threshold", CONFIDENCE_THRESHOLD) and guess != "unknown":
             return guess, confidence
         return keyword_rules(sentence)
     return predict
@@ -103,16 +105,32 @@ def print_thresholds(results) -> None:
         print(f"  >= {t:.1f}: {len(accepted):>3}/{len(results)} accepted, {wrong} wrong")
 
 
+def compare(examples, hard, k: int = 5) -> None:
+    """Every kind of brain side by side. A new brain must beat the current one here before it replaces it."""
+    print(f"{k}-fold cross-validation, every sentence tested once (hard cases: trained on everything):")
+    for kind in MODELS:
+        brain_scores, maverick_scores = [], []
+        for train_part, test_part in folds(examples, k):
+            model = train(train_part, kind)
+            brain_scores.append(accuracy(grade(lambda s: model.predict(tokenize(s)), test_part)))
+            maverick_scores.append(accuracy(grade(as_maverick_runs(model), test_part)))
+        full = train(examples, kind)
+        hard_brain = accuracy(grade(lambda s: full.predict(tokenize(s)), hard))
+        hard_maverick = accuracy(grade(as_maverick_runs(full), hard))
+        mark = "  <- default" if kind == DEFAULT_KIND else ""
+        print(f"  {kind:<20} brain {sum(brain_scores) / k:.1%}  as MAVERICK runs {sum(maverick_scores) / k:.1%}"
+              f"  | hard: brain {hard_brain:.0%}, as MAVERICK runs {hard_maverick:.0%}{mark}")
+
+
 def main() -> None:
     examples = load_examples(INTENTS_PATH)
-    brain_cv = cross_validate(lambda part: (lambda s, m=train(part): m.predict(tokenize(s))), examples)
-    maverick_cv = cross_validate(lambda part: as_maverick_runs(train(part)), examples)
-    print(f"5-fold cross-validation (every sentence tested once): brain {brain_cv[0]:.1%} (F1 {brain_cv[1]:.2f}), "
-          f"as MAVERICK runs {maverick_cv[0]:.1%} (F1 {maverick_cv[1]:.2f})")
-
-    train_set, test_set = split(examples)
     hard = load_examples(HARD_CASES_PATH)
-    model = train(train_set)
+    compare(examples, hard)
+
+    kind = sys.argv[1] if len(sys.argv) > 1 else DEFAULT_KIND
+    train_set, test_set = split(examples)
+    model = train(train_set, kind)
+    print(f"\nDetails for the {kind} brain:")
     brain = lambda s: model.predict(tokenize(s))
 
     print(f"Trained on {len(train_set)}, testing on {len(test_set)} unseen + {len(hard)} hard cases.")
@@ -121,7 +139,7 @@ def main() -> None:
     print_report("Keyword rules, test set", grade(keyword_rules, test_set))
     print_report("Keyword rules, hard cases", grade(keyword_rules, hard))
     combined = as_maverick_runs(model)
-    print(f"\n=== As MAVERICK runs (brain >= {CONFIDENCE_THRESHOLD}, else rules): "
+    print(f"\n=== As MAVERICK runs (brain >= {model.threshold}, else rules): "
           f"test {accuracy(grade(combined, test_set)):.0%}, hard cases {accuracy(grade(combined, hard)):.0%} ===")
     print_thresholds(grade(brain, test_set + hard))
 

@@ -1,9 +1,8 @@
 import pytest
 
-from maverick.brain import Brain
+from maverick.brain import MODELS, Brain, load_model
 from maverick.brain.dataset import HARD_CASES_PATH, INTENTS_PATH, load_examples, split
 from maverick.brain.evaluate import accuracy, as_maverick_runs, grade
-from maverick.brain.naive_bayes import NaiveBayes
 from maverick.brain.text import tokenize
 from maverick.brain.train import train
 from maverick.main import build
@@ -22,11 +21,13 @@ from maverick.main import build
 #   + jobs (26 labels): 77% / 78% test, hard 68% alone / 58% as MAVERICK runs.
 #     Each new agent costs a few points, so the floors are now set once with room for the rest of Stages 6-7
 #     (about 35 labels) instead of being nudged after every agent. Stage 8 must lift them back up.
-# Naive Bayes hits its limit here; the Stage 8 brains (TF-IDF, logistic regression, MLP) are meant to raise these.
-MIN_TEST_ACCURACY = 0.60
-MIN_HARD_ACCURACY = 0.60
-MIN_MAVERICK_TEST_ACCURACY = 0.70
-MIN_MAVERICK_HARD_ACCURACY = 0.50
+#   Stage 8.2: logistic regression on TF-IDF word pairs (38 labels), 5-fold cross-validation:
+#     brain alone 73% -> 79%, hard cases 74% -> 82%, as MAVERICK runs 84% -> 83%, hard 60% -> 76%.
+#     Floors raised again (seed-42 split: 83% / 73% alone, 87% / 68% as MAVERICK runs).
+MIN_TEST_ACCURACY = 0.75
+MIN_HARD_ACCURACY = 0.68
+MIN_MAVERICK_TEST_ACCURACY = 0.82
+MIN_MAVERICK_HARD_ACCURACY = 0.62
 
 
 @pytest.fixture(scope="module")
@@ -108,6 +109,23 @@ def test_must_pass_sentences(full_brain, sentence, label):
 
 
 @pytest.mark.parametrize("sentence, label", [
+    ("what started chrome", "process.origin"),    # word pairs (8.1) let the brain itself see word order now
+    ("what did chrome start", "process.children"),
+])
+def test_brain_sees_word_order(full_brain, sentence, label):
+    assert full_brain.predict(sentence)[0] == label
+
+
+@pytest.mark.parametrize("kind", sorted(MODELS))
+def test_every_brain_kind_trains_saves_and_loads(tmp_path, kind):
+    model = train(load_examples(INTENTS_PATH), kind)
+    model.save(tmp_path / "brain.json")
+    loaded = load_model(tmp_path / "brain.json")
+    assert loaded.kind == kind
+    assert loaded.predict(tokenize("rename a.txt to b.txt"))[0] == "files.rename"
+
+
+@pytest.mark.parametrize("sentence, label", [
     # Naive Bayes ignores word order, so "what started chrome" (origin) looks like "what did chrome start"
     # (children). The brain is unsure (< 0.6), so keyword rules decide. Word pairs (Stage 8.1) should fix the brain.
     ("what started chrome", "process.origin"),
@@ -120,9 +138,10 @@ def test_must_pass_as_maverick_runs(full_brain, sentence, label):
 def test_model_save_and_load_round_trip(tmp_path, trained):
     model, _ = trained
     model.save(tmp_path / "m.json")
-    loaded = NaiveBayes.load(tmp_path / "m.json")
+    loaded = load_model(tmp_path / "m.json")
     tokens = tokenize("copy notes.txt to D:\\x")
-    assert loaded.predict(tokens) == model.predict(tokens)
+    label, confidence = model.predict(tokens)
+    assert loaded.predict(tokens) == (label, pytest.approx(confidence, abs=1e-6))  # weights are saved rounded
 
 
 def test_missing_model_means_no_brain(tmp_path):
