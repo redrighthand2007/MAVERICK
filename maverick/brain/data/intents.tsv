@@ -1,6 +1,7 @@
 # MAVERICK brain training data.
 # Format: label<TAB>sentence. Lines starting with # are comments.
-# Labels: files.copy, files.move, files.rename, files.size, unknown
+# Labels: files.copy, files.move, files.rename, files.size,
+#         hardware.ram, hardware.slots, hardware.cpu, hardware.battery, hardware.disks, unknown
 
 # --- files.copy ---
 files.copy	copy notes.txt to D:\backup
@@ -170,6 +171,177 @@ files.size	how big is it
 files.size	check how much space the game folder takes
 files.size	what's the size
 
+# --- hardware.ram ---
+hardware.ram	how much ram do i have
+hardware.ram	how much memory does my pc have
+hardware.ram	show my ram usage
+hardware.ram	how much ram is free
+hardware.ram	how much memory is being used
+hardware.ram	whats my total ram
+hardware.ram	check memory usage
+hardware.ram	is my ram full
+hardware.ram	how many gb of ram is installed
+hardware.ram	ram status
+hardware.ram	how much memory is left
+hardware.ram	show available memory
+hardware.ram	what percentage of ram is used
+hardware.ram	memory usage right now
+hardware.ram	how much ram am i using
+hardware.ram	tell me about my ram
+hardware.ram	can you check my memory
+hardware.ram	pls show ram
+hardware.ram	how much free memory do i have
+hardware.ram	is my computer low on memory
+hardware.ram	whats eating ram total
+hardware.ram	how much ram does this laptop have
+hardware.ram	total and used memory
+hardware.ram	show me memory stats
+hardware.ram	am i running out of ram
+hardware.ram	how full is my ram
+hardware.ram	installed memory
+hardware.ram	how much physical memory
+hardware.ram	check my ram please
+hardware.ram	what is my ram size
+hardware.ram	ram used vs free
+hardware.ram	how big is my ram
+hardware.ram	how much memory is in use
+
+# --- hardware.slots ---
+hardware.slots	do i have empty ram slots
+hardware.slots	how many ram slots does my laptop have
+hardware.slots	can i add more ram
+hardware.slots	is there a free memory slot
+hardware.slots	what kind of ram do i have
+hardware.slots	what type of ram is installed
+hardware.slots	is my ram ddr4 or ddr5
+hardware.slots	what is my ram speed
+hardware.slots	how many ram sticks are installed
+hardware.slots	show my memory modules
+hardware.slots	can i upgrade my ram
+hardware.slots	what's the maximum ram my pc supports
+hardware.slots	how much ram can i install
+hardware.slots	which ram slots are used
+hardware.slots	ram stick details
+hardware.slots	what brand is my ram
+hardware.slots	how many dimm slots
+hardware.slots	is there room for another ram stick
+hardware.slots	ram frequency
+hardware.slots	what mhz is my ram
+hardware.slots	show ram slot info
+hardware.slots	do i have a spare slot for memory
+hardware.slots	how many memory slots are empty
+hardware.slots	ram generation and speed
+hardware.slots	can my laptop take 32 gb of ram
+hardware.slots	is my ram dual channel
+hardware.slots	list installed memory sticks
+hardware.slots	what ram should i buy for an upgrade
+hardware.slots	memory slot details
+hardware.slots	how many slots are free for ram
+hardware.slots	check ram type
+hardware.slots	upgrade options for memory
+
+# --- hardware.cpu ---
+hardware.cpu	what cpu do i have
+hardware.cpu	which processor is in my laptop
+hardware.cpu	how many cores does my cpu have
+hardware.cpu	how busy is my cpu
+hardware.cpu	cpu usage
+hardware.cpu	what's my processor
+hardware.cpu	show cpu info
+hardware.cpu	how much cpu is being used
+hardware.cpu	is my cpu at 100
+hardware.cpu	processor details
+hardware.cpu	how many threads does my processor have
+hardware.cpu	cpu model
+hardware.cpu	what intel chip do i have
+hardware.cpu	check my processor
+hardware.cpu	tell me about my cpu
+hardware.cpu	whats the current cpu load
+hardware.cpu	how fast is my processor
+hardware.cpu	pls show processor usage
+hardware.cpu	is my cpu i5 or i7
+hardware.cpu	cpu load right now
+hardware.cpu	how hard is my cpu working
+hardware.cpu	core count
+hardware.cpu	cpu name and cores
+hardware.cpu	what generation is my processor
+hardware.cpu	how much of my cpu is used
+hardware.cpu	processor usage percentage
+hardware.cpu	show me cpu stats
+hardware.cpu	is the cpu maxed out
+hardware.cpu	which cpu is this
+hardware.cpu	cpu specs
+hardware.cpu	how powerful is my processor
+hardware.cpu	check cpu
+
+# --- hardware.battery ---
+hardware.battery	what's my battery
+hardware.battery	battery status
+hardware.battery	show my battery percentage
+hardware.battery	how much battery is left
+hardware.battery	is my laptop charging
+hardware.battery	how long will my battery last
+hardware.battery	battery level
+hardware.battery	am i plugged in
+hardware.battery	is the charger connected
+hardware.battery	how much charge do i have
+hardware.battery	check battery
+hardware.battery	what percent is my battery
+hardware.battery	is my battery full
+hardware.battery	battery time remaining
+hardware.battery	how many hours of battery left
+hardware.battery	is it charging right now
+hardware.battery	tell me my battery
+hardware.battery	pls check charge
+hardware.battery	is my laptop on battery or power
+hardware.battery	battery percentage please
+hardware.battery	how low is my battery
+hardware.battery	do i need to charge my laptop
+hardware.battery	battery health and charge
+hardware.battery	how much juice is left
+hardware.battery	power status
+hardware.battery	is my battery dying
+hardware.battery	show charging status
+hardware.battery	how long until my battery is full
+hardware.battery	is the laptop plugged into power
+hardware.battery	whats the charge level
+hardware.battery	battery info
+hardware.battery	how much power is left
+
+# --- hardware.disks ---
+hardware.disks	how much space is left on D:
+hardware.disks	how much free space do i have
+hardware.disks	show free space on my drives
+hardware.disks	is my C: drive full
+hardware.disks	list my drives
+hardware.disks	how much storage is left
+hardware.disks	free space on C:
+hardware.disks	which drive has the most space
+hardware.disks	how full are my disks
+hardware.disks	show all drives
+hardware.disks	how much space remains on E:
+hardware.disks	am i running out of disk space
+hardware.disks	storage left on my laptop
+hardware.disks	check drive space
+hardware.disks	how many drives do i have
+hardware.disks	how much room is left on my hard drive
+hardware.disks	show disk capacity
+hardware.disks	drive usage overview
+hardware.disks	how much free storage on D:
+hardware.disks	is there space left on E: drive
+hardware.disks	pls show free space
+hardware.disks	how much space do i have left
+hardware.disks	partitions and free space
+hardware.disks	total and free space of each drive
+hardware.disks	how much ssd space is free
+hardware.disks	whats the capacity of my drives
+hardware.disks	remaining storage
+hardware.disks	can i fit a 50 gb game on D:
+hardware.disks	how full is my C: drive
+hardware.disks	disk space status
+hardware.disks	free gb on each disk
+hardware.disks	space remaining on all drives
+
 # --- unknown: things MAVERICK cannot do (yet) ---
 unknown	hi
 unknown	hello maverick
@@ -191,8 +363,6 @@ unknown	empty the recycle bin
 unknown	kill chrome
 unknown	kill the process using port 8080
 unknown	what's using my cpu
-unknown	how much ram do i have
-unknown	show my battery percentage
 unknown	turn off wifi
 unknown	shut down the computer
 unknown	restart my pc
@@ -231,3 +401,38 @@ unknown	show running processes
 unknown	sort my downloads by date
 unknown	compress video.mp4
 unknown	schedule a backup every friday
+unknown	format my D: drive
+unknown	defragment drive C:
+unknown	eject the usb drive
+unknown	clean up my disk
+unknown	overclock my cpu
+unknown	turn on battery saver
+unknown	lower the screen brightness
+unknown	update my graphics driver
+unknown	close all programs using memory
+unknown	free up ram by closing apps
+unknown	which app is using the most memory
+unknown	what is the cpu fan speed
+unknown	is my gpu working
+unknown	how hot is my laptop
+unknown	open file explorer
+unknown	show hidden files
+unknown	unzip the downloads folder
+unknown	share this file on whatsapp
+unknown	upload notes.txt to google drive
+unknown	what's the date today
+unknown	set an alarm for 7 am
+unknown	remind me to study at 6
+unknown	who made you
+unknown	are you an ai
+unknown	how are you
+unknown	sing a song
+unknown	tell me something interesting
+unknown	what is python
+unknown	explain machine learning
+unknown	calculate 15 percent of 200
+unknown	connect to wifi
+unknown	turn bluetooth on
+unknown	mute the sound
+unknown	minimize all windows
+unknown	switch to dark mode
