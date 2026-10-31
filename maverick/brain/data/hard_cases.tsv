@@ -25,7 +25,7 @@ unknown	delete everything on my drive
 unknown	remove old.txt permanently
 unknown	open the downloads folder
 unknown	good night maverick
-unknown	kill the python script
+process.end	kill the python script
 hardware.ram	how much memory have i got in total
 hardware.ram	is my pc short on ram right now
 hardware.ram	what's my memory situation
@@ -52,3 +52,6 @@ search.find	where did i put the dune movie
 search.find	videos i downloaded this week
 search.content	which file has my wifi password written in it
 search.content	find notes that talk about exams
+process.end	get rid of the zoom program that is still running
+process.end	nuke discord
+process.end	shut chrome down completely

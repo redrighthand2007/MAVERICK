@@ -2,7 +2,7 @@
 # Format: label<TAB>sentence. Lines starting with # are comments.
 # Labels: files.copy, files.move, files.rename, files.size,
 #         hardware.ram, hardware.slots, hardware.cpu, hardware.battery, hardware.disks,
-#         process.list, process.origin, process.children, search.find, search.content, unknown
+#         process.list, process.origin, process.children, process.end, search.find, search.content, unknown
 
 # --- files.copy ---
 files.copy	copy notes.txt to D:\backup
@@ -521,8 +521,7 @@ unknown	delete notes.txt
 unknown	delete the folder D:\old
 unknown	remove report.pdf
 unknown	empty the recycle bin
-unknown	kill chrome
-unknown	kill the process using port 8080
+process.end	kill chrome
 process.list	what's using my cpu
 unknown	turn off wifi
 unknown	shut down the computer
@@ -570,8 +569,8 @@ unknown	overclock my cpu
 unknown	turn on battery saver
 unknown	lower the screen brightness
 unknown	update my graphics driver
-unknown	close all programs using memory
-unknown	free up ram by closing apps
+process.end	close all programs using memory
+process.end	free up ram by closing apps
 process.list	which app is using the most memory
 unknown	what is the cpu fan speed
 unknown	is my gpu working
@@ -597,3 +596,37 @@ unknown	turn bluetooth on
 unknown	mute the sound
 unknown	minimize all windows
 unknown	switch to dark mode
+
+# --- process.end ---
+process.end	kill notepad
+process.end	end chrome.exe
+process.end	close spotify
+process.end	terminate the zoom process
+process.end	force close discord
+process.end	kill pid 4521
+process.end	end task for teams
+process.end	stop the steam app
+process.end	close all chrome windows and processes
+process.end	kill whatever is using the most ram
+process.end	end the program using the most cpu
+process.end	please close word
+process.end	can you kill vlc for me
+process.end	force quit the frozen game
+process.end	end process code.exe
+process.end	kill the biggest program
+process.end	shut down the brave browser process
+process.end	close every copy of edge
+process.end	kill node.exe
+process.end	terminate java
+process.end	end notepad++ please
+process.end	kill the app hogging my memory
+process.end	stop running obs
+process.end	close the whatsapp app
+process.end	kill excel it is stuck
+process.end	end the heaviest process
+process.end	force kill pid 9932
+process.end	quit spotify completely
+process.end	kill all python processes
+process.end	end the process called telegram
+process.end	close the program eating my cpu
+process.end	kill that greedy chrome
