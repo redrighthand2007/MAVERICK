@@ -89,40 +89,40 @@ Every agent follows the same recipe:
   - Naive Bayes has hit its limit (ignores word order: "what started chrome" vs "what did chrome start"); Stage 8 brains should lift this
   - Test floors now: brain alone 0.60, as MAVERICK runs 0.80 / 0.70
 
-## Stage 5: Action agents (use the 3.1 confirmation) · learned 0/7
+## Stage 5: Action agents (use the 3.1 confirmation) · learned 0/5
 
 - 👉 📕 **5.1 Process hunter (#1)**: find heavy processes by CPU/RAM/name; end them after y/n
-- ⬜ 📕 **5.2 CPU priority and affinity (#3)**: set priority (low/normal/high), pin to cores
+- ⏭️ 📕 **5.2 CPU priority and affinity (#3)**: skipped for now
 - ⬜ 📕 **5.3 Disk space optimizer (#8)**: find big/old files; delete to the **Recycle Bin** only
 - ⬜ 📕 **5.4 Smart archive (#12)**: zip/tar create, list, extract (Zip Slip guard), AES encryption; port of the Linux project
-- ⬜ 📕 **5.5 Broken shortcut finder (#10)**: find `.lnk` files whose target is gone; remove after y/n
+- ⏭️ 📕 **5.5 Broken shortcut finder (#10)**: skipped for now
 - ⬜ 📕 **5.6 Power agent (#34)**: switch power plans, set screen brightness
 - ⬜ 📕 **5.7 Hung app reaper (#2)**: find "Not Responding" apps; end them after y/n
 
-## Stage 6: Background agents (MAVERICK keeps running) · learned 0/5
+## Stage 6: Background agents (MAVERICK keeps running) · learned 0/3
 
 - ⬜ 📕 **6.1 Background mode**: MAVERICK runs in the background so agents can watch and wait
 - ⬜ 📕 **6.2 Folder watcher (#11)**: e.g. move every new PDF in Downloads to Documents
-- ⬜ 📕 **6.3 Background jobs (#5)**: run a command detached, Windows notification when done
-- ⬜ 📕 **6.4 Task scheduler (#32)**: "every Friday at midnight" → Windows Task Scheduler
+- ⏭️ 📕 **6.3 Background jobs (#5)**: skipped for now
+- ⏭️ 📕 **6.4 Task scheduler (#32)**: skipped for now
 - ⬜ 📕 **6.5 Log rotator (#15)**: copy, compress, empty a big log file
 
-## Stage 7: Admin-level and hard agents (last) · learned 0/15
+## Stage 7: Admin-level and hard agents (last) · learned 0/6
 
 These need Administrator rights or are risky; each explains clearly when admin is required.
 
 - ⬜ 📕 **7.1 Services (#31)**: list, start, stop, enable at boot
-- ⬜ 📕 **7.2 Event logs (#35)**: read the Windows System log, explain errors (e.g. USB disconnects)
-- ⬜ 📕 **7.3 Login audit (#26)**: logons outside given hours
+- ⏭️ 📕 **7.2 Event logs (#35)**: skipped for now
+- ⏭️ 📕 **7.3 Login audit (#26)**: skipped for now
 - ⬜ 📕 **7.4 Network adapters (#17)**: Wi-Fi on/off, show IP addresses
-- ⬜ 📕 **7.5 Firewall (#18)**: add/remove rules from plain English
+- ⏭️ 📕 **7.5 Firewall (#18)**: skipped for now
 - ⬜ 📕 **7.6 Drivers (#30)**: restart a device (e.g. webcam)
-- ⬜ 📕 **7.7 Users and passwords (#23, #24)**: create local users, force password change
-- ⬜ 📕 **7.8 Mount (#14)**: mount ISO / VHD files only
-- ⬜ 📕 **7.9 Secure shredding (#13)**: overwrite then delete; warns that SSDs can't guarantee it
-- ⬜ 📕 **7.10 Bandwidth (#19)**: which app is using the network
-- ⬜ 📕 **7.11 Connections audit (#22)**: outbound connections + offline GeoIP lookup
-- ⬜ 📕 **7.12 Permissions (#9)**: folder permissions from plain English
+- ⏭️ 📕 **7.7 Users and passwords (#23, #24)**: skipped for now
+- ⏭️ 📕 **7.8 Mount (#14)**: skipped for now
+- ⏭️ 📕 **7.9 Secure shredding (#13)**: skipped for now
+- ⏭️ 📕 **7.10 Bandwidth (#19)**: skipped for now
+- ⏭️ 📕 **7.11 Connections audit (#22)**: skipped for now
+- ⏭️ 📕 **7.12 Permissions (#9)**: skipped for now
 - ⬜ 📕 **7.13 Memory hogs (#29)**: spot apps whose RAM keeps growing
 - ⬜ 📕 **7.14 Handle leaks (#6)**: apps holding too many handles
 - ⬜ 📕 **7.15 Admin-rights audit (#25)**: who has admin on this PC (read-only)
