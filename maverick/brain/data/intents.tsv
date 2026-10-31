@@ -2,7 +2,7 @@
 # Format: label<TAB>sentence. Lines starting with # are comments.
 # Labels: files.copy, files.move, files.rename, files.size,
 #         hardware.ram, hardware.slots, hardware.cpu, hardware.battery, hardware.disks,
-#         process.list, process.origin, process.children, process.end, process.hung, process.growing,
+#         process.list, process.origin, process.children, process.end, process.hung, process.growing, process.handles,
 #         search.find, search.content,
 #         cleanup.scan, cleanup.recycle, archive.create, archive.list, archive.extract,
 #         power.plan, power.brightness, jobs.list, jobs.stop, watch.start, logs.rotate,
@@ -1242,3 +1242,35 @@ process.growing	does anything have a memory leak
 process.growing	memory leak check please
 process.growing	who keeps grabbing more ram
 process.growing	find processes with rising memory use
+
+# --- process.handles ---
+process.handles	which app has the most handles
+process.handles	find handle leaks
+process.handles	is any program leaking handles
+process.handles	show handle count per app
+process.handles	programs with too many open handles
+process.handles	check for handle leaks
+process.handles	which process holds the most handles
+process.handles	top programs by handle count
+process.handles	is explorer leaking handles
+process.handles	show apps with the most open handles
+process.handles	find programs using too many handles
+process.handles	handle usage by program
+process.handles	detect handle leaks please
+process.handles	who has too many handles open
+process.handles	which program is hogging handles
+process.handles	list handle counts
+process.handles	show the handle hogs
+process.handles	any app with a handle leak
+process.handles	count open handles for each program
+process.handles	find the app leaking windows handles
+process.handles	is chrome using too many handles
+process.handles	handles per process
+process.handles	which apps keep too many handles open
+process.handles	check handle counts for leaks
+process.handles	show top handle users
+process.handles	is something leaking handles on my pc
+process.handles	look for programs with lots of handles
+process.handles	handle leak check
+process.handles	programs leaking handles
+process.handles	which program has the highest handle count
