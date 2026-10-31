@@ -200,7 +200,7 @@ Not strictly after Stage 7: each step can start once the data or agent it needs 
 Every new brain must beat the current one in `evaluate.py` before it replaces it.
 
 **8A. Better text features**
-- ⬜ 📕 **8.1 N-grams + TF-IDF**: count word pairs and weight telling words (after 4.1)
+- 👉 📕 **8.1 N-grams + TF-IDF**: count word pairs and weight telling words (after 4.1)
 
 **8B. More classic models, compared side by side**
 - ⬜ 📕 **8.2 Logistic regression** (scikit-learn): weight per word (after 4.1)
@@ -209,8 +209,12 @@ Every new brain must beat the current one in `evaluate.py` before it replaces it
 - ⬜ 📕 **8.5 Ensemble / voting**: combine the best models' answers
 
 **8C. Better evaluation**
-- ⬜ 📕 **8.6 Cross-validation**: more reliable scores from small data
-- ⬜ 📕 **8.7 Precision, recall, F1 per label**: once labels become unbalanced
+- ✅ 📕 **8.6 Cross-validation**: `folds()` in `dataset.py`, `cross_validate()` in `evaluate.py`
+  - 5 stratified folds: train on 4, test on 1, five times; every sentence is tested exactly once
+  - Baseline Naive Bayes: brain **73.4%**, as MAVERICK runs **83.8%** (one 80/20 split swung between 75% and 86%)
+- ✅ 📕 **8.7 Precision, recall, F1 per label**: `per_label()` and `macro_f1()` in `evaluate.py`
+  - Precision: when the brain says a label, how often it's right; recall: how many of that label it catches
+  - Macro F1 (every label counts the same): Naive Bayes 0.73
 - ⬜ 📕 **8.8 Hyperparameter tuning**: try settings, keep the best
 
 **8D. Neural networks**
