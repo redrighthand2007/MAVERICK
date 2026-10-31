@@ -7,7 +7,7 @@ import sys
 from collections import Counter
 
 from maverick.brain import DEFAULT_KIND, MODEL_PATH, MODELS
-from maverick.brain.dataset import INTENTS_PATH, load_examples
+from maverick.brain.dataset import DATA_DIR, INTENTS_PATH, load_examples
 from maverick.brain.text import tokenize
 
 
@@ -20,6 +20,11 @@ def main() -> None:
     if kind not in MODELS:
         sys.exit(f"Unknown brain '{kind}'. Choose one of: {', '.join(MODELS)}")
     examples = load_examples(INTENTS_PATH)
+    learned = DATA_DIR / "learned.tsv"  # your reviewed real requests (python -m maverick.brain.review)
+    if learned.exists():
+        mine = load_examples(learned)
+        examples += mine
+        print(f"Including {len(mine)} of your reviewed requests from {learned.name}.")
     model = train(examples, kind)
     model.save(MODEL_PATH)
     print(f"Trained a {kind} brain on {len(examples)} examples.")
