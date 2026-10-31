@@ -4,7 +4,7 @@
 #         hardware.ram, hardware.slots, hardware.cpu, hardware.battery, hardware.disks,
 #         process.list, process.origin, process.children, process.end, process.hung, search.find, search.content,
 #         cleanup.scan, cleanup.recycle, archive.create, archive.list, archive.extract,
-#         power.plan, power.brightness, unknown
+#         power.plan, power.brightness, jobs.list, jobs.stop, unknown
 
 # --- files.copy ---
 files.copy	copy notes.txt to D:\backup
@@ -888,3 +888,67 @@ process.hung	which program froze
 process.hung	reap the frozen apps
 process.hung	detect not responding programs
 process.hung	quit apps that stopped responding
+
+# --- jobs.list ---
+jobs.list	show background jobs
+jobs.list	what jobs are running
+jobs.list	list my background jobs
+jobs.list	which watchers are running
+jobs.list	what is maverick doing in the background
+jobs.list	any background jobs
+jobs.list	show the watchers
+jobs.list	list running jobs
+jobs.list	what are you watching right now
+jobs.list	show all jobs
+jobs.list	what's running in the background
+jobs.list	do i have any watchers
+jobs.list	list background tasks
+jobs.list	which folders are you watching
+jobs.list	show my log rotations
+jobs.list	jobs
+jobs.list	what background work is active
+jobs.list	are any jobs running now
+jobs.list	display background jobs
+jobs.list	what have i set up to run in the background
+jobs.list	show active watchers
+jobs.list	list all monitoring jobs
+jobs.list	which jobs are on
+jobs.list	tell me the background jobs
+jobs.list	check background jobs
+jobs.list	see my running watchers
+jobs.list	what jobs did i create
+jobs.list	how many background jobs are there
+jobs.list	show what's being monitored
+jobs.list	list everything running in background
+
+# --- jobs.stop ---
+jobs.stop	stop job 2
+jobs.stop	stop watching downloads
+jobs.stop	cancel all background jobs
+jobs.stop	remove the downloads watcher
+jobs.stop	stop job number 1
+jobs.stop	kill all jobs
+jobs.stop	delete job 3
+jobs.stop	stop the log rotation
+jobs.stop	cancel the pdf watcher
+jobs.stop	stop every watcher
+jobs.stop	end background job 4
+jobs.stop	remove job 1
+jobs.stop	pause all background jobs
+jobs.stop	stop monitoring my downloads folder
+jobs.stop	disable the watcher for desktop
+jobs.stop	cancel job 5
+jobs.stop	stop all the background tasks
+jobs.stop	quit job 2 please
+jobs.stop	remove all watchers
+jobs.stop	stop the job watching documents
+jobs.stop	cancel the rotation for server.log
+jobs.stop	end all jobs
+jobs.stop	delete the downloads watcher
+jobs.stop	stop background job 1
+jobs.stop	kill job 6
+jobs.stop	cancel watching pictures
+jobs.stop	turn off the folder watcher
+jobs.stop	stop rotating app.log
+jobs.stop	remove every background job
+jobs.stop	stop the watcher

@@ -126,8 +126,14 @@ Every agent follows the same recipe:
 
 ## Stage 6: Background agents (MAVERICK keeps running) · learned 0/3
 
-- 👉 📕 **6.1 Background mode**: MAVERICK runs in the background so agents can watch and wait
-- ⬜ 📕 **6.2 Folder watcher (#11)**: e.g. move every new PDF in Downloads to Documents
+- ✅ 📕 **6.1 Background mode**: `maverick/core/background.py` + `maverick/agents/jobs/`
+  - A background thread inside MAVERICK ticks every job on its own interval while you keep chatting
+  - Jobs are saved to `~/.maverick/jobs.json` and come back on the next start
+  - `python -m maverick.main --background`: no chat, just the saved jobs (`pythonw` for no window; log in `~/.maverick/background.log`)
+  - `show background jobs`, `stop job 2`, `stop watching downloads`, `cancel all background jobs`
+  - One broken job never stops the others
+  - Brain: 26 labels; alone 77%, as MAVERICK runs 78% test / 58% hard; floors set once for Stages 6-7 (0.60 / 0.60 / 0.70 / 0.50)
+- 👉 📕 **6.2 Folder watcher (#11)**: e.g. move every new PDF in Downloads to Documents
 - ⏭️ 📕 **6.3 Background jobs (#5)**: skipped for now
 - ⏭️ 📕 **6.4 Task scheduler (#32)**: skipped for now
 - ⬜ 📕 **6.5 Log rotator (#15)**: copy, compress, empty a big log file
