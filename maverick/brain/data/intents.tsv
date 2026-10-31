@@ -3,7 +3,8 @@
 # Labels: files.copy, files.move, files.rename, files.size,
 #         hardware.ram, hardware.slots, hardware.cpu, hardware.battery, hardware.disks,
 #         process.list, process.origin, process.children, process.end, search.find, search.content,
-#         cleanup.scan, cleanup.recycle, archive.create, archive.list, archive.extract, unknown
+#         cleanup.scan, cleanup.recycle, archive.create, archive.list, archive.extract,
+#         power.plan, power.brightness, unknown
 
 # --- files.copy ---
 files.copy	copy notes.txt to D:\backup
@@ -567,8 +568,8 @@ unknown	defragment drive C:
 unknown	eject the usb drive
 cleanup.scan	clean up my disk
 unknown	overclock my cpu
-unknown	turn on battery saver
-unknown	lower the screen brightness
+power.plan	turn on battery saver
+power.brightness	lower the screen brightness
 unknown	update my graphics driver
 process.end	close all programs using memory
 process.end	free up ram by closing apps
@@ -791,3 +792,67 @@ archive.extract	unpack E:\games\mods.zip
 archive.extract	decompress the zip D:\big.zip
 archive.extract	extract the contents of report.zip
 archive.extract	unzip it D:\save.zip
+
+# --- power.plan ---
+power.plan	switch to power saver
+power.plan	what power mode am i on
+power.plan	use best performance mode
+power.plan	set the power plan to balanced
+power.plan	go back to balanced power mode
+power.plan	turn on best power efficiency
+power.plan	change power mode to performance
+power.plan	which power plan is active
+power.plan	show my power plans
+power.plan	enable gaming mode for max speed
+power.plan	put my laptop in power saving mode
+power.plan	i want maximum performance
+power.plan	switch to eco mode
+power.plan	make my pc run faster with high performance power
+power.plan	save battery by changing the power mode
+power.plan	what is my current power setting
+power.plan	list power plans
+power.plan	activate the high performance plan
+power.plan	set power mode to best performance
+power.plan	turn on turbo mode
+power.plan	change to the efficient power mode
+power.plan	use power saver while i travel
+power.plan	power mode balanced please
+power.plan	my laptop should save power now
+power.plan	switch power plan
+power.plan	is my pc on performance mode
+power.plan	set best power efficiency
+power.plan	go to quiet power mode
+power.plan	give me full performance power settings
+power.plan	change the power profile to balanced
+
+# --- power.brightness ---
+power.brightness	set brightness to 40
+power.brightness	make the screen brighter
+power.brightness	dim the screen
+power.brightness	turn brightness up
+power.brightness	turn the brightness down a bit
+power.brightness	what is my screen brightness
+power.brightness	brightness 70 percent
+power.brightness	set screen brightness to max
+power.brightness	reduce brightness
+power.brightness	increase the brightness
+power.brightness	my screen is too dark
+power.brightness	my screen is too bright
+power.brightness	make the display dimmer
+power.brightness	brightness to 100
+power.brightness	lower brightness to 20
+power.brightness	how bright is my screen
+power.brightness	raise screen brightness
+power.brightness	darker screen please
+power.brightness	full brightness
+power.brightness	set the display brightness to 50 percent
+power.brightness	brighten my screen
+power.brightness	screen brightness
+power.brightness	can you dim my laptop display
+power.brightness	turn down the screen light
+power.brightness	make it brighter
+power.brightness	decrease display brightness by a little
+power.brightness	set brightness level 30
+power.brightness	max brightness now
+power.brightness	brightness up please
+power.brightness	reduce screen brightness to save battery
