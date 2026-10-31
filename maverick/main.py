@@ -4,6 +4,7 @@ from pathlib import Path
 # Lets `python maverick/main.py` work from the project root.
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
+from maverick.agents.cleanup.agent import CleanupAgent
 from maverick.agents.files.agent import FileAgent
 from maverick.agents.hardware.agent import HardwareAgent
 from maverick.agents.process.agent import ProcessAgent
@@ -16,9 +17,10 @@ from maverick.core.orchestrator import Orchestrator
 def build(brain: Brain | None = None) -> Orchestrator:
     # Register sub-agents here. Order matters for keyword rules: the first agent that understands a request wins.
     # Process before hardware: "which programs use the most memory" is about programs, not RAM size.
+    # Cleanup before hardware: "free up space on D:" wants space back, not "how much is free".
     # Hardware before files: "space left on D:" means free space, not the size of everything on D:.
     # Search before files: "find big files" is a search, not "size of big".
-    return Orchestrator([ProcessAgent(), HardwareAgent(), SearchAgent(), FileAgent()], brain)
+    return Orchestrator([ProcessAgent(), CleanupAgent(), HardwareAgent(), SearchAgent(), FileAgent()], brain)
 
 
 def ask_if_needed(maverick: Orchestrator, result: Result) -> Result:
