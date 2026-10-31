@@ -4,7 +4,8 @@
 #         hardware.ram, hardware.slots, hardware.cpu, hardware.battery, hardware.disks,
 #         process.list, process.origin, process.children, process.end, process.hung, search.find, search.content,
 #         cleanup.scan, cleanup.recycle, archive.create, archive.list, archive.extract,
-#         power.plan, power.brightness, jobs.list, jobs.stop, watch.start, logs.rotate, unknown
+#         power.plan, power.brightness, jobs.list, jobs.stop, watch.start, logs.rotate,
+#         services.list, services.change, unknown
 
 # --- files.copy ---
 files.copy	copy notes.txt to D:\backup
@@ -1016,3 +1017,67 @@ logs.rotate	rotate this log please D:\x\y.log
 logs.rotate	empty debug.log but keep a compressed copy
 logs.rotate	rotate the big log file in D:\logs
 logs.rotate	start rotating server.log whenever it is over 5 mb
+
+# --- services.list ---
+services.list	is the print spooler running
+services.list	show running services
+services.list	list all services
+services.list	what services are running on my pc
+services.list	is windows update service on
+services.list	check the bluetooth service status
+services.list	which services start at boot
+services.list	show me the spooler service
+services.list	how many services are running
+services.list	list stopped services
+services.list	is the audio service running
+services.list	status of the windows search service
+services.list	show services related to xbox
+services.list	what is the state of the wlan service
+services.list	find the remote desktop service
+services.list	list windows services
+services.list	is the vpn service running right now
+services.list	show all asus services
+services.list	check if the print spooler is started
+services.list	which services are disabled
+services.list	what does the spooler service do
+services.list	show me background services
+services.list	is the time service running
+services.list	list services with update in the name
+services.list	check the status of sql server service
+services.list	tell me if the firewall service is on
+services.list	show nvidia services
+services.list	are any google services running
+services.list	what services did windows start
+services.list	show the steam client service
+
+# --- services.change ---
+services.change	restart the spooler service
+services.change	stop the windows update service
+services.change	start the print spooler service
+services.change	enable the spooler service at boot
+services.change	disable the xbox services
+services.change	start bluetooth support service
+services.change	restart the audio service
+services.change	stop the sql server service
+services.change	set the vpn service to start automatically
+services.change	disable the windows search service
+services.change	make the steam service manual
+services.change	turn off the xbox live service
+services.change	restart the wlan autoconfig service
+services.change	start the remote desktop service
+services.change	stop the nvidia telemetry service
+services.change	enable the bluetooth service on startup
+services.change	restart print spooler service it's stuck
+services.change	disable the asus optimization service
+services.change	start the time service now
+services.change	stop the google update service
+services.change	set the update service to manual
+services.change	restart the windows audio service please
+services.change	turn on the print spooler service
+services.change	kill the spooler service
+services.change	start the sql service at boot
+services.change	stop the adobe update service
+services.change	reset the network service
+services.change	disable the fax service
+services.change	enable the windows search service
+services.change	restart the dhcp client service
