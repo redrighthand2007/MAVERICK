@@ -236,3 +236,32 @@ def test_growing_finds_only_steady_climbers(monkeypatch):
 def test_growing_is_read_only_and_never_asks():
     agent = ProcessAgent()
     assert not agent.is_risky(agent.parse("which app is leaking memory"))
+
+
+@pytest.mark.parametrize("sentence", ["which app has the most handles", "find handle leaks",
+                                      "is any program leaking handles"])
+def test_parse_handle_requests(sentence):
+    assert ProcessAgent().parse(sentence).operation == "handles"
+
+
+def test_handle_leak_is_not_a_memory_leak():
+    assert ProcessAgent().parse("which app is leaking memory").operation == "growing"
+    assert ProcessAgent().parse("can you handle this") is None
+
+
+def test_handles_flags_suspicious_programs(monkeypatch):
+    class Fake:
+        def __init__(self, pid, name, handles):
+            self.pid, self.info, self.n = pid, {"name": name}, handles
+
+        def num_handles(self):
+            return self.n
+    procs = [Fake(1, "leaky.exe", 25_000), Fake(2, "chrome.exe", 900), Fake(3, "chrome.exe", 1_100)]
+    monkeypatch.setattr(ops.psutil, "process_iter", lambda attrs=None: procs)
+    result = ops.handles()
+    assert result.data["suspects"] == ["leaky.exe"]
+    assert "chrome.exe x2: 1,100 in its biggest process (2,000 total)" in result.message
+
+
+def test_real_pc_handles_are_read_only():
+    assert build().handle("which app has the most handles").message.startswith("Programs holding the most handles")
