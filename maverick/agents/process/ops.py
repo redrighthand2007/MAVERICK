@@ -325,3 +325,32 @@ def growing(seconds: int = 10, samples: int = 5) -> Result:
         lines.append(f"  - {name}: +{human_size(growth)} (about +{human_size(per_minute)}/min), now {human_size(now)}")
     lines.append("If one keeps climbing for minutes, restarting it frees the memory: say 'kill <name>'.")
     return Result(True, "\n".join(lines), {"growing": [name for _, name, _ in suspects]})
+
+
+HANDLE_WARNING = 10_000  # a single process holding more than this usually leaks handles
+
+
+def handles(limit: int = 10) -> Result:
+    """Programs holding the most Windows handles (open files, registry keys, threads, events ...)."""
+    groups = defaultdict(lambda: {"count": 0, "handles": 0, "worst": 0})
+    for proc in psutil.process_iter(["name"]):
+        try:
+            n = proc.num_handles()
+        except GONE:
+            continue
+        group = groups[proc.info["name"] or f"PID {proc.pid}"]
+        group["count"] += 1
+        group["handles"] += n
+        group["worst"] = max(group["worst"], n)
+    ranked = sorted(groups.items(), key=lambda item: item[1]["worst"], reverse=True)[:limit]
+    lines = [f"Programs holding the most handles (one process over {HANDLE_WARNING:,} usually means a leak):"]
+    suspects = []
+    for name, g in ranked:
+        copies = f" x{g['count']}" if g["count"] > 1 else ""
+        flag = "  <-- suspicious" if g["worst"] > HANDLE_WARNING else ""
+        if flag:
+            suspects.append(name)
+        lines.append(f"  - {name}{copies}: {g['worst']:,} in its biggest process ({g['handles']:,} total){flag}")
+    if suspects:
+        lines.append("Restarting a leaking program gives its handles back: say 'kill <name>'.")
+    return Result(True, "\n".join(lines), {"suspects": suspects, "top": [n for n, _ in ranked]})
