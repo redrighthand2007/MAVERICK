@@ -7,7 +7,7 @@
 #         cleanup.scan, cleanup.recycle, archive.create, archive.list, archive.extract,
 #         power.plan, power.brightness, jobs.list, jobs.stop, watch.start, logs.rotate,
 #         services.list, services.change, network.info, network.wifi,
-#         devices.list, devices.restart, unknown
+#         devices.list, devices.restart, accounts.admins, unknown
 
 # --- files.copy ---
 files.copy	copy notes.txt to D:\backup
@@ -1274,3 +1274,35 @@ process.handles	look for programs with lots of handles
 process.handles	handle leak check
 process.handles	programs leaking handles
 process.handles	which program has the highest handle count
+
+# --- accounts.admins ---
+accounts.admins	who has admin on this pc
+accounts.admins	am i admin
+accounts.admins	list administrators
+accounts.admins	which accounts have admin rights
+accounts.admins	is maverick elevated
+accounts.admins	who are the administrators on my computer
+accounts.admins	show admin accounts
+accounts.admins	does anyone else have admin access
+accounts.admins	how many admins are on this laptop
+accounts.admins	am i an administrator
+accounts.admins	check admin privileges
+accounts.admins	list users with admin rights
+accounts.admins	is the administrator account enabled
+accounts.admins	which users are admins
+accounts.admins	audit admin rights
+accounts.admins	show me everyone with administrator privileges
+accounts.admins	do i have admin rights
+accounts.admins	is this session elevated
+accounts.admins	who can install software as admin
+accounts.admins	list members of the administrators group
+accounts.admins	are there extra admin accounts
+accounts.admins	check who has full control of this pc as admin
+accounts.admins	show local admins
+accounts.admins	which accounts are in the admin group
+accounts.admins	security check on admin accounts
+accounts.admins	is my account an admin
+accounts.admins	who else is admin here
+accounts.admins	find all administrator accounts
+accounts.admins	report admin access on this machine
+accounts.admins	are you running as administrator

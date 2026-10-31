@@ -83,3 +83,5 @@ devices.list	did windows find my new mouse
 process.growing	my laptop gets slower every hour, is some app hoarding more and more ram
 process.growing	keep an eye on memory for a minute and tell me who balloons
 process.handles	my pc says out of resources, does an app hold thousands of handles
+accounts.admins	who could install anything they want on this machine
+accounts.admins	do i have the top level rights on this laptop
