@@ -80,3 +80,5 @@ network.wifi	go offline by switching off the wireless card
 network.info	what address does my laptop have on this network
 devices.restart	the camera shows a black screen, power cycle it
 devices.list	did windows find my new mouse
+process.growing	my laptop gets slower every hour, is some app hoarding more and more ram
+process.growing	keep an eye on memory for a minute and tell me who balloons
