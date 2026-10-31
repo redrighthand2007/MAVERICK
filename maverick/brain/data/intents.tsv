@@ -2,7 +2,8 @@
 # Format: label<TAB>sentence. Lines starting with # are comments.
 # Labels: files.copy, files.move, files.rename, files.size,
 #         hardware.ram, hardware.slots, hardware.cpu, hardware.battery, hardware.disks,
-#         process.list, process.origin, process.children, process.end, search.find, search.content, unknown
+#         process.list, process.origin, process.children, process.end, search.find, search.content,
+#         cleanup.scan, cleanup.recycle, unknown
 
 # --- files.copy ---
 files.copy	copy notes.txt to D:\backup
@@ -517,9 +518,9 @@ unknown	who are you
 unknown	what can you do
 unknown	open chrome
 unknown	open notepad
-unknown	delete notes.txt
-unknown	delete the folder D:\old
-unknown	remove report.pdf
+cleanup.recycle	delete notes.txt
+cleanup.recycle	delete the folder D:\old
+cleanup.recycle	remove report.pdf
 unknown	empty the recycle bin
 process.end	kill chrome
 process.list	what's using my cpu
@@ -564,7 +565,7 @@ unknown	schedule a backup every friday
 unknown	format my D: drive
 unknown	defragment drive C:
 unknown	eject the usb drive
-unknown	clean up my disk
+cleanup.scan	clean up my disk
 unknown	overclock my cpu
 unknown	turn on battery saver
 unknown	lower the screen brightness
@@ -630,3 +631,67 @@ process.end	kill all python processes
 process.end	end the process called telegram
 process.end	close the program eating my cpu
 process.end	kill that greedy chrome
+
+# --- cleanup.scan ---
+cleanup.scan	free up space
+cleanup.scan	free up some space on my c drive
+cleanup.scan	my disk is full what can i delete
+cleanup.scan	help me make room on my laptop
+cleanup.scan	find junk i can remove
+cleanup.scan	clean my pc
+cleanup.scan	clean up the d drive
+cleanup.scan	what is wasting space on my computer
+cleanup.scan	show me the space hogs
+cleanup.scan	reclaim disk space
+cleanup.scan	declutter my storage
+cleanup.scan	i need more storage space
+cleanup.scan	my c drive is almost full help
+cleanup.scan	scan for files i can delete
+cleanup.scan	what's taking up all my space
+cleanup.scan	find stuff to clean up on e drive
+cleanup.scan	clean up my computer please
+cleanup.scan	make some space on d:
+cleanup.scan	what can i remove to get space back
+cleanup.scan	show big old files i can get rid of
+cleanup.scan	free up storage
+cleanup.scan	my laptop is out of space
+cleanup.scan	how can i get more free space
+cleanup.scan	clean junk from my pc
+cleanup.scan	do a disk cleanup
+cleanup.scan	show what's eating my disk space
+cleanup.scan	find forgotten downloads
+cleanup.scan	cleanup my storage
+cleanup.scan	optimize my disk space
+cleanup.scan	look for things to delete on c:
+
+# --- cleanup.recycle ---
+cleanup.recycle	delete old.zip
+cleanup.recycle	remove D:\temp\setup.exe
+cleanup.recycle	trash the file report-old.docx
+cleanup.recycle	send notes.txt to the recycle bin
+cleanup.recycle	delete the folder E:\junk
+cleanup.recycle	clear temp files
+cleanup.recycle	delete temporary files
+cleanup.recycle	remove junk files
+cleanup.recycle	clean the temp folder
+cleanup.recycle	clear my cache files
+cleanup.recycle	delete "D:\old movies\film.mkv"
+cleanup.recycle	put screenshot.png in the recycle bin
+cleanup.recycle	erase draft.txt
+cleanup.recycle	recycle the folder D:\backup-2019
+cleanup.recycle	get rid of installer.msi
+cleanup.recycle	delete my temp folder contents
+cleanup.recycle	remove the file E:\logs\big.log
+cleanup.recycle	throw away old-photos.zip
+cleanup.recycle	delete this file D:\x.iso
+cleanup.recycle	wipe the temp files
+cleanup.recycle	remove the downloads\setup.exe file
+cleanup.recycle	delete D:\games\old-game
+cleanup.recycle	bin the file notes-copy.txt
+cleanup.recycle	delete C:\Users\me\Downloads\movie.mp4
+cleanup.recycle	clear out temporary junk
+cleanup.recycle	trash D:\old
+cleanup.recycle	delete the zip file archive.zip
+cleanup.recycle	remove report-final-old.pdf please
+cleanup.recycle	delete windows temp junk
+cleanup.recycle	clean temporary internet files
