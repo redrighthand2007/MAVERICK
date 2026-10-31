@@ -187,7 +187,11 @@ These need Administrator rights or are risky; each explains clearly when admin i
   - `which app has the most handles`, `find handle leaks`: top 10 programs by handles in their biggest process
   - Flags any single process over 10,000 handles as a likely leak; read-only (suggests `kill <name>`)
   - Brain: 37 labels; alone 75%, as MAVERICK runs 79% test / 51% hard
-- 👉 📕 **7.15 Admin-rights audit (#25)**: who has admin on this PC (read-only)
+- ✅ 📕 **7.15 Admin-rights audit (#25)**: `maverick/agents/accounts/` (read-only)
+  - `who has admin on this pc`, `am i admin`: members of the Administrators group (by SID, so any Windows language)
+  - Marks disabled accounts, Microsoft vs local accounts, and which one is you; warns if more than 2 are active
+  - Says whether MAVERICK itself is running as Administrator
+  - Brain: 38 labels; alone 74%, as MAVERICK runs 88% test / 57% hard
 - ❌ **#27 Linux capabilities**: dropped, no Windows equivalent
 
 ## Stage 8: AI methods (every technique from the AI Map that MAVERICK can use) · learned 0/28
