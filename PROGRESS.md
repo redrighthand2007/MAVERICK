@@ -237,8 +237,11 @@ Every new brain must beat the current one in `evaluate.py` before it replaces it
 - ⬜ 📕 **8.12 Small pretrained transformer encoder**: fine-tuned for intent (transfer learning)
 
 **8E. Learning from real use**
-- ⬜ 📕 **8.13 Online learning**: retrain from reviewed `inbox.tsv` lines
-- ⬜ 📕 **8.14 Active learning**: show the least-confident inbox lines first for labelling
+- ✅ 📕 **8.13 Online learning**: `python -m maverick.brain.review` then `python -m maverick.brain.train`
+  - Your reviewed real requests go to `learned.tsv` (gitignored, stays on your PC); training adds them to intents.tsv
+  - `inbox.tsv` is never changed; already-reviewed lines are not asked again
+- ✅ 📕 **8.14 Active learning**: the review shows the brain's LEAST confident requests first
+  - Enter = guess is right, type a label to correct it, s = skip, q = stop; typos get label suggestions
 
 **8F. Filling arguments (function calling)**
 - ⬜ 📕 **8.15 Slot filling**: the brain also tags source / destination / name in the sentence
