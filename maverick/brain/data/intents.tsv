@@ -5,7 +5,8 @@
 #         process.list, process.origin, process.children, process.end, process.hung, search.find, search.content,
 #         cleanup.scan, cleanup.recycle, archive.create, archive.list, archive.extract,
 #         power.plan, power.brightness, jobs.list, jobs.stop, watch.start, logs.rotate,
-#         services.list, services.change, network.info, network.wifi, unknown
+#         services.list, services.change, network.info, network.wifi,
+#         devices.list, devices.restart, unknown
 
 # --- files.copy ---
 files.copy	copy notes.txt to D:\backup
@@ -576,7 +577,7 @@ process.end	close all programs using memory
 process.end	free up ram by closing apps
 process.list	which app is using the most memory
 unknown	what is the cpu fan speed
-unknown	is my gpu working
+devices.list	is my gpu working
 unknown	how hot is my laptop
 unknown	open file explorer
 unknown	show hidden files
@@ -1144,3 +1145,67 @@ network.wifi	kill the wifi
 network.wifi	switch the ethernet on
 network.wifi	turn the wi-fi on again
 network.wifi	disable the network card
+
+# --- devices.list ---
+devices.list	show devices with problems
+devices.list	list usb devices
+devices.list	show drivers
+devices.list	show my webcam
+devices.list	list audio devices
+devices.list	any devices not working
+devices.list	which drivers have problems
+devices.list	show bluetooth devices
+devices.list	is my webcam detected
+devices.list	list all hardware devices
+devices.list	what graphics card driver do i have
+devices.list	show the touchpad device
+devices.list	check device manager for errors
+devices.list	list my cameras
+devices.list	which usb devices are connected
+devices.list	show input devices like mouse and keyboard
+devices.list	is the fingerprint reader working
+devices.list	show the network card device
+devices.list	list devices with yellow warning
+devices.list	any broken drivers
+devices.list	what devices are plugged in
+devices.list	show me my microphone devices
+devices.list	is my keyboard driver ok
+devices.list	show printers devices
+devices.list	list display devices
+devices.list	show device status
+devices.list	which devices failed
+devices.list	check if my mic is detected
+devices.list	show the speaker device
+devices.list	list all drivers on this pc
+
+# --- devices.restart ---
+devices.restart	restart the webcam
+devices.restart	my webcam is stuck, restart it
+devices.restart	reset the touchpad driver
+devices.restart	restart the bluetooth device
+devices.restart	restart my microphone driver
+devices.restart	reload the camera driver
+devices.restart	reset the usb device
+devices.restart	restart the wifi card
+devices.restart	fix my touchpad by restarting it
+devices.restart	restart the graphics driver
+devices.restart	reset my webcam it shows black
+devices.restart	restart the audio device realtek
+devices.restart	restart the fingerprint reader
+devices.restart	reload the mouse driver
+devices.restart	restart the keyboard device
+devices.restart	reset the bluetooth adapter driver
+devices.restart	restart the printer device
+devices.restart	my mic stopped working restart it
+devices.restart	restart device usb2.0 hd uvc webcam
+devices.restart	reinitialize the camera
+devices.restart	reset the trackpad
+devices.restart	restart the network card driver
+devices.restart	restart the speakers device
+devices.restart	reload the bluetooth driver
+devices.restart	reset the display driver
+devices.restart	restart the frozen webcam
+devices.restart	unstick my camera
+devices.restart	reset the realtek audio driver
+devices.restart	restart my touchpad please
+devices.restart	restart the usb camera device

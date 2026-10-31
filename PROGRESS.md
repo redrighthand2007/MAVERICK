@@ -166,14 +166,19 @@ These need Administrator rights or are risky; each explains clearly when admin i
   - `connect to wifi` and Bluetooth are not handled (left for later)
   - Brain: 33 labels; alone 73%, as MAVERICK runs 80% test / 58% hard
 - ⏭️ 📕 **7.5 Firewall (#18)**: skipped for now
-- 👉 📕 **7.6 Drivers (#30)**: restart a device (e.g. webcam)
+- ✅ 📕 **7.6 Drivers (#30)**: `maverick/agents/devices/`
+  - `show devices with problems`, `list usb devices`, `is my gpu working`, `show my webcam`: read-only
+  - `restart the webcam`: y/n, then `pnputil /restart-device` (needs Administrator), like unplugging it
+  - A broad word ("speakers") picks the one device that has a problem; otherwise asks which
+  - Never restarts disks, CPU, firmware or core system devices
+  - Brain: 35 labels; alone 75%, as MAVERICK runs 80% test / 53% hard
 - ⏭️ 📕 **7.7 Users and passwords (#23, #24)**: skipped for now
 - ⏭️ 📕 **7.8 Mount (#14)**: skipped for now
 - ⏭️ 📕 **7.9 Secure shredding (#13)**: skipped for now
 - ⏭️ 📕 **7.10 Bandwidth (#19)**: skipped for now
 - ⏭️ 📕 **7.11 Connections audit (#22)**: skipped for now
 - ⏭️ 📕 **7.12 Permissions (#9)**: skipped for now
-- ⬜ 📕 **7.13 Memory hogs (#29)**: spot apps whose RAM keeps growing
+- 👉 📕 **7.13 Memory hogs (#29)**: spot apps whose RAM keeps growing
 - ⬜ 📕 **7.14 Handle leaks (#6)**: apps holding too many handles
 - ⬜ 📕 **7.15 Admin-rights audit (#25)**: who has admin on this PC (read-only)
 - ❌ **#27 Linux capabilities**: dropped, no Windows equivalent

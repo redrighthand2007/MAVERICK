@@ -7,6 +7,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from maverick.agents.archive.agent import ArchiveAgent
 from maverick.agents.cleanup.agent import CleanupAgent
+from maverick.agents.devices.agent import DevicesAgent
 from maverick.agents.files.agent import FileAgent
 from maverick.agents.hardware.agent import HardwareAgent
 from maverick.agents.jobs.agent import JobsAgent
@@ -44,7 +45,8 @@ def build(brain: Brain | None = None, background: Background | None = None) -> O
     # Search before archive: "find zip files" is a search, not "make a zip".
     agents = [
         ProcessAgent(), JobsAgent(background), WatchAgent(background), LogsAgent(background), ServicesAgent(),
-        NetworkAgent(), PowerAgent(), CleanupAgent(), HardwareAgent(), SearchAgent(), ArchiveAgent(), FileAgent(),
+        NetworkAgent(), DevicesAgent(), PowerAgent(), CleanupAgent(), HardwareAgent(), SearchAgent(), ArchiveAgent(),
+        FileAgent(),
     ]
     maverick = Orchestrator(agents, brain)
     maverick.background = background
