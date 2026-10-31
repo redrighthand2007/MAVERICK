@@ -17,6 +17,9 @@ FILLER_WORDS = {
     "please", "file", "folder", "directory", "this", "does", "take", "takes", "up",
 }
 KEYWORDS = RENAME_WORDS | MOVE_WORDS | COPY_WORDS | SIZE_WORDS | FILLER_WORDS
+# The arguments each operation takes (also the slot names the 8.15 slot tagger may fill).
+SLOTS = {"copy": ("source", "destination"), "move": ("source", "destination"),
+         "rename": ("source", "new_name"), "size": ("path",)}
 
 
 def split_words_and_paths(text: str) -> tuple[set[str], list[str], list[str]]:
@@ -47,6 +50,10 @@ class FileAgent(SubAgent):
     # Copy never overwrites and size only reads, so only these two ask first.
     risky = {"move", "rename"}
 
+    def __init__(self, tagger=None):
+        # The trained slot tagger (8.15) finds the arguments; without one, the regex rules below do.
+        self.tagger = tagger
+
     def parse(self, text: str) -> Intent | None:
         words, _, _ = split_words_and_paths(text)
 
@@ -63,6 +70,11 @@ class FileAgent(SubAgent):
         return self.extract(operation, text)
 
     def extract(self, operation: str, text: str) -> Intent:
+        if self.tagger:
+            found = self.tagger.fill(f"files.{operation}", text, SLOTS[operation])
+            args = {slot: found.get(slot, "") for slot in SLOTS[operation]}
+            return Intent(operation, args, [k for k, v in args.items() if not v])
+
         _, sure, possible = split_words_and_paths(text)
         # Prefer path-shaped tokens; they survive chatty sentences like "make a duplicate of notes.txt in D:\x".
         needed = 1 if operation == "size" else 2

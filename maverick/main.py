@@ -20,6 +20,7 @@ from maverick.agents.search.agent import SearchAgent
 from maverick.agents.services.agent import ServicesAgent
 from maverick.agents.watch.agent import WatchAgent
 from maverick.brain import Brain
+from maverick.brain.slots import SlotTagger
 from maverick.core.agent_base import Result
 from maverick.core.background import JOBS_PATH, Background
 from maverick.core.orchestrator import Orchestrator
@@ -28,7 +29,8 @@ from maverick.core.orchestrator import Orchestrator
 LOG_PATH = JOBS_PATH.parent / "background.log"
 
 
-def build(brain: Brain | None = None, background: Background | None = None) -> Orchestrator:
+def build(brain: Brain | None = None, background: Background | None = None,
+          tagger: SlotTagger | None = None) -> Orchestrator:
     # Jobs that keep running in the background (6.1). Without one passed in, jobs live in memory only.
     background = background or Background()
     # Register sub-agents here. Order matters for keyword rules: the first agent that understands a request wins.
@@ -47,7 +49,7 @@ def build(brain: Brain | None = None, background: Background | None = None) -> O
     agents = [
         ProcessAgent(), JobsAgent(background), WatchAgent(background), LogsAgent(background), ServicesAgent(),
         NetworkAgent(), DevicesAgent(), AccountsAgent(), PowerAgent(), CleanupAgent(), HardwareAgent(),
-        SearchAgent(), ArchiveAgent(), FileAgent(),
+        SearchAgent(), ArchiveAgent(), FileAgent(tagger),
     ]
     maverick = Orchestrator(agents, brain)
     maverick.background = background
@@ -110,7 +112,8 @@ if __name__ == "__main__":
     brain = Brain.load()
     if brain is None:
         print("(Brain not trained yet; using keyword rules. Train it with: python -m maverick.brain.train)")
-    maverick = build(brain, background)
+    # The 8.15 slot tagger finds file names in sentences; untrained, the file agent's regex rules do.
+    maverick = build(brain, background, SlotTagger.load())
     if len(sys.argv) > 1:
         # The shell already removed the quotes, so put them back around args with spaces,
         # unless the whole request was passed as one quoted sentence.
