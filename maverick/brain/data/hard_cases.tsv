@@ -68,3 +68,5 @@ power.plan	let the laptop sip power
 power.brightness	the display is blinding me
 process.hung	the app has the spinning wheel and won't react
 process.hung	something locked up, deal with it
+jobs.list	what are you keeping an eye on for me
+jobs.stop	forget about the downloads folder, stop watching it
