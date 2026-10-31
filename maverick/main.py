@@ -8,6 +8,7 @@ from maverick.agents.archive.agent import ArchiveAgent
 from maverick.agents.cleanup.agent import CleanupAgent
 from maverick.agents.files.agent import FileAgent
 from maverick.agents.hardware.agent import HardwareAgent
+from maverick.agents.power.agent import PowerAgent
 from maverick.agents.process.agent import ProcessAgent
 from maverick.agents.search.agent import SearchAgent
 from maverick.brain import Brain
@@ -18,11 +19,12 @@ from maverick.core.orchestrator import Orchestrator
 def build(brain: Brain | None = None) -> Orchestrator:
     # Register sub-agents here. Order matters for keyword rules: the first agent that understands a request wins.
     # Process before hardware: "which programs use the most memory" is about programs, not RAM size.
+    # Power before hardware: "turn on battery saver" is a power mode, not a battery reading.
     # Cleanup before hardware: "free up space on D:" wants space back, not "how much is free".
     # Hardware before files: "space left on D:" means free space, not the size of everything on D:.
     # Search before files: "find big files" is a search, not "size of big".
     # Search before archive: "find zip files" is a search, not "make a zip".
-    agents = [ProcessAgent(), CleanupAgent(), HardwareAgent(), SearchAgent(), ArchiveAgent(), FileAgent()]
+    agents = [ProcessAgent(), PowerAgent(), CleanupAgent(), HardwareAgent(), SearchAgent(), ArchiveAgent(), FileAgent()]
     return Orchestrator(agents, brain)
 
 
