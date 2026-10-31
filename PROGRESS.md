@@ -49,7 +49,7 @@ No prior knowledge assumed. These explain the ideas every stage below is built o
   - New agents get it by listing operations in `risky` and writing `describe()`
 - ⏭️ 📕 **3.2 Undo**: skipped for now
 
-## Stage 4: Read-only agents (safe, can't break anything) · learned 0/6
+## Stage 4: Read-only agents (safe, can't break anything) ✅ · learned 0/6
 
 Every agent follows the same recipe:
 **a)** `ops.py` functions → **b)** `agent.py` (keywords, `extract`) → **c)** register in `main.py` →
@@ -65,26 +65,33 @@ Every agent follows the same recipe:
   - Brain alone 76% on unseen sentences; **as MAVERICK runs (brain + rules) 87%**; keyword rules alone 79%
   - `evaluate.py` now reports the combined score; brain-alone test floor lowered 0.80 → 0.75, new combined floors 0.85 / 0.70
   - Fixed: one-shot mode now accepts the whole request as one quoted sentence
-- 👉 📕 **4.2 Process tree agent (#4)**
-  - List running processes (name, PID, CPU, RAM)
-  - "What started X?": walk up the parent chain
-  - Show children of a process
-- ⬜ 📕 **4.3 File integrity agent (#28)**
+- ✅ 📕 **4.2 Process tree agent (#4)**: `maverick/agents/process/`
+  - Biggest programs by RAM or CPU, with copies grouped (`chrome.exe x18`)
+  - "What started X?": walks up the parent chain, notices closed parents and reused PIDs, says it in plain words
+  - "What did X start?": direct and total child programs
+  - Find by name (`chrome`, `code.exe`) or PID
+- ⏭️ 📕 **4.3 File integrity agent (#28)**: skipped for now
   - Take a snapshot: SHA-256 of every file in a folder, saved as JSON
   - Compare later: list added, removed, changed files
-- ⬜ 📕 **4.4 Connectivity agent (#20)**
+- ⏭️ 📕 **4.4 Connectivity agent (#20)**: skipped for now
   - Ping a host; check DNS lookup; trace the route
   - Diagnose step by step: adapter → gateway → DNS → internet
-- ⬜ 📕 **4.5 Port viewer agent (#16, view only)**
+- ⏭️ 📕 **4.5 Port viewer agent (#16, view only)**: skipped for now
   - Which app is using port X
   - List all listening ports with their apps
-- ⬜ 📕 **4.6 File search agent (#7)**
-  - By name or pattern (`*.pdf`), by date ("edited yesterday"), by size ("bigger than 1 GB")
-  - Search inside text files for a word
+- ✅ 📕 **4.6 File search agent (#7)**: `maverick/agents/search/`
+  - By name, kind (`pdf`, `videos`, `photos`, `python`, `*.mkv`), date (`today`, `yesterday`, `this week`, `last 3 days`, `older than 2 years`), size (`bigger than 1 gb`, `big files`)
+  - Inside text files, showing the matching line
+  - Where: a typed path, `e drive`, or `in downloads / documents / desktop`; default is your user folder
+  - Skips system and junk folders (Windows, AppData, node_modules, .git); stops after 20 s on huge drives
+- Brain after Stage 4: 15 labels, 564 sentences, 51 hard cases
+  - Brain alone 66%; **as MAVERICK runs 82%** (keyword rules alone 77%); hard cases 73% (rules 49%)
+  - Naive Bayes has hit its limit (ignores word order: "what started chrome" vs "what did chrome start"); Stage 8 brains should lift this
+  - Test floors now: brain alone 0.60, as MAVERICK runs 0.80 / 0.70
 
 ## Stage 5: Action agents (use the 3.1 confirmation) · learned 0/7
 
-- ⬜ 📕 **5.1 Process hunter (#1)**: find heavy processes by CPU/RAM/name; end them after y/n
+- 👉 📕 **5.1 Process hunter (#1)**: find heavy processes by CPU/RAM/name; end them after y/n
 - ⬜ 📕 **5.2 CPU priority and affinity (#3)**: set priority (low/normal/high), pin to cores
 - ⬜ 📕 **5.3 Disk space optimizer (#8)**: find big/old files; delete to the **Recycle Bin** only
 - ⬜ 📕 **5.4 Smart archive (#12)**: zip/tar create, list, extract (Zip Slip guard), AES encryption; port of the Linux project
