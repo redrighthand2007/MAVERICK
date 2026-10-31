@@ -76,3 +76,5 @@ logs.rotate	server.log ate 3 gb, squash it and start fresh
 logs.rotate	keep a zipped copy of app.log then wipe it clean
 services.change	my printer queue is jammed, bounce the spooler service
 services.list	which windows services are up right now
+network.wifi	go offline by switching off the wireless card
+network.info	what address does my laptop have on this network

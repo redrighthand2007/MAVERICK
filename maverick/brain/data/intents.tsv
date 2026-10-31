@@ -5,7 +5,7 @@
 #         process.list, process.origin, process.children, process.end, process.hung, search.find, search.content,
 #         cleanup.scan, cleanup.recycle, archive.create, archive.list, archive.extract,
 #         power.plan, power.brightness, jobs.list, jobs.stop, watch.start, logs.rotate,
-#         services.list, services.change, unknown
+#         services.list, services.change, network.info, network.wifi, unknown
 
 # --- files.copy ---
 files.copy	copy notes.txt to D:\backup
@@ -526,7 +526,7 @@ cleanup.recycle	remove report.pdf
 unknown	empty the recycle bin
 process.end	kill chrome
 process.list	what's using my cpu
-unknown	turn off wifi
+network.wifi	turn off wifi
 unknown	shut down the computer
 unknown	restart my pc
 unknown	lock the screen
@@ -558,7 +558,7 @@ unknown	write me a poem
 unknown	how do i learn python
 unknown	install vlc
 unknown	update windows
-unknown	what's my ip address
+network.info	what's my ip address
 unknown	ping google.com
 process.list	show running processes
 unknown	sort my downloads by date
@@ -1081,3 +1081,66 @@ services.change	reset the network service
 services.change	disable the fax service
 services.change	enable the windows search service
 services.change	restart the dhcp client service
+
+# --- network.info ---
+network.info	which wifi am i connected to
+network.info	show network adapters
+network.info	what is my mac address
+network.info	wifi signal strength
+network.info	show my ip
+network.info	what's my local ip address
+network.info	am i connected to the internet
+network.info	list my network adapters
+network.info	what is my ipv4 address
+network.info	show network details
+network.info	how strong is my wifi signal
+network.info	what wifi network is this
+network.info	show my ipv6 address
+network.info	what's the name of my wifi
+network.info	is my ethernet connected
+network.info	network status please
+network.info	what is the mac of my wifi card
+network.info	show ip config
+network.info	what's my wifi speed
+network.info	tell me my ip and mac
+network.info	which network am i on
+network.info	how fast is my network connection
+network.info	display the network info
+network.info	am i online
+network.info	what band is my wifi on
+network.info	show all network cards
+network.info	give me my ip address
+network.info	check my internet connection status
+network.info	show the ssid
+
+# --- network.wifi ---
+network.wifi	turn on wi-fi
+network.wifi	disable the ethernet adapter
+network.wifi	enable wifi
+network.wifi	switch wifi off
+network.wifi	turn the wireless off
+network.wifi	turn on the ethernet adapter
+network.wifi	disable wifi for a while
+network.wifi	enable the wi-fi adapter
+network.wifi	switch on wireless
+network.wifi	cut off the wifi
+network.wifi	turn off the lan adapter
+network.wifi	reenable my network card
+network.wifi	turn wifi back on
+network.wifi	disable my wireless card
+network.wifi	deactivate the wifi adapter
+network.wifi	start the wifi
+network.wifi	put wifi off please
+network.wifi	turn off ethernet
+network.wifi	enable ethernet
+network.wifi	wifi off
+network.wifi	wifi on
+network.wifi	switch off the network adapter
+network.wifi	turn my wlan off
+network.wifi	enable the wireless adapter
+network.wifi	disable wlan
+network.wifi	turn on my network card
+network.wifi	kill the wifi
+network.wifi	switch the ethernet on
+network.wifi	turn the wi-fi on again
+network.wifi	disable the network card
