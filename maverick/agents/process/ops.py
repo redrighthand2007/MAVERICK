@@ -1,4 +1,7 @@
-"""Questions about running programs, plus ending them (5.1, 5.7). Only the end functions change anything, after y/n."""
+"""Questions about running programs, ending them (5.1, 5.7), and spotting leaks (7.13, 7.14).
+
+Only the end functions change anything, and only after y/n.
+"""
 import ctypes
 import time
 from collections import defaultdict
@@ -283,3 +286,42 @@ def end_hung() -> Result:
                              "(try running MAVERICK as Administrator).", {"ended": len(ended)})
     return Result(True, f"Ended {len(ended)} frozen app{'s' if len(ended) > 1 else ''}: {', '.join(ended)}.",
                   {"ended": len(ended)})
+
+
+def ram_by_program() -> dict[str, int]:
+    """Total RAM per program name right now (all copies added together)."""
+    totals = defaultdict(int)
+    for proc in psutil.process_iter(["name", "memory_info"]):
+        if proc.info["memory_info"] and proc.pid:
+            totals[proc.info["name"] or f"PID {proc.pid}"] += proc.info["memory_info"].rss
+    return totals
+
+
+MIN_GROWTH = 20 * 1024 ** 2  # less than this is normal wobble
+
+
+def growing(seconds: int = 10, samples: int = 5) -> Result:
+    """Programs whose RAM went up at every sample: the usual sign of a memory leak."""
+    seconds = max(4, min(seconds, 300))
+    history = [ram_by_program()]
+    for _ in range(samples - 1):
+        time.sleep(seconds / (samples - 1))
+        history.append(ram_by_program())
+    suspects = []
+    for name in history[0]:
+        values = [snapshot.get(name, 0) for snapshot in history]
+        rising = all(later >= earlier for earlier, later in zip(values, values[1:]))
+        growth = values[-1] - values[0]
+        if rising and growth >= MIN_GROWTH:
+            suspects.append((growth, name, values[-1]))
+    suspects.sort(reverse=True)
+    if not suspects:
+        return Result(True, f"Watched every program for {seconds} s: no RAM kept growing "
+                            f"(more than {human_size(MIN_GROWTH)}). Try a longer watch, e.g. 'for 2 minutes'.",
+                      {"growing": []})
+    lines = [f"Watched for {seconds} s. RAM kept growing in:"]
+    for growth, name, now in suspects[:10]:
+        per_minute = growth * 60 / seconds
+        lines.append(f"  - {name}: +{human_size(growth)} (about +{human_size(per_minute)}/min), now {human_size(now)}")
+    lines.append("If one keeps climbing for minutes, restarting it frees the memory: say 'kill <name>'.")
+    return Result(True, "\n".join(lines), {"growing": [name for _, name, _ in suspects]})

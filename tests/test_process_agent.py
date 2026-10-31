@@ -205,3 +205,34 @@ def test_frozen_windows_parts_are_never_ended(monkeypatch):
     monkeypatch.setattr(ops, "hung_windows", lambda: [(explorer.pid, "File Explorer")])
     result = build().handle("end frozen apps")
     assert result.message.startswith("Blocked for safety")
+
+
+@pytest.mark.parametrize("sentence, seconds", [
+    ("which app is leaking memory", 10),
+    ("find memory leaks for 2 minutes", 120),
+    ("watch ram growth for 30 seconds", 30),
+])
+def test_parse_memory_leak_requests(sentence, seconds):
+    intent = ProcessAgent().parse(sentence)
+    assert (intent.operation, intent.args) == ("growing", {"seconds": seconds})
+
+
+def test_growing_finds_only_steady_climbers(monkeypatch):
+    MB = 1024 ** 2
+    history = iter([
+        {"leaky.exe": 100 * MB, "steady.exe": 500 * MB, "wobbly.exe": 200 * MB},
+        {"leaky.exe": 120 * MB, "steady.exe": 500 * MB, "wobbly.exe": 260 * MB},
+        {"leaky.exe": 150 * MB, "steady.exe": 501 * MB, "wobbly.exe": 210 * MB},  # wobbly dropped: not a leak
+        {"leaky.exe": 180 * MB, "steady.exe": 501 * MB, "wobbly.exe": 250 * MB},
+        {"leaky.exe": 200 * MB, "steady.exe": 502 * MB, "wobbly.exe": 240 * MB},
+    ])
+    monkeypatch.setattr(ops, "ram_by_program", lambda: next(history))
+    monkeypatch.setattr(ops.time, "sleep", lambda s: None)
+    result = ops.growing(seconds=60)
+    assert result.data["growing"] == ["leaky.exe"]
+    assert "leaky.exe: +100.00 MB (about +100.00 MB/min), now 200.00 MB" in result.message
+
+
+def test_growing_is_read_only_and_never_asks():
+    agent = ProcessAgent()
+    assert not agent.is_risky(agent.parse("which app is leaking memory"))

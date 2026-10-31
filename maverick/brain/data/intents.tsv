@@ -2,7 +2,8 @@
 # Format: label<TAB>sentence. Lines starting with # are comments.
 # Labels: files.copy, files.move, files.rename, files.size,
 #         hardware.ram, hardware.slots, hardware.cpu, hardware.battery, hardware.disks,
-#         process.list, process.origin, process.children, process.end, process.hung, search.find, search.content,
+#         process.list, process.origin, process.children, process.end, process.hung, process.growing,
+#         search.find, search.content,
 #         cleanup.scan, cleanup.recycle, archive.create, archive.list, archive.extract,
 #         power.plan, power.brightness, jobs.list, jobs.stop, watch.start, logs.rotate,
 #         services.list, services.change, network.info, network.wifi,
@@ -1209,3 +1210,35 @@ devices.restart	unstick my camera
 devices.restart	reset the realtek audio driver
 devices.restart	restart my touchpad please
 devices.restart	restart the usb camera device
+
+# --- process.growing ---
+process.growing	which app is leaking memory
+process.growing	find memory leaks for 2 minutes
+process.growing	whose ram keeps growing
+process.growing	is any program's memory going up
+process.growing	watch ram growth for 30 seconds
+process.growing	check for memory leaks
+process.growing	which program keeps using more and more ram
+process.growing	find apps with growing memory
+process.growing	is chrome leaking memory
+process.growing	detect memory leaks
+process.growing	my ram usage keeps climbing which app is it
+process.growing	something is slowly eating more memory, find it
+process.growing	watch memory growth for 1 minute
+process.growing	which process has a memory leak
+process.growing	find the app whose memory keeps increasing
+process.growing	is there a leak in any program
+process.growing	track ram growth for 60 seconds
+process.growing	which app's memory is creeping up
+process.growing	look for leaking programs
+process.growing	memory keeps going up over time, who is it
+process.growing	spot memory hogs that keep growing
+process.growing	monitor programs for memory leaks
+process.growing	find leaky apps
+process.growing	which program grows in ram the longer it runs
+process.growing	check if discord is leaking ram
+process.growing	watch for growing memory for 2 minutes
+process.growing	does anything have a memory leak
+process.growing	memory leak check please
+process.growing	who keeps grabbing more ram
+process.growing	find processes with rising memory use
