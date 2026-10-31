@@ -21,8 +21,8 @@ files.size	how big is my steam folder
 files.size	how many gigabytes does E:\backup take
 files.size	whats the weight of video.mp4
 files.size	is D:\movies taking a lot of space
-unknown	delete everything on my drive
-unknown	remove old.txt permanently
+cleanup.recycle	delete everything on my drive
+cleanup.recycle	remove old.txt permanently
 unknown	open the downloads folder
 unknown	good night maverick
 process.end	kill the python script
@@ -55,3 +55,7 @@ search.content	find notes that talk about exams
 process.end	get rid of the zoom program that is still running
 process.end	nuke discord
 process.end	shut chrome down completely
+cleanup.scan	my storage is nearly full what should go
+cleanup.scan	get me some disk space back
+cleanup.recycle	chuck old.zip in the bin
+cleanup.recycle	get rid of D:\iso\win10.iso
