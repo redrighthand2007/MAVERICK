@@ -54,7 +54,7 @@ class Orchestrator:
     def run(self, agent: SubAgent, intent: Intent) -> Result:
         if intent.missing:
             return Result(False, f"[{agent.name}] I need: " + ", ".join(intent.missing))
-        if intent.operation in agent.risky:
+        if agent.is_risky(intent):
             # describe() runs the safety checks first, so a blocked action is never even asked about.
             question = self.safely(lambda: Result(False, agent.describe(intent), {"confirm": True}))
             if question.data.get("confirm"):
