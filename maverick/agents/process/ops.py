@@ -1,10 +1,11 @@
-"""Read-only questions about running programs. Nothing here stops or changes a process."""
+"""Questions about running programs, plus ending them (5.1). Only end() changes anything, and only after y/n."""
 import time
 from collections import defaultdict
 
 import psutil
 
 from maverick.core.agent_base import Result
+from maverick.core.safety import SafetyError
 from maverick.core.units import human_size
 
 GONE = (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess)
@@ -135,3 +136,77 @@ def children(name: str) -> Result:
     if len(direct) > 15:
         lines.append(f"  ... and {len(direct) - 15} more")
     return Result(True, "\n".join(lines), {"direct": len(direct), "total": len(everything)})
+
+
+# Ending these crashes or locks Windows, so MAVERICK refuses even if you say yes.
+PROTECTED = {
+    "system", "registry", "memory compression", "smss.exe", "csrss.exe", "wininit.exe", "winlogon.exe",
+    "services.exe", "lsass.exe", "lsaiso.exe", "svchost.exe", "dwm.exe", "fontdrvhost.exe", "explorer.exe",
+    "msmpeng.exe", "sihost.exe", "ctfmon.exe", "conhost.exe",
+}
+
+
+def plan_end(name: str) -> list[psutil.Process]:
+    """The processes "end <name>" would stop, after the safety checks."""
+    matches = find(name)
+    if not matches:
+        raise SafetyError(f"No running program called '{name}'.")
+    names = {(p.info["name"] or "").lower() for p in matches}
+    blocked = names & PROTECTED
+    if blocked:
+        raise SafetyError(f"{', '.join(sorted(blocked))} is part of Windows; ending it would crash or lock the PC.")
+    # Never end MAVERICK itself or the terminal it runs in.
+    me = psutil.Process()
+    keep = {me.pid} | {p.pid for p in me.parents()}
+    targets = [p for p in matches if p.pid not in keep]
+    if not targets:
+        raise SafetyError(f"'{name}' is MAVERICK itself (or the window it runs in).")
+    return targets
+
+
+def heaviest(sort: str = "memory") -> str:
+    """Name of the biggest program you could end: "kill whatever is using the most ram"."""
+    for program in top(sort, limit=50).data["programs"]:
+        if program["name"].lower() not in PROTECTED:
+            try:
+                plan_end(program["name"])
+                return program["name"]
+            except SafetyError:
+                continue
+    return ""
+
+
+def describe_end(targets: list[psutil.Process]) -> str:
+    ram = 0
+    for proc in targets:
+        try:
+            ram += proc.memory_info().rss
+        except GONE:
+            pass
+    names = sorted({p.info["name"] for p in targets})
+    copies = f"{len(targets)} copies, " if len(targets) > 1 else ""
+    return f"End {', '.join(names)} ({copies}using {human_size(ram)} RAM)? Unsaved work in it will be lost."
+
+
+def end(name: str) -> Result:
+    """Ask each process to close, then force the ones that don't within 3 seconds."""
+    targets = plan_end(name)
+    for proc in targets:
+        try:
+            proc.terminate()
+        except GONE:
+            pass
+    gone, alive = psutil.wait_procs(targets, timeout=3)
+    for proc in alive:
+        try:
+            proc.kill()
+        except GONE:
+            pass
+    _, still = psutil.wait_procs(alive, timeout=2)
+    names = ", ".join(sorted({p.info["name"] for p in targets}))
+    if still:
+        return Result(False, f"Ended {len(targets) - len(still)} of {len(targets)} {names} processes; "
+                             f"Windows refused the rest (try running MAVERICK as Administrator).",
+                      {"ended": len(targets) - len(still), "failed": len(still)})
+    return Result(True, f"Ended {names} ({len(targets)} process{'es' if len(targets) > 1 else ''}).",
+                  {"ended": len(targets), "failed": 0})

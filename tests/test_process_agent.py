@@ -75,5 +75,5 @@ def test_real_pc_list_through_maverick():
     assert build().handle("show running processes").message.startswith("Top ")
 
 
-def test_process_questions_never_ask_for_confirmation():
-    assert ProcessAgent.risky == set()
+def test_only_ending_a_program_asks_for_confirmation():
+    assert ProcessAgent.risky == {"end"}
