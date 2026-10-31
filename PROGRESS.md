@@ -160,9 +160,13 @@ These need Administrator rights or are risky; each explains clearly when admin i
   - Brain: 31 labels; alone 75%, as MAVERICK runs 81% test / 57% hard
 - ⏭️ 📕 **7.2 Event logs (#35)**: skipped for now
 - ⏭️ 📕 **7.3 Login audit (#26)**: skipped for now
-- 👉 📕 **7.4 Network adapters (#17)**: Wi-Fi on/off, show IP addresses
+- ✅ 📕 **7.4 Network adapters (#17)**: `maverick/agents/network/`
+  - `what's my ip address`, `show network adapters`, `which wifi am i connected to`: IPv4/IPv6, MAC, speed, Wi-Fi name, signal, band
+  - `turn off wifi`, `turn on wi-fi`, `disable the ethernet adapter`: y/n with a lose-internet warning, then needs Administrator
+  - `connect to wifi` and Bluetooth are not handled (left for later)
+  - Brain: 33 labels; alone 73%, as MAVERICK runs 80% test / 58% hard
 - ⏭️ 📕 **7.5 Firewall (#18)**: skipped for now
-- ⬜ 📕 **7.6 Drivers (#30)**: restart a device (e.g. webcam)
+- 👉 📕 **7.6 Drivers (#30)**: restart a device (e.g. webcam)
 - ⏭️ 📕 **7.7 Users and passwords (#23, #24)**: skipped for now
 - ⏭️ 📕 **7.8 Mount (#14)**: skipped for now
 - ⏭️ 📕 **7.9 Secure shredding (#13)**: skipped for now
