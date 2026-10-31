@@ -244,7 +244,11 @@ Every new brain must beat the current one in `evaluate.py` before it replaces it
   - Enter = guess is right, type a label to correct it, s = skip, q = stop; typos get label suggestions
 
 **8F. Filling arguments (function calling)**
-- ⬜ 📕 **8.15 Slot filling**: the brain also tags source / destination / name in the sentence
+- ✅ 📕 **8.15 Slot filling**: `maverick/brain/slots.py` + `data/slots.tsv` (200 hand-checked file sentences)
+  - BIO tagging: every word gets B-source / I-source / B-destination / B-new_name / B-path / O
+  - Per-word softmax regression (word, neighbours, shape, operation) + Viterbi so tag sequences are never broken
+  - 5-fold cross-validation: **93.0%** of sentences fully right vs **79.0%** for the old regex rules
+  - Train: `python -m maverick.brain.slots` (saves `models/slots.json`); without it the file agent uses its regex
 - ⬜ 📕 **8.16 Multi-label**: one sentence → several actions ("copy and zip")
 
 **8G. Small local LLM (offline)**
