@@ -2,7 +2,7 @@
 # Format: label<TAB>sentence. Lines starting with # are comments.
 # Labels: files.copy, files.move, files.rename, files.size,
 #         hardware.ram, hardware.slots, hardware.cpu, hardware.battery, hardware.disks,
-#         process.list, process.origin, process.children, process.end, search.find, search.content,
+#         process.list, process.origin, process.children, process.end, process.hung, search.find, search.content,
 #         cleanup.scan, cleanup.recycle, archive.create, archive.list, archive.extract,
 #         power.plan, power.brightness, unknown
 
@@ -856,3 +856,35 @@ power.brightness	set brightness level 30
 power.brightness	max brightness now
 power.brightness	brightness up please
 power.brightness	reduce screen brightness to save battery
+
+# --- process.hung ---
+process.hung	which apps are not responding
+process.hung	end frozen apps
+process.hung	is any program frozen
+process.hung	close all the frozen windows
+process.hung	show apps that are not responding
+process.hung	my pc is frozen what is hung
+process.hung	kill everything that's not responding
+process.hung	find hung programs
+process.hung	which window is stuck
+process.hung	end the not responding apps
+process.hung	is something hanging my computer
+process.hung	force close frozen programs
+process.hung	list unresponsive apps
+process.hung	are there any frozen windows
+process.hung	an app froze, close it
+process.hung	kill all hung applications
+process.hung	what program is not responding right now
+process.hung	check for stuck apps
+process.hung	my screen froze which app is it
+process.hung	close whatever is frozen
+process.hung	get rid of the not responding windows
+process.hung	show me hung processes
+process.hung	something is stuck find it
+process.hung	terminate frozen apps
+process.hung	any apps hanging
+process.hung	end every unresponsive program
+process.hung	which program froze
+process.hung	reap the frozen apps
+process.hung	detect not responding programs
+process.hung	quit apps that stopped responding
