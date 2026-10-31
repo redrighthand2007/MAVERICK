@@ -14,6 +14,9 @@ END_WORDS = {"end", "kill", "close", "terminate", "stop", "quit"}
 # "stop the spooler service", "stop watching downloads", "kill the process on port 8080" belong to other agents.
 NOT_END = {"service", "services", "job", "jobs", "watcher", "watching", "watch", "rotating", "rotation", "wifi", "wi-fi", "port",
            "device", "bluetooth", "window", "windows"}
+GROW_RE = re.compile(r"\bleak|\b(?:ram|memory)\b.*\b(?:grow|grows|growing|growth|increasing|climbing|creeping|going up)\b"
+                     r"|\b(?:grow|grows|growing|keeps growing)\b.*\b(?:ram|memory)\b")
+DURATION_RE = re.compile(r"\bfor\s+(\d+)\s*(seconds?|secs?|s|minutes?|mins?|m)\b")
 HUNG_RE = re.compile(r"not\s+responding|\bfrozen\b|\bfreez|\bhung\b|\bhanging\b|\bstuck\b|\bunresponsive\b")
 HUNG_FILLER = {"frozen", "freezing", "freezed", "frozen.", "stuck", "hung", "hanging", "unresponsive", "not", "responding",
                "window", "windows", "everything", "any", "there", "its", "every", "again", "and", "up", "thats", "anything"}
@@ -44,11 +47,14 @@ def target_name(text: str, extra_filler: set[str] = frozenset()) -> str:
 class ProcessAgent(SubAgent):
     name = "process"
     description = ("running programs: biggest by RAM or CPU, what started a program, what it started, end a program, "
-                   "frozen apps. e.g. what started chrome, kill chrome, end frozen apps")
+                   "frozen apps, memory leaks. e.g. what started chrome, kill chrome, end frozen apps, "
+                   "which app is leaking memory")
     risky = {"end"}
 
     def parse(self, text: str) -> Intent | None:
         words = set(WORD_RE.findall(text.lower()))
+        if GROW_RE.search(text.lower()):
+            return self.extract("growing", text)
         if HUNG_RE.search(text.lower()):
             return self.extract("hung", text)
         if words & END_WORDS and not words & NOT_END:
@@ -65,6 +71,11 @@ class ProcessAgent(SubAgent):
         return self.extract(operation, text)
 
     def extract(self, operation: str, text: str) -> Intent:
+        if operation == "growing":
+            # "watch for 2 minutes" / "for 30 seconds"; a short default keeps MAVERICK responsive.
+            m = DURATION_RE.search(text.lower())
+            seconds = int(m.group(1)) * (60 if m.group(2).startswith("m") else 1) if m else 10
+            return Intent("growing", {"seconds": seconds})
         if operation == "hung":
             if not set(WORD_RE.findall(text.lower())) & END_WORDS:
                 return Intent("hung", {"end": False})
@@ -90,6 +101,8 @@ class ProcessAgent(SubAgent):
         return ops.describe_end(ops.plan_end(**intent.args))
 
     def handle(self, intent: Intent) -> Result:
+        if intent.operation == "growing":
+            return ops.growing(**intent.args)
         if intent.operation == "hung":
             return ops.end_hung() if intent.args["end"] else ops.hung()
         if intent.operation == "end":
