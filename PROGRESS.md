@@ -178,8 +178,12 @@ These need Administrator rights or are risky; each explains clearly when admin i
 - ⏭️ 📕 **7.10 Bandwidth (#19)**: skipped for now
 - ⏭️ 📕 **7.11 Connections audit (#22)**: skipped for now
 - ⏭️ 📕 **7.12 Permissions (#9)**: skipped for now
-- 👉 📕 **7.13 Memory hogs (#29)**: spot apps whose RAM keeps growing
-- ⬜ 📕 **7.14 Handle leaks (#6)**: apps holding too many handles
+- ✅ 📕 **7.13 Memory hogs (#29)**: `growing` command in `maverick/agents/process/`
+  - `which app is leaking memory`, `find memory leaks for 2 minutes`, `whose ram keeps growing`
+  - Samples every program's RAM 5 times (10 s by default, up to 5 min) and reports the ones that rose every time
+  - Shows growth and MB per minute; ignores wobble under 20 MB; read-only (suggests `kill <name>`)
+  - Brain: 36 labels; alone 74%, as MAVERICK runs 80% test / 52% hard
+- 👉 📕 **7.14 Handle leaks (#6)**: apps holding too many handles
 - ⬜ 📕 **7.15 Admin-rights audit (#25)**: who has admin on this PC (read-only)
 - ❌ **#27 Linux capabilities**: dropped, no Windows equivalent
 
