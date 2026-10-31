@@ -151,7 +151,7 @@ Every new brain must beat the current one in `evaluate.py` before it replaces it
 - ⬜ 📕 **8.15 Slot filling**: the brain also tags source / destination / name in the sentence
 - ⬜ 📕 **8.16 Multi-label**: one sentence → several actions ("copy and zip")
 
-**8G. Small local LLM (optional, offline)**
+**8G. Small local LLM (offline)**
 - ⬜ 📕 **8.17 Local LLM setup**: Ollama or llama.cpp, a 1–4B open-weights model at 4-bit (fits RTX 2050)
 - ⬜ 📕 **8.18 LLM tool calling**: describe `ops` functions; the model returns function + arguments as JSON; safety checks still run
 - ⬜ 📕 **8.19 Prompting / few-shot**: tune the instructions given to the local model
@@ -168,7 +168,7 @@ Every new brain must beat the current one in `evaluate.py` before it replaces it
 - ⬜ 📕 **8.26 Planning + utility scoring**: "free up 5 GB" → choose the best files to remove (after 5.3)
 - ⬜ 📕 **8.27 Constraint solving**: scheduled jobs that must not clash (after 6.4)
 
-**8J. Voice (optional)**
+**8J. Voice**
 - ⬜ 📕 **8.28 Offline speech-to-text** (Whisper): speak commands instead of typing
 
 ## Learning track (side chat) · learned 0/7
