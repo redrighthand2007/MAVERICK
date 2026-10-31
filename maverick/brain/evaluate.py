@@ -1,7 +1,7 @@
 """Grade the brain honestly.  Run:  python -m maverick.brain.evaluate"""
 from collections import Counter
 
-from maverick.brain.dataset import HARD_CASES_PATH, INTENTS_PATH, load_examples, split
+from maverick.brain.dataset import HARD_CASES_PATH, INTENTS_PATH, folds, load_examples, split
 from maverick.brain.text import tokenize
 from maverick.brain.train import train
 from maverick.core.orchestrator import CONFIDENCE_THRESHOLD
@@ -39,15 +39,53 @@ def accuracy(results) -> float:
     return sum(real == guess for real, guess, _ in results) / len(results)
 
 
+def per_label(results) -> dict[str, tuple[float, float, float, int]]:
+    """label -> (precision, recall, F1, how many real examples).
+
+    precision: of the times the brain SAID this label, how often was it right?
+    recall:    of the sentences that really ARE this label, how many did it catch?
+    F1:        one number that is high only when both are high (their harmonic mean).
+    """
+    scores = {}
+    for label in sorted({real for real, _, _ in results} | {guess for _, guess, _ in results}):
+        tp = sum(real == label and guess == label for real, guess, _ in results)
+        said = sum(guess == label for _, guess, _ in results)
+        real = sum(r == label for r, _, _ in results)
+        precision = tp / said if said else 0.0
+        recall = tp / real if real else 0.0
+        f1 = 2 * precision * recall / (precision + recall) if precision + recall else 0.0
+        scores[label] = (precision, recall, f1, real)
+    return scores
+
+
+def macro_f1(results) -> float:
+    """Average F1 over labels: every label counts the same, however few examples it has."""
+    scores = [f1 for _, _, f1, n in per_label(results).values() if n]
+    return sum(scores) / len(scores)
+
+
+def cross_validate(make_predict, examples, k: int = 5) -> tuple[float, float]:
+    """Train on k-1 folds, test on the last one, k times. Returns (mean accuracy, mean macro F1).
+
+    make_predict(train_examples) must return a function sentence -> (label, confidence).
+    """
+    accs, f1s = [], []
+    for train_part, test_part in folds(examples, k):
+        results = grade(make_predict(train_part), test_part)
+        accs.append(accuracy(results))
+        f1s.append(macro_f1(results))
+    return sum(accs) / k, sum(f1s) / k
+
+
 def print_report(name: str, results) -> None:
     labels = sorted({real for real, _, _ in results} | {guess for _, guess, _ in results})
-    print(f"\n=== {name}: accuracy {accuracy(results):.0%} ({len(results)} sentences) ===")
+    print(f"\n=== {name}: accuracy {accuracy(results):.0%}, macro F1 {macro_f1(results):.2f} "
+          f"({len(results)} sentences) ===")
 
-    print("Per label:")
-    for label in labels:
-        mine = [r for r in results if r[0] == label]
-        if mine:
-            print(f"  {label:<18} {accuracy(mine):.0%}  ({len(mine)})")
+    print("Per label:          precision recall   F1  (examples)")
+    for label, (precision, recall, f1, n) in per_label(results).items():
+        if n:
+            print(f"  {label:<18} {precision:>6.0%} {recall:>6.0%} {f1:>6.2f}  ({n})")
 
     print("Confusion matrix (rows = real, columns = predicted):")
     short = [label.split(".")[-1][:7] for label in labels]
@@ -66,7 +104,13 @@ def print_thresholds(results) -> None:
 
 
 def main() -> None:
-    train_set, test_set = split(load_examples(INTENTS_PATH))
+    examples = load_examples(INTENTS_PATH)
+    brain_cv = cross_validate(lambda part: (lambda s, m=train(part): m.predict(tokenize(s))), examples)
+    maverick_cv = cross_validate(lambda part: as_maverick_runs(train(part)), examples)
+    print(f"5-fold cross-validation (every sentence tested once): brain {brain_cv[0]:.1%} (F1 {brain_cv[1]:.2f}), "
+          f"as MAVERICK runs {maverick_cv[0]:.1%} (F1 {maverick_cv[1]:.2f})")
+
+    train_set, test_set = split(examples)
     hard = load_examples(HARD_CASES_PATH)
     model = train(train_set)
     brain = lambda s: model.predict(tokenize(s))
