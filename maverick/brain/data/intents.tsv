@@ -1,7 +1,8 @@
 # MAVERICK brain training data.
 # Format: label<TAB>sentence. Lines starting with # are comments.
 # Labels: files.copy, files.move, files.rename, files.size,
-#         hardware.ram, hardware.slots, hardware.cpu, hardware.battery, hardware.disks, unknown
+#         hardware.ram, hardware.slots, hardware.cpu, hardware.battery, hardware.disks,
+#         process.list, process.origin, process.children, search.find, search.content, unknown
 
 # --- files.copy ---
 files.copy	copy notes.txt to D:\backup
@@ -342,6 +343,166 @@ hardware.disks	disk space status
 hardware.disks	free gb on each disk
 hardware.disks	space remaining on all drives
 
+# --- process.list ---
+process.list	what programs are running
+process.list	list running processes
+process.list	which apps are open right now
+process.list	what is using the most ram
+process.list	which program uses the most memory
+process.list	what's slowing down my pc
+process.list	top processes by cpu
+process.list	which app is hogging the cpu
+process.list	show me the task list
+process.list	what's running in the background
+process.list	biggest programs by memory
+process.list	which processes use the most cpu
+process.list	show heavy apps
+process.list	what is eating my memory
+process.list	list all programs and their memory
+process.list	what apps are using my ram
+process.list	show task manager
+process.list	which program is using cpu right now
+process.list	how many processes are running
+process.list	pls list processes
+process.list	what's open on my laptop
+process.list	show me cpu hogs
+process.list	what is taking all my ram
+process.list	running apps
+process.list	memory hungry programs
+process.list	which tasks are heavy
+process.list	what is making my laptop slow
+process.list	processes sorted by memory
+
+# --- process.origin ---
+process.origin	what started chrome
+process.origin	why is node running
+process.origin	who launched python.exe
+process.origin	what opened this process
+process.origin	where did code.exe come from
+process.origin	parent of pid 1234
+process.origin	which program started powershell
+process.origin	why is this app running
+process.origin	what launched spotify
+process.origin	show the parent process of explorer
+process.origin	who started cmd.exe
+process.origin	trace where chrome came from
+process.origin	what is the origin of svchost
+process.origin	why is vlc open
+process.origin	what started this python script
+process.origin	which app opened brave
+process.origin	who is the parent of node.exe
+process.origin	how did whatsapp get started
+process.origin	show the chain that started code
+process.origin	what kicked off java.exe
+process.origin	why is there a python process
+process.origin	what made notepad start
+process.origin	find the parent of pid 4420
+process.origin	who ran this program
+process.origin	where does msedge come from
+process.origin	what is behind this process
+process.origin	pls show what started teams
+process.origin	what caused git.exe to run
+process.origin	what launched this background app
+process.origin	which program opened python
+
+# --- process.children ---
+process.children	what did explorer start
+process.children	show children of chrome
+process.children	which processes did code.exe launch
+process.children	what has powershell started
+process.children	list child processes of pid 1234
+process.children	what programs did vs code open
+process.children	sub processes of node
+process.children	what is running under explorer
+process.children	what did python spawn
+process.children	children of svchost
+process.children	what has brave launched
+process.children	which apps were started by explorer
+process.children	show what cmd.exe is running
+process.children	what did this program start
+process.children	processes started by claude
+process.children	what opened from spotify
+process.children	list what java.exe started
+process.children	child processes please
+process.children	what did my terminal start
+process.children	what runs under chrome
+process.children	show the tree below explorer
+process.children	everything started by code
+process.children	what did powershell open
+process.children	which processes belong to chrome
+process.children	what has vlc spawned
+process.children	pls show child programs of node
+process.children	what did windows terminal launch
+process.children	spawned processes of python
+process.children	what programs are under code.exe
+process.children	show everything node started
+
+# --- search.find ---
+search.find	find dune movie in e drive
+search.find	where is notes.txt
+search.find	find pdf files in downloads
+search.find	search for report
+search.find	find *.py in E:\MAVERICK
+search.find	find big files on d drive
+search.find	photos from yesterday
+search.find	find files edited today
+search.find	which files did i change this week
+search.find	find videos bigger than 1 gb
+search.find	files modified in the last 3 days
+search.find	find files older than 2 years in documents
+search.find	locate my resume
+search.find	where did i save budget.xlsx
+search.find	find all mp3 songs
+search.find	search my desktop for screenshots
+search.find	find large files
+search.find	find documents smaller than 1 mb
+search.find	where are my python files
+search.find	find files named invoice
+search.find	look for the thesis document
+search.find	find recent downloads
+search.find	search e drive for movies
+search.find	where is the setup exe
+search.find	find zip files in downloads
+search.find	files i edited yesterday
+search.find	find pictures from this month
+search.find	look for cv.pdf on d drive
+search.find	pls find top gun
+search.find	search for installers in apk stuff
+search.find	find the biggest videos
+search.find	where is my project file main.py
+
+# --- search.content ---
+search.content	find files containing password
+search.content	search for "api key" inside files
+search.content	which files mention maverick
+search.content	find text files that contain todo
+search.content	search inside files for confidence
+search.content	files containing the word secret
+search.content	which document says invoice
+search.content	look inside my notes for exam
+search.content	find code that mentions psutil
+search.content	grep for error in logs
+search.content	search the text of files for budget
+search.content	which python files contain import os
+search.content	find the word deadline in my documents
+search.content	files that say hello world
+search.content	search file contents for kush
+search.content	find notes mentioning project
+search.content	which files have the text threshold
+search.content	look for "TODO" in E:\MAVERICK
+search.content	search inside txt files for wifi password
+search.content	find any file that mentions github
+search.content	where did i write about the meeting
+search.content	search my code for orchestrator
+search.content	find lines containing fixme
+search.content	which logs contain failed
+search.content	look inside files for an email address
+search.content	search contents for phone number
+search.content	find csv files containing marks
+search.content	which md files mention brain
+search.content	search all files for the text deadline
+search.content	find documents that contain my roll number
+
 # --- unknown: things MAVERICK cannot do (yet) ---
 unknown	hi
 unknown	hello maverick
@@ -362,7 +523,7 @@ unknown	remove report.pdf
 unknown	empty the recycle bin
 unknown	kill chrome
 unknown	kill the process using port 8080
-unknown	what's using my cpu
+process.list	what's using my cpu
 unknown	turn off wifi
 unknown	shut down the computer
 unknown	restart my pc
@@ -375,7 +536,7 @@ unknown	send an email to my friend
 unknown	zip the folder D:\work
 unknown	extract archive.zip
 unknown	encrypt notes.txt
-unknown	find all pdf files in D:\
+search.find	find all pdf files in D:\
 unknown	list files in D:\docs
 unknown	what's in D:\movies
 unknown	create a new folder called test
@@ -397,7 +558,7 @@ unknown	install vlc
 unknown	update windows
 unknown	what's my ip address
 unknown	ping google.com
-unknown	show running processes
+process.list	show running processes
 unknown	sort my downloads by date
 unknown	compress video.mp4
 unknown	schedule a backup every friday
@@ -411,7 +572,7 @@ unknown	lower the screen brightness
 unknown	update my graphics driver
 unknown	close all programs using memory
 unknown	free up ram by closing apps
-unknown	which app is using the most memory
+process.list	which app is using the most memory
 unknown	what is the cpu fan speed
 unknown	is my gpu working
 unknown	how hot is my laptop

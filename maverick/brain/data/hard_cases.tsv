@@ -43,3 +43,12 @@ hardware.disks	is D: almost full
 hardware.disks	which disk has free space for a 20 gb file
 files.size	how much space does the D:\games folder take
 unknown	what's the cpu temperature
+process.list	what's draining my laptop right now
+process.list	show which apps are open
+process.origin	why is java running on my pc
+process.origin	what made code.exe start
+process.children	what is chrome running underneath
+search.find	where did i put the dune movie
+search.find	videos i downloaded this week
+search.content	which file has my wifi password written in it
+search.content	find notes that talk about exams
