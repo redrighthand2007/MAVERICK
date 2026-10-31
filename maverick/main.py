@@ -4,6 +4,7 @@ from pathlib import Path
 # Lets `python maverick/main.py` work from the project root.
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
+from maverick.agents.archive.agent import ArchiveAgent
 from maverick.agents.cleanup.agent import CleanupAgent
 from maverick.agents.files.agent import FileAgent
 from maverick.agents.hardware.agent import HardwareAgent
@@ -20,7 +21,9 @@ def build(brain: Brain | None = None) -> Orchestrator:
     # Cleanup before hardware: "free up space on D:" wants space back, not "how much is free".
     # Hardware before files: "space left on D:" means free space, not the size of everything on D:.
     # Search before files: "find big files" is a search, not "size of big".
-    return Orchestrator([ProcessAgent(), CleanupAgent(), HardwareAgent(), SearchAgent(), FileAgent()], brain)
+    # Search before archive: "find zip files" is a search, not "make a zip".
+    agents = [ProcessAgent(), CleanupAgent(), HardwareAgent(), SearchAgent(), ArchiveAgent(), FileAgent()]
+    return Orchestrator(agents, brain)
 
 
 def ask_if_needed(maverick: Orchestrator, result: Result) -> Result:
