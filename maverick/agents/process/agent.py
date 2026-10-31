@@ -12,7 +12,7 @@ CHILD_WORDS = {"children", "child", "spawned", "subprocesses"}
 HEAVY_WORDS = {"most", "biggest", "heaviest", "hungriest", "top"}
 END_WORDS = {"end", "kill", "close", "terminate", "stop", "quit"}
 # "stop the spooler service", "stop watching downloads", "kill the process on port 8080" belong to other agents.
-NOT_END = {"service", "services", "job", "jobs", "watcher", "watching", "watch", "wifi", "wi-fi", "port",
+NOT_END = {"service", "services", "job", "jobs", "watcher", "watching", "watch", "rotating", "rotation", "wifi", "wi-fi", "port",
            "device", "bluetooth", "window", "windows"}
 HUNG_RE = re.compile(r"not\s+responding|\bfrozen\b|\bfreez|\bhung\b|\bhanging\b|\bstuck\b|\bunresponsive\b")
 HUNG_FILLER = {"frozen", "freezing", "freezed", "frozen.", "stuck", "hung", "hanging", "unresponsive", "not", "responding",

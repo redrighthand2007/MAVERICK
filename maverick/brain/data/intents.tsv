@@ -4,7 +4,7 @@
 #         hardware.ram, hardware.slots, hardware.cpu, hardware.battery, hardware.disks,
 #         process.list, process.origin, process.children, process.end, process.hung, search.find, search.content,
 #         cleanup.scan, cleanup.recycle, archive.create, archive.list, archive.extract,
-#         power.plan, power.brightness, jobs.list, jobs.stop, watch.start, unknown
+#         power.plan, power.brightness, jobs.list, jobs.stop, watch.start, logs.rotate, unknown
 
 # --- files.copy ---
 files.copy	copy notes.txt to D:\backup
@@ -984,3 +984,35 @@ watch.start	watch downloads and file away pdfs into documents
 watch.start	auto-copy new photos in pictures to E:\cloud
 watch.start	monitor downloads and send videos to D:\videos
 watch.start	put every new screenshot from desktop into pictures automatically
+
+# --- logs.rotate ---
+logs.rotate	rotate D:\app\server.log
+logs.rotate	rotate server.log when it gets bigger than 50 mb
+logs.rotate	truncate D:\logs\debug.log
+logs.rotate	my log D:\x\app.log is too big
+logs.rotate	empty the log app.log
+logs.rotate	rotate the log file error.log
+logs.rotate	compress and empty access.log
+logs.rotate	rotate app.log every time it goes over 100 mb
+logs.rotate	keep server.log small by rotating it at 20 mb
+logs.rotate	the log D:\game\output.log is huge, rotate it
+logs.rotate	clear the log file D:\web\access.log
+logs.rotate	shrink the log D:\bot\bot.log
+logs.rotate	rotate my minecraft log latest.log
+logs.rotate	save and empty D:\service\service.log
+logs.rotate	log rotation for D:\api\api.log
+logs.rotate	reset the log debug.log after saving a copy
+logs.rotate	archive and clear the log events.log
+logs.rotate	rotate error.log when it is larger than 1 gb
+logs.rotate	trim the log file D:\server\server.log
+logs.rotate	rotate logs for D:\app\app.log when it passes 10 mb
+logs.rotate	the server log keeps growing, rotate D:\srv\srv.log
+logs.rotate	truncate app.log but keep a backup
+logs.rotate	rotate the nginx log D:\nginx\logs\error.log
+logs.rotate	rotate output.log now
+logs.rotate	gzip and empty the log trace.log
+logs.rotate	set up log rotation on app.log at 200 mb
+logs.rotate	rotate this log please D:\x\y.log
+logs.rotate	empty debug.log but keep a compressed copy
+logs.rotate	rotate the big log file in D:\logs
+logs.rotate	start rotating server.log whenever it is over 5 mb
