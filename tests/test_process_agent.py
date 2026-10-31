@@ -157,3 +157,51 @@ def test_end_the_heaviest_hunts_by_cpu_or_ram(monkeypatch):
     assert agent.parse("kill whatever uses the most cpu").args == {"name": "notepad.exe"}
     assert agent.parse("end the biggest program").args == {"name": "notepad.exe"}
     assert asked == ["cpu", "memory"]
+
+
+@pytest.mark.parametrize("sentence, operation, args", [
+    ("which apps are not responding", "hung", {"end": False}),
+    ("my pc is frozen", "hung", {"end": False}),
+    ("end frozen apps", "hung", {"end": True}),
+    ("force close everything that's not responding", "hung", {"end": True}),
+    ("kill excel it is stuck", "end", {"name": "excel"}),  # names one program, so only that one
+])
+def test_parse_frozen_app_requests(sentence, operation, args):
+    intent = ProcessAgent().parse(sentence)
+    assert (intent.operation, intent.args) == (operation, args)
+
+
+def test_only_ending_frozen_apps_is_risky():
+    agent = ProcessAgent()
+    assert not agent.is_risky(agent.parse("show frozen apps"))
+    assert agent.is_risky(agent.parse("end frozen apps"))
+
+
+def test_nothing_frozen():
+    # On a healthy PC this is the real answer; it only reads window states.
+    result = ops.hung()
+    assert result.success
+
+
+def test_end_frozen_apps_after_yes(monkeypatch):
+    child = subprocess.Popen([sys.executable, "-c", "import time; time.sleep(60)"])
+    try:
+        monkeypatch.setattr(ops, "hung_windows", lambda: [(child.pid, "Untitled - Frozen")])
+        maverick = build()
+        listed = maverick.handle("which apps are not responding")
+        assert f"(PID {child.pid}): \"Untitled - Frozen\"" in listed.message
+        question = maverick.handle("end frozen apps")
+        assert question.data.get("confirm") and "Untitled - Frozen" in question.message
+        result = maverick.confirm(True)
+        assert result.success, result.message
+        assert child.wait(timeout=5) is not None
+    finally:
+        if child.poll() is None:
+            child.kill()
+
+
+def test_frozen_windows_parts_are_never_ended(monkeypatch):
+    explorer = next(p for p in psutil.process_iter(["name"]) if (p.info["name"] or "").lower() == "explorer.exe")
+    monkeypatch.setattr(ops, "hung_windows", lambda: [(explorer.pid, "File Explorer")])
+    result = build().handle("end frozen apps")
+    assert result.message.startswith("Blocked for safety")

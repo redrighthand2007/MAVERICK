@@ -31,6 +31,10 @@ class SubAgent:
     description = ""
     risky: set[str] = set()
 
+    def is_risky(self, intent: Intent) -> bool:
+        """Override when the arguments decide it: "show frozen apps" is safe, "end frozen apps" is not."""
+        return intent.operation in self.risky
+
     def parse(self, text: str) -> Intent | None:
         raise NotImplementedError
 

@@ -66,3 +66,5 @@ archive.extract	pull everything out of photos.zip
 power.plan	squeeze every bit of speed out of this laptop
 power.plan	let the laptop sip power
 power.brightness	the display is blinding me
+process.hung	the app has the spinning wheel and won't react
+process.hung	something locked up, deal with it

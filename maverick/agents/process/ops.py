@@ -1,6 +1,8 @@
-"""Questions about running programs, plus ending them (5.1). Only end() changes anything, and only after y/n."""
+"""Questions about running programs, plus ending them (5.1, 5.7). Only the end functions change anything, after y/n."""
+import ctypes
 import time
 from collections import defaultdict
+from ctypes import wintypes
 
 import psutil
 
@@ -210,3 +212,74 @@ def end(name: str) -> Result:
                       {"ended": len(targets) - len(still), "failed": len(still)})
     return Result(True, f"Ended {names} ({len(targets)} process{'es' if len(targets) > 1 else ''}).",
                   {"ended": len(targets), "failed": 0})
+
+
+def hung_windows() -> list[tuple[int, str]]:
+    """(PID, window title) of every visible window Windows marks "Not Responding"."""
+    user32 = ctypes.windll.user32
+    found = []
+
+    @ctypes.WINFUNCTYPE(ctypes.c_bool, wintypes.HWND, wintypes.LPARAM)
+    def check(hwnd, _):
+        if user32.IsWindowVisible(hwnd) and user32.IsHungAppWindow(hwnd):
+            length = user32.GetWindowTextLengthW(hwnd)
+            title = ctypes.create_unicode_buffer(length + 1)
+            user32.GetWindowTextW(hwnd, title, length + 1)
+            pid = wintypes.DWORD()
+            user32.GetWindowThreadProcessId(hwnd, ctypes.byref(pid))
+            found.append((pid.value, title.value))
+        return True
+
+    user32.EnumWindows(check, 0)
+    return found
+
+
+def hung_programs() -> list[dict]:
+    """Not-responding programs, one entry per process (a frozen app can have several windows)."""
+    programs = {}
+    for pid, title in hung_windows():
+        try:
+            name = psutil.Process(pid).name()
+        except GONE:
+            continue
+        programs.setdefault(pid, {"pid": pid, "name": name, "titles": []})["titles"].append(title)
+    return list(programs.values())
+
+
+def hung() -> Result:
+    programs = hung_programs()
+    if not programs:
+        return Result(True, "No apps are frozen right now; every window is responding.", {"hung": []})
+    lines = [f"{len(programs)} app{'s are' if len(programs) > 1 else ' is'} not responding:"]
+    lines += [f"  - {p['name']} (PID {p['pid']}): \"{p['titles'][0]}\"" for p in programs]
+    lines.append("To end them, say: end frozen apps")
+    return Result(True, "\n".join(lines), {"hung": programs})
+
+
+def plan_end_hung() -> list[dict]:
+    programs = [p for p in hung_programs() if p["name"].lower() not in PROTECTED]
+    if not programs:
+        raise SafetyError("No frozen apps to end; every window is responding.")
+    return programs
+
+
+def describe_end_hung() -> str:
+    names = ", ".join(f"{p['name']} (\"{p['titles'][0]}\")" for p in plan_end_hung())
+    return f"End these frozen apps: {names}? Unsaved work in them will be lost."
+
+
+def end_hung() -> Result:
+    """Frozen apps can't answer a polite close, so they are forced straight away."""
+    programs = plan_end_hung()
+    ended = []
+    for program in programs:
+        try:
+            psutil.Process(program["pid"]).kill()
+            ended.append(program["name"])
+        except GONE:
+            pass
+    if len(ended) < len(programs):
+        return Result(False, f"Ended {len(ended)} of {len(programs)} frozen apps; Windows refused the rest "
+                             "(try running MAVERICK as Administrator).", {"ended": len(ended)})
+    return Result(True, f"Ended {len(ended)} frozen app{'s' if len(ended) > 1 else ''}: {', '.join(ended)}.",
+                  {"ended": len(ended)})

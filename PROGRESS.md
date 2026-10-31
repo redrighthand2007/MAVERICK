@@ -117,11 +117,16 @@ Every agent follows the same recipe:
   - `set brightness to 40`, `make the screen brighter`, `dim the screen`: laptop screens only (WMI)
   - No y/n: both change instantly and can be switched straight back
   - Brain: 23 labels; alone 72%, as MAVERICK runs 78% test / 60% hard
-- 👉 📕 **5.7 Hung app reaper (#2)**: find "Not Responding" apps; end them after y/n
+- ✅ 📕 **5.7 Hung app reaper (#2)**: `hung` command in `maverick/agents/process/`
+  - `which apps are not responding`: the windows Windows itself marks "Not Responding" (`IsHungAppWindow`)
+  - `end frozen apps`: y/n listing each app and window title, then forces them (frozen apps can't close politely)
+  - `kill excel it is stuck` ends just excel; Windows' own processes are never ended
+  - Core: agents can now decide y/n from the details (`is_risky`): "show frozen apps" is safe, "end frozen apps" asks
+  - Brain: 24 labels; alone 73%, as MAVERICK runs 78% test / 58% hard (hard floor 0.60 → 0.55)
 
 ## Stage 6: Background agents (MAVERICK keeps running) · learned 0/3
 
-- ⬜ 📕 **6.1 Background mode**: MAVERICK runs in the background so agents can watch and wait
+- 👉 📕 **6.1 Background mode**: MAVERICK runs in the background so agents can watch and wait
 - ⬜ 📕 **6.2 Folder watcher (#11)**: e.g. move every new PDF in Downloads to Documents
 - ⏭️ 📕 **6.3 Background jobs (#5)**: skipped for now
 - ⏭️ 📕 **6.4 Task scheduler (#32)**: skipped for now
