@@ -249,7 +249,13 @@ Every new brain must beat the current one in `evaluate.py` before it replaces it
   - Per-word softmax regression (word, neighbours, shape, operation) + Viterbi so tag sequences are never broken
   - 5-fold cross-validation: **93.0%** of sentences fully right vs **79.0%** for the old regex rules
   - Train: `python -m maverick.brain.slots` (saves `models/slots.json`); without it the file agent uses its regex
-- ⬜ 📕 **8.16 Multi-label**: one sentence → several actions ("copy and zip")
+- ✅ 📕 **8.16 Several actions in one sentence**: `maverick/brain/multi.py` + `data/multi.tsv` (85 sentences)
+  - A learned splitter decides at every "and" / "then" / comma: cut here, or keep together ("cut and paste" is ONE action)
+  - Stacking: the intent brain reads each side of the gap, and its answers become the splitter's features
+  - 5-fold CV: multi-action sentences cut right 88.9% (words only) → **97.5%** (with the brain); one-action kept whole 80.5% → **86.4%**
+  - The orchestrator checks every piece is understood BEFORE running any, then runs them in order;
+    "it" / "them" means the previous step's result, a "no" or a failure stops the rest
+  - Train: `python -m maverick.brain.multi` (saves `models/splitter.json`; needs the brain trained first)
 
 **8G. Small local LLM (offline)**
 - ⬜ 📕 **8.17 Local LLM setup**: Ollama or llama.cpp, a 1–4B open-weights model at 4-bit (fits RTX 2050)
