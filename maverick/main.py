@@ -20,6 +20,7 @@ from maverick.agents.search.agent import SearchAgent
 from maverick.agents.services.agent import ServicesAgent
 from maverick.agents.watch.agent import WatchAgent
 from maverick.brain import Brain
+from maverick.brain.multi import Splitter
 from maverick.brain.slots import SlotTagger
 from maverick.core.agent_base import Result
 from maverick.core.background import JOBS_PATH, Background
@@ -30,7 +31,7 @@ LOG_PATH = JOBS_PATH.parent / "background.log"
 
 
 def build(brain: Brain | None = None, background: Background | None = None,
-          tagger: SlotTagger | None = None) -> Orchestrator:
+          tagger: SlotTagger | None = None, splitter: Splitter | None = None) -> Orchestrator:
     # Jobs that keep running in the background (6.1). Without one passed in, jobs live in memory only.
     background = background or Background()
     # Register sub-agents here. Order matters for keyword rules: the first agent that understands a request wins.
@@ -51,7 +52,7 @@ def build(brain: Brain | None = None, background: Background | None = None,
         NetworkAgent(), DevicesAgent(), AccountsAgent(), PowerAgent(), CleanupAgent(), HardwareAgent(),
         SearchAgent(), ArchiveAgent(), FileAgent(tagger),
     ]
-    maverick = Orchestrator(agents, brain)
+    maverick = Orchestrator(agents, brain, splitter)
     maverick.background = background
     return maverick
 
@@ -113,7 +114,8 @@ if __name__ == "__main__":
     if brain is None:
         print("(Brain not trained yet; using keyword rules. Train it with: python -m maverick.brain.train)")
     # The 8.15 slot tagger finds file names in sentences; untrained, the file agent's regex rules do.
-    maverick = build(brain, background, SlotTagger.load())
+    # The 8.16 splitter cuts "copy a.txt to D:\x and zip it" into steps; it needs the brain to read each piece.
+    maverick = build(brain, background, SlotTagger.load(), Splitter.load(brain.model if brain else None))
     if len(sys.argv) > 1:
         # The shell already removed the quotes, so put them back around args with spaces,
         # unless the whole request was passed as one quoted sentence.

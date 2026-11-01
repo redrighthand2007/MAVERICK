@@ -77,7 +77,7 @@ def create(source: str, output: str = "", fmt: str = "zip", password: str = "") 
     after = out.stat().st_size
     lock = ", AES-256 encrypted" if password else ""
     return Result(True, f"Created {out} ({len(items)} files, {human_size(before)} -> {human_size(after)}{lock}).",
-                  {"archive": str(out), "files": len(items)})
+                  {"archive": str(out), "files": len(items), "output": str(out)})
 
 
 def is_encrypted(archive: Path) -> bool:
@@ -151,4 +151,4 @@ def extract(archive: str, destination: str = "", password: str = "") -> Result:
             # The "data" filter refuses links, devices and absolute paths: the tar version of the Zip Slip guard.
             tf.extractall(dest, filter="data")
     count = len(entries(path))
-    return Result(True, f"Extracted {count} files from {path.name} into {dest}.", {"destination": str(dest), "files": count})
+    return Result(True, f"Extracted {count} files from {path.name} into {dest}.", {"destination": str(dest), "files": count, "output": str(dest)})
