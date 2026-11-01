@@ -258,7 +258,12 @@ Every new brain must beat the current one in `evaluate.py` before it replaces it
   - Train: `python -m maverick.brain.multi` (saves `models/splitter.json`; needs the brain trained first)
 
 **8G. Small local LLM (offline)**
-- ⬜ 📕 **8.17 Local LLM setup**: Ollama or llama.cpp, a 1–4B open-weights model at 4-bit (fits RTX 2050)
+- ✅ 📕 **8.17 Local LLM setup**: Ollama + **Llama 3.2 3B** (Meta, 2 GB, 4-bit); client in `maverick/llm/ollama.py`
+  - Ollama is a local web server (`localhost:11434`); MAVERICK POSTs JSON to `/api/chat`, standard library only
+  - On the RTX 2050: 80% GPU / 20% CPU, ~38 tokens/sec, 0.7 s per short answer once loaded (first load ~55 s)
+  - temperature 0 by default, so the same question gets the same answer
+  - Setup: install Ollama, then `ollama pull llama3.2:3b`. Try: `python -m maverick.llm.ollama "what is RAM?"`
+  - Tests use a fake Ollama server, so they need no model or GPU
 - ⬜ 📕 **8.18 LLM tool calling**: describe `ops` functions; the model returns function + arguments as JSON; safety checks still run
 - ⬜ 📕 **8.19 Prompting / few-shot**: tune the instructions given to the local model
 - ⬜ 📕 **8.20 LoRA fine-tune** of a 0.5–1.5B model on `intents.tsv`
