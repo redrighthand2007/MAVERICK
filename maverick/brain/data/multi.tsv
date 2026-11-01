@@ -1,0 +1,90 @@
+# Several actions in one sentence (Stage 8.16).
+# Format: labels joined by +<TAB>sentence, with | where one action ends and the next begins.
+# The splitter learns WHERE to cut. Every "and" / "then" / comma NOT marked with | is a "don't cut here" example,
+# and so is every such word in intents.tsv: "cut and paste a.txt" or "cpu name and cores" are ONE action.
+files.copy+archive.create	copy notes.txt to D:\backup | and zip it
+files.copy+archive.create	copy report.pdf to E:\docs | and then compress it
+files.copy+archive.create	copy D:\photos to E:\photos | then zip it
+files.copy+archive.create	duplicate thesis.docx into D:\safe | and make a zip of it
+files.copy+files.rename	copy notes.txt to D:\backup | and rename it to notes-old.txt
+files.copy+files.rename	copy budget.xlsx into E:\work | then rename it to budget-2025.xlsx
+files.copy+files.size	copy D:\games to E:\games | and tell me how big it is
+files.copy+files.copy	copy a.txt to D:\x | and copy b.txt to D:\y
+files.copy+files.move	copy notes.txt to E:\backup | and move report.pdf to D:\old
+files.move+archive.create	move D:\logs to E:\old | and zip it
+files.move+archive.create	move report.pdf into D:\archive | then compress it
+files.move+files.rename	move notes.txt to D:\backup | and rename it to ideas.txt
+files.move+files.rename	move song.mp3 to E:\music | then rename it to intro.mp3
+files.move+files.size	move D:\movies to E:\movies | and check how big it is
+files.rename+files.move	rename draft.txt to final.txt | and move it to D:\done
+files.rename+files.copy	rename cv.pdf to resume.pdf | and copy it to E:\jobs
+files.rename+archive.create	rename D:\work to work-old | then zip it
+files.size+files.copy	how big is D:\photos | and copy it to E:\photos
+files.size+archive.create	check the size of D:\videos | and compress it
+archive.create+files.move	zip D:\project | and move it to E:\backups
+archive.create+files.copy	compress D:\notes | then copy it to F:\
+archive.create+files.move	make a zip of report.docx | and put it in D:\send
+archive.extract+files.size	unzip photos.zip to D:\photos | and tell me how big it is
+archive.extract+files.move	extract data.zip into D:\data | then move it to E:\data
+archive.extract+archive.list	extract backup.zip to D:\restore | and list what was in backup.zip
+archive.list+archive.extract	show what's inside notes.zip | and then extract it to D:\notes
+hardware.ram+hardware.cpu	how much ram do i have | and what cpu is it
+hardware.ram+hardware.cpu	show my memory | and my processor
+hardware.cpu+hardware.ram	what processor do i have, | how much ram
+hardware.battery+power.plan	check my battery | and turn on battery saver
+hardware.battery+power.plan	how much battery is left | then switch to best power efficiency
+hardware.battery+power.brightness	what's my battery at | and lower the brightness to 30
+hardware.disks+cleanup.scan	how much space is left on my drives | and find junk i can clean
+hardware.disks+cleanup.recycle	show free space on each drive | then clear the temp files
+cleanup.scan+cleanup.recycle	scan for junk files | and then clean them up
+cleanup.recycle+hardware.disks	clear temp files | and show me free space after
+process.list+process.end	show what is using the most memory | and kill the biggest one
+process.list+process.end	list running programs | then close chrome
+process.hung+process.end	which apps are frozen | and end them
+process.hung+process.end	find apps that are not responding | then close them
+process.origin+process.children	what started chrome | and what did chrome start
+process.list+hardware.ram	what is eating my memory | and how much ram do i have in total
+process.handles+process.growing	which app has the most handles | and which one is leaking memory
+process.end+process.list	close notepad | and show me what's still running
+power.plan+power.brightness	switch to best performance | and set brightness to 100
+power.brightness+power.plan	dim the screen to 20 | then turn on battery saver
+power.plan+power.brightness	turn on battery saver, | lower brightness to 40
+network.info+network.wifi	what's my ip address | and turn off wifi
+network.wifi+network.info	turn on wifi | then show my ip
+network.info+devices.list	show my network adapters | and list devices with problems
+devices.list+devices.restart	show devices with problems | and restart the webcam
+services.list+services.change	is the print spooler running | and restart it
+services.list+services.change	check the windows update service | then stop it
+services.change+services.list	restart the spooler service | and show me if it's running
+jobs.list+jobs.stop	list my background jobs | and stop job 2
+jobs.list+jobs.stop	show running jobs | then stop all of them
+watch.start+jobs.list	watch downloads and move pdfs to documents | and then list my jobs
+logs.rotate+files.size	rotate D:\app\server.log | and tell me how big it is now
+logs.rotate+jobs.list	rotate D:\srv\srv.log when it is bigger than 50 mb | and show my jobs
+search.find+files.size	find big videos on D: | and tell me the size of D:\videos
+search.find+archive.create	find pdf files in documents | then zip D:\docs
+search.content+files.copy	find files containing invoice | and copy D:\bills to E:\bills
+accounts.admins+network.info	who has admin on this pc | and what's my ip
+accounts.admins+services.list	list the admin accounts | then show running services
+hardware.cpu+hardware.battery+hardware.disks	what cpu do i have, | how is my battery | and how much disk space is free
+files.copy+archive.create+files.move	copy D:\photos to E:\photos | then zip it | and move it to F:\backups
+process.list+process.end+hardware.ram	show the heaviest programs, | close the biggest one | and then show my ram
+network.info+network.wifi+network.info	show my ip | then turn off wifi | and show my ip again
+cleanup.scan+cleanup.recycle+hardware.disks	scan for junk | then clean it | and then show free space
+# One action, even with "and" / "then" / commas inside: the splitter must leave these whole.
+files.copy	copy and paste report.pdf into D:\work
+files.move	cut and paste notes.txt to E:\
+files.move	move song.mp3 out of downloads and into E:\music
+files.copy	copy rock and roll.mp3 to D:\music
+search.content	find files containing cats and dogs
+search.find	find photos from 2023 and 2024
+hardware.ram	how much ram is free and how much is used
+hardware.cpu	cpu speed and number of cores
+network.info	my ip, mac and adapter name
+process.end	close chrome and all its windows
+archive.create	zip notes.txt and todo.txt together
+archive.create	compress and password protect secrets.docx
+power.plan	switch to balanced and stay there
+devices.list	list keyboard, mouse and webcam
+cleanup.scan	look for temp files and old junk
+files.rename	rename notes.txt to notes and ideas.txt
