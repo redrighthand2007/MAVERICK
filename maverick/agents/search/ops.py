@@ -19,6 +19,7 @@ SKIP_DIRS = {"windows", "program files", "program files (x86)", "programdata", "
 TEXT_EXTS = {"txt", "md", "py", "js", "ts", "json", "csv", "tsv", "html", "css", "xml", "yml", "yaml",
              "ini", "cfg", "log", "java", "c", "cpp", "h", "sql", "bat", "ps1", "env", "toml"}
 MAX_TEXT_SIZE = 5 * 1024 * 1024  # don't read inside files bigger than 5 MB
+OWN_FIRST = {"documents", "desktop", "downloads", "pictures", "music", "videos", "onedrive"}
 SHOW = 20
 
 
@@ -35,7 +36,10 @@ def find(root: str = "", name: str = "", exts: list[str] | None = None, after: f
     found, scanned, stopped = [], 0, False
     began = time.monotonic()
     for folder, dirs, files in os.walk(start):
-        dirs[:] = [d for d in dirs if d.lower() not in SKIP_DIRS]
+        # Hidden dot-folders (.cache, .vscode, ...) hold app settings, not your files: they used up the whole
+        # time limit before the search ever reached Downloads. Your own folders go first for the same reason.
+        dirs[:] = sorted((d for d in dirs if d.lower() not in SKIP_DIRS and not d.startswith(".")),
+                         key=lambda d: d.lower() not in OWN_FIRST)
         for filename in files:
             scanned += 1
             low = filename.lower()
@@ -66,6 +70,8 @@ def find(root: str = "", name: str = "", exts: list[str] | None = None, after: f
         found.sort(key=lambda f: f[1], reverse=True)  # "bigger than" questions want the biggest first
     elif after is not None:
         found.sort(key=lambda f: f[2], reverse=True)  # date questions want the newest first
+    elif len(found) > 1:
+        found = rank(found, name)  # 8.25: the file you most likely meant first, not disk order
 
     took = time.monotonic() - began
     header = f"Found {len(found)} file{'s' if len(found) != 1 else ''} in {start} (looked at {scanned:,} files in {took:.1f} s)"
@@ -82,6 +88,15 @@ def find(root: str = "", name: str = "", exts: list[str] | None = None, after: f
         lines.append(f"  ... and {len(found) - SHOW} more")
     return Result(True, "\n".join(lines), {"count": len(found), "scanned": scanned, "stopped": stopped,
                                            "files": [str(f[0]) for f in found]})
+
+
+def rank(found: list[tuple], query: str) -> list[tuple]:
+    """Sort (path, size, mtime, line) results with the 8.25 ranker: learned weights if trained, else hand-set."""
+    from maverick.brain.rank import Ranker, features
+
+    now = time.time()
+    X = np.array([features(path, query, mtime, now) for path, _, mtime, _ in found])
+    return [found[i] for i in Ranker.load().order(X)]
 
 
 def first_matching_line(path: Path, size: int, needle: str) -> str | None:
