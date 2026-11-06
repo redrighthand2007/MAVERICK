@@ -3,7 +3,7 @@
 # Labels: files.copy, files.move, files.rename, files.size,
 #         hardware.ram, hardware.slots, hardware.cpu, hardware.battery, hardware.disks,
 #         process.list, process.origin, process.children, process.end, process.hung, process.growing, process.handles, process.unusual,
-#         search.find, search.content,
+#         search.find, search.content, search.group,
 #         cleanup.scan, cleanup.recycle, archive.create, archive.list, archive.extract,
 #         power.plan, power.brightness, jobs.list, jobs.stop, watch.start, logs.rotate,
 #         services.list, services.change, network.info, network.wifi,
@@ -507,6 +507,38 @@ search.content	find csv files containing marks
 search.content	which md files mention brain
 search.content	search all files for the text deadline
 search.content	find documents that contain my roll number
+
+# --- search.group --- (8.23: k-means groups the files in a folder; read-only)
+search.group	group the files in my downloads
+search.group	group similar files in downloads
+search.group	cluster the files on my desktop
+search.group	what kinds of files make up my downloads
+search.group	organize my downloads into groups
+search.group	group my downloads by type
+search.group	categorize the files in documents
+search.group	which files in downloads belong together
+search.group	show my downloads grouped
+search.group	put my desktop files into groups
+search.group	group my downloads into sorts of files
+search.group	group up the stuff in my downloads
+search.group	find groups of similar files in documents
+search.group	cluster my documents
+search.group	how are the files in downloads related
+search.group	group the files in D:\work
+search.group	organise the files in E:\notes into groups
+search.group	what types of files are on my desktop
+search.group	group files by what they have in common
+search.group	which downloads go together
+search.group	make sense of my messy downloads
+search.group	split my downloads into categories
+search.group	what's in my downloads, grouped
+search.group	categorise my desktop files
+search.group	group similar documents together
+search.group	are there files in downloads that belong together
+search.group	split my downloads into clusters
+search.group	group my pictures
+search.group	what groups of files are in D:\projects
+search.group	tidy view of my downloads by kind
 
 # --- unknown: things MAVERICK cannot do (yet) ---
 unknown	hi
