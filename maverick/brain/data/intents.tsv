@@ -5,7 +5,7 @@
 #         process.list, process.origin, process.children, process.end, process.hung, process.growing, process.handles, process.unusual,
 #         search.find, search.content, search.group,
 #         cleanup.scan, cleanup.recycle, cleanup.free, archive.create, archive.list, archive.extract,
-#         power.plan, power.brightness, jobs.list, jobs.stop, watch.start, logs.rotate,
+#         power.plan, power.brightness, jobs.list, jobs.stop, jobs.plan, watch.start, logs.rotate,
 #         services.list, services.change, network.info, network.wifi,
 #         devices.list, devices.restart, accounts.admins, unknown
 
@@ -1051,6 +1051,38 @@ jobs.stop	turn off the folder watcher
 jobs.stop	stop rotating app.log
 jobs.stop	remove every background job
 jobs.stop	stop the watcher
+
+# --- jobs.plan --- (8.27: a constraint solver fits MAVERICK's maintenance jobs into a time window)
+jobs.plan	plan my maintenance
+jobs.plan	schedule maintenance between 10 pm and 2 am
+jobs.plan	plan maintenance from 23:00 to 01:00
+jobs.plan	when should my maintenance run
+jobs.plan	make a maintenance timetable for tonight
+jobs.plan	schedule my cleanup chores at night
+jobs.plan	plan the nightly chores
+jobs.plan	fit my maintenance into 11 pm to 1 am
+jobs.plan	timetable for maintenance jobs
+jobs.plan	when can the maintenance tasks run without clashing
+jobs.plan	schedule maintenance tasks so they don't overlap
+jobs.plan	plan maintenance between midnight and 3 am
+jobs.plan	work out a maintenance schedule
+jobs.plan	arrange my maintenance chores between 9 pm and 11 pm
+jobs.plan	plan pc maintenance for the night
+jobs.plan	give me a maintenance plan
+jobs.plan	schedule the chores from 1 am to 4 am
+jobs.plan	when should the cleanup and scans happen
+jobs.plan	create a maintenance timetable
+jobs.plan	plan when to run temp cleanup and junk scan
+jobs.plan	maintenance schedule please
+jobs.plan	plan my pc chores
+jobs.plan	can you schedule maintenance for tonight
+jobs.plan	find a time slot for each maintenance job
+jobs.plan	plan maintenance between 22:00 and 23:00
+jobs.plan	schedule the nightly maintenance tasks
+jobs.plan	timetable my pc chores between 10 pm and midnight
+jobs.plan	when do i run my maintenance chores
+jobs.plan	sort out a schedule for maintenance
+jobs.plan	plan the maintenance jobs so the disk isn't busy twice
 
 # --- watch.start ---
 watch.start	move every new pdf in downloads to documents

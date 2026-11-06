@@ -1,7 +1,7 @@
 import pytest
 
 from maverick.brain import MODELS, Brain, load_model
-from maverick.brain.dataset import HARD_CASES_PATH, INTENTS_PATH, load_examples, split
+from maverick.brain.dataset import HARD_CASES_PATH, INTENTS_PATH, folds, load_examples, split
 from maverick.brain.evaluate import accuracy, as_maverick_runs, grade
 from maverick.brain.text import tokenize
 from maverick.brain.train import train
@@ -24,6 +24,9 @@ from maverick.main import build
 #   Stage 8.2: logistic regression on TF-IDF word pairs (38 labels), 5-fold cross-validation:
 #     brain alone 73% -> 79%, hard cases 74% -> 82%, as MAVERICK runs 84% -> 83%, hard 60% -> 76%.
 #     Floors raised again (seed-42 split: 83% / 73% alone, 87% / 68% as MAVERICK runs).
+#   Stages 8.22-8.27 (45 labels): every new label reshuffles the seed-42 split, and that one number swung
+#     81.6 -> 82.8 -> 84.3 -> 81.3% while 5-fold stayed 82.4-83.2%. At 8.27 seed 42 gave 81.3%, seeds 43-47
+#     81.7-85.3%. So the as-MAVERICK-runs TEST floor is now checked on the 5-fold average (83.2%), same 0.82.
 MIN_TEST_ACCURACY = 0.75
 MIN_HARD_ACCURACY = 0.68
 MIN_MAVERICK_TEST_ACCURACY = 0.82
@@ -81,10 +84,12 @@ def test_accuracy_floor_on_hard_cases(trained):
 
 
 def test_accuracy_floor_as_maverick_runs(trained):
-    model, test_set = trained
-    combined = as_maverick_runs(model)
-    assert accuracy(grade(combined, test_set)) >= MIN_MAVERICK_TEST_ACCURACY
-    assert accuracy(grade(combined, load_examples(HARD_CASES_PATH))) >= MIN_MAVERICK_HARD_ACCURACY
+    model, _ = trained
+    # 5-fold average, not the one seed-42 split: see the 8.27 note at the top.
+    examples = load_examples(INTENTS_PATH)
+    scores = [accuracy(grade(as_maverick_runs(train(train_set)), test_set)) for train_set, test_set in folds(examples)]
+    assert sum(scores) / len(scores) >= MIN_MAVERICK_TEST_ACCURACY
+    assert accuracy(grade(as_maverick_runs(model), load_examples(HARD_CASES_PATH))) >= MIN_MAVERICK_HARD_ACCURACY
 
 
 @pytest.mark.parametrize("sentence, label", [

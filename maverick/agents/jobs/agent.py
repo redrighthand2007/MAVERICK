@@ -9,6 +9,41 @@ JOB_WORDS = {"job", "jobs", "background", "watcher", "watchers", "watching", "wa
 STOP_WORDS = {"stop", "cancel", "remove", "end", "kill", "delete", "pause", "quit", "disable"}
 FILLER = JOB_WORDS | STOP_WORDS | {"the", "a", "my", "all", "every", "please", "pls", "number", "no", "id", "for",
                                    "of", "that", "is", "which", "what", "show", "list", "running", "now", "in", "on"}
+# "plan my maintenance between 10 pm and 2 am": a timetable from the 8.27 constraint solver.
+PLAN_RE = re.compile(r"\b(?:plan|schedule|timetable)\b.*\b(?:maintenance|chores|jobs|tasks)\b"
+                     r"|\b(?:maintenance|chores)\b.*\b(?:plan|schedule|timetable|when)\b"
+                     r"|\bwhen\b.*\b(?:maintenance|chores)\b")
+TIME_RE = re.compile(r"\b(\d{1,2})(?::(\d{2}))?\s*(am|pm)?\b")
+DEFAULT_WINDOW = (23 * 60, 1 * 60)  # 23:00-01:00
+
+
+def minutes(match) -> int:
+    hour, minute, half = int(match.group(1)) % 24, int(match.group(2) or 0), match.group(3)
+    if half == "pm" and hour < 12:
+        hour += 12
+    if half == "am" and hour == 12:
+        hour = 0
+    return hour * 60 + minute
+
+
+def plan_maintenance(start: int, end: int) -> Result:
+    from maverick.brain.constraints import BEFORE, MAINTENANCE, clock, maintenance_csp
+
+    csp = maintenance_csp(start, end)
+    answer = csp.solve()
+    window = f"{clock(start)}-{clock(end)}"
+    if not answer:
+        need = sum(j.minutes for j in MAINTENANCE if j.disk_heavy)
+        return Result(False, f"No timetable fits {window}: the disk-heavy jobs alone need {need} minutes one after "
+                             f"another. Try a longer window, e.g. 'plan maintenance between 11 pm and 2 am'.")
+    by_name = {j.name: j for j in MAINTENANCE}
+    lines = [f"Maintenance timetable for {window} (found after trying {csp.nodes} choices):"]
+    for name, begin in sorted(answer.items(), key=lambda nv: nv[1]):
+        lines.append(f"  {clock(begin)}-{clock(begin + by_name[name].minutes)}  {name}")
+    lines.append("Every rule holds: disk-heavy jobs never overlap, at most 2 jobs at once, "
+                 + ", ".join(f"'{a}' before '{b}'" for a, b in BEFORE) + ".")
+    lines.append("This is a plan only: MAVERICK can't start jobs at set times yet (the 6.4 task scheduler was skipped).")
+    return Result(True, "\n".join(lines), {"timetable": answer})
 
 
 class JobsAgent(SubAgent):
@@ -21,6 +56,8 @@ class JobsAgent(SubAgent):
 
     def parse(self, text: str) -> Intent | None:
         words = set(WORD_RE.findall(text.lower()))
+        if PLAN_RE.search(text.lower()):
+            return self.extract("plan", text)
         if not words & JOB_WORDS:
             return None
         # "watch downloads for pdfs" creates a job; that belongs to the watch agent.
@@ -31,6 +68,10 @@ class JobsAgent(SubAgent):
     def extract(self, operation: str, text: str) -> Intent:
         if operation == "list":
             return Intent("list")
+        if operation == "plan":
+            times = [m for m in TIME_RE.finditer(text.lower()) if m.group(2) or m.group(3)]
+            start, end = (minutes(times[0]), minutes(times[1])) if len(times) >= 2 else DEFAULT_WINDOW
+            return Intent("plan", {"start": start, "end": end})
         words = WORD_RE.findall(text.lower())
         if set(words) & {"all", "every", "everything"}:
             return Intent("stop", {"which": "all"})
@@ -41,6 +82,8 @@ class JobsAgent(SubAgent):
         return Intent("stop", {"which": " ".join(hints)}, [] if hints else ["which job (say: show background jobs)"])
 
     def handle(self, intent: Intent) -> Result:
+        if intent.operation == "plan":
+            return plan_maintenance(**intent.args)
         jobs = self.background.list()
         if intent.operation == "list":
             if not jobs:
