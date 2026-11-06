@@ -1,0 +1,46 @@
+# Test set for the local LLM's tool calling (Stage 8.19). Used ONLY to compare prompts, never shown to the model.
+# Format: action<TAB>sentence, with each expected argument wrapped as [arg value]. "none" = nothing on the menu fits.
+# Mostly wordings the brain and keyword rules don't know, since those are what reach the LLM.
+# An argument the user didn't give is simply not tagged: the right answer then LEAVES IT OUT.
+files.copy	stick a spare copy of [source report.pdf] in [destination E:\spare]
+files.copy	clone [source budget.xlsx] over to [destination D:\work]
+files.copy	I want [source cv.docx] in [destination F:\jobs] as well, keep the original
+files.copy	put a backup of [source thesis.docx] somewhere safe
+files.move	shift [source song.mp3] into [destination E:\music]
+files.move	relocate [source D:\old\logs] to [destination E:\archive]
+files.move	take [source draft.txt] out of here and drop it in [destination D:\done]
+files.rename	call [source notes.txt] [new_name ideas.txt] from now on
+files.rename	change the name of [source img001.jpg] to [new_name beach.jpg]
+files.rename	[source report.docx] should be named [new_name final.docx]
+files.size	how much room does [path D:\games] take
+files.size	what does [path D:\movies] weigh
+files.size	is [path backup.iso] a huge file
+files.size	how many megabytes is [path video.mp4]
+archive.create	squeeze [source D:\project] into a zip
+archive.create	bundle [source notes.txt] up so i can email it
+archive.create	pack up [source D:\photos] as [output E:\photos.zip]
+archive.create	shrink my files into a zip
+archive.list	peek into [archive old.zip] without opening it
+archive.list	which files did they put in [archive invoices.zip]
+archive.extract	open up [archive photos.zip] into [destination D:\pics]
+archive.extract	get the stuff out of [archive data.zip]
+hardware.ram	am i running out of memory
+hardware.ram	how many gigs of ram are in this thing
+hardware.cpu	what chip is this laptop running on
+hardware.cpu	how fast is my processor
+hardware.battery	am i plugged in right now
+hardware.battery	how long until my laptop dies
+hardware.disks	is [drive E] getting full
+hardware.disks	how much storage do i have left
+network.info	what address is this pc using on the network
+network.info	am i connected to the internet and through what
+accounts.admins	which users can install software on this pc
+accounts.admins	is my account an administrator
+jobs.list	what are you doing in the background
+jobs.list	anything running behind the scenes
+none	kill chrome
+none	turn off the wifi
+none	write me a poem about cats
+none	what's the weather tomorrow
+none	delete everything on D:
+none	shut down the pc

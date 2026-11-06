@@ -57,16 +57,23 @@ class Ollama:
             return False
         return any(m.get("name") == self.model for m in models)
 
-    def ask(self, question: str, system: str | None = None, temperature: float = 0.0) -> str:
+    def ask(self, question: str, system: str | None = None, temperature: float = 0.0, json_only: bool = False,
+            examples: list[tuple[str, str]] = ()) -> str:
         """One question in, the model's text answer out.
 
         temperature 0 = always pick the most likely next word, so the same question gets the same answer.
         Higher values make answers more varied (fine for chat, bad when we need an exact format).
+        json_only: Ollama only lets the model write words that keep the answer valid JSON (8.18).
+        examples: (question, answer) pairs shown as if the model had already answered them (few-shot, 8.19).
         """
-        messages = ([{"role": "system", "content": system}] if system else []) + [{"role": "user", "content": question}]
-        answer = self.request("/api/chat", {
-            "model": self.model, "messages": messages, "stream": False, "options": {"temperature": temperature},
-        })
+        messages = [{"role": "system", "content": system}] if system else []
+        for asked, answered in examples:
+            messages += [{"role": "user", "content": asked}, {"role": "assistant", "content": answered}]
+        messages.append({"role": "user", "content": question})
+        payload = {"model": self.model, "messages": messages, "stream": False, "options": {"temperature": temperature}}
+        if json_only:
+            payload["format"] = "json"
+        answer = self.request("/api/chat", payload)
         try:
             return answer["message"]["content"].strip()
         except (KeyError, TypeError, AttributeError) as exc:
