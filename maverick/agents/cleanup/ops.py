@@ -93,6 +93,106 @@ def scan(root: str = "") -> Result:
                                             "old_downloads": [str(p) for _, p in old_downloads]})
 
 
+# --- "Free up 5 GB": choose the files (8.26) ---
+
+PLAN_MIN_FILE = 50 * 1024 ** 2   # smaller files aren't worth a decision each
+NEVER_REGRET = 0.9               # files you'd miss this much are never offered
+DOC_TYPES = {"doc", "docx", "pdf", "xls", "xlsx", "ppt", "pptx", "txt", "md", "odt", "csv", "jpg", "jpeg", "png",
+             "heic", "raw", "psd"}
+INSTALLER_TYPES = {"exe", "msi", "iso", "img", "dmg", "apk"}
+ARCHIVE_TYPES = {"zip", "rar", "7z", "tar", "gz"}
+VIDEO_TYPES = {"mp4", "mkv", "avi", "mov", "wmv", "webm"}
+
+
+def regret(path: Path, mtime: float, now: float) -> float:
+    """0 = nobody misses it .. 1 = you'd want it back. A person's rules of thumb, written down."""
+    ext = path.suffix.lower().lstrip(".")
+    base = (0.1 if ext in INSTALLER_TYPES else 0.3 if ext in ARCHIVE_TYPES else 0.5 if ext in VIDEO_TYPES
+            else 0.8 if ext in DOC_TYPES else 0.5)
+    days = (now - mtime) / 86400
+    base += 0.4 if days < 30 else 0.2 if days < 180 else 0.0  # recent things are probably still in use
+    if Path.home() / "Downloads" in path.parents:
+        base -= 0.1                                          # downloads are often one-off copies
+    return round(min(1.0, max(0.0, base)), 2)
+
+
+def free_candidates(root: str = "", now: float | None = None) -> tuple[list[tuple[Path, int, float]], bool]:
+    """(path, size, regret) for old temp files (as one item) and every file over 50 MB; and whether the scan stopped."""
+    now = now or time.time()
+    start = Path(root) if root else Path.home()
+    found = []
+    temp = old_temp_items(now)
+    if temp:
+        found.append((Path("temp"), items_size(temp), 0.0))
+    deadline, stopped = time.time() + SCAN_LIMIT, False
+    for folder, dirs, files in os.walk(start):
+        dirs[:] = [d for d in dirs if d.lower() not in SKIP_DIRS and not d.startswith(("$", "."))]
+        if time.time() > deadline:
+            stopped = True
+            break
+        for name in files:
+            path = Path(folder, name)
+            try:
+                st = path.stat()
+                if st.st_size < PLAN_MIN_FILE:
+                    continue
+                require_not_protected(path)
+            except (OSError, SafetyError):
+                continue
+            r = regret(path, st.st_mtime, now)
+            if r < NEVER_REGRET:
+                found.append((path, st.st_size, r))
+    return found, stopped
+
+
+def plan_free(goal: int, root: str = "") -> tuple[list[tuple[Path, int, float]], str]:
+    """The least-regret set that frees `goal` bytes, plus a note if that's impossible or the scan stopped."""
+    from maverick.brain.plan import optimal
+
+    found, stopped = free_candidates(root)
+    chosen = optimal([(size, r) for _, size, r in found], goal)
+    note = f" (the scan stopped after {SCAN_LIMIT} s, so a smaller folder may give a better plan)" if stopped else ""
+    if not chosen:
+        available = sum(size for _, size, _ in found)
+        return [], (f"I can only find {human_size(available)} that is safe to suggest, not {human_size(goal)}" + note)
+    return [found[i] for i in chosen], note
+
+
+# The plan last shown in a y/n question: "yes" must delete exactly that list, never a fresh plan.
+shown_plans: dict[tuple[int, str], list[tuple[Path, int, float]]] = {}
+
+
+def describe_free(goal: int, root: str = "") -> str:
+    plan, note = plan_free(goal, root)
+    shown_plans[(goal, root)] = plan
+    if not plan:
+        return note + ". Nothing will be deleted; say 'free up space' to see where the space goes."
+    lines = [f"To free {human_size(goal)}, the least-missed choice is {len(plan)} item(s), "
+             f"{human_size(sum(s for _, s, _ in plan))} in all{note}:"]
+    for path, size, r in sorted(plan, key=lambda p: -p[1]):
+        what = "old temp files" if str(path) == "temp" else str(path)
+        lines.append(f"  - {human_size(size):>10}  {what}  (would you miss it: {r:.1f})")
+    lines.append("Send them all to the Recycle Bin?")
+    return "\n".join(lines)
+
+
+def free(goal: int, root: str = "") -> Result:
+    """Recycle exactly the items shown in the y/n question; each one still passes recycle()'s safety checks."""
+    plan = shown_plans.pop((goal, root), None)
+    if not plan:
+        return Result(False, "There is no approved plan to carry out. Nothing was deleted.", {"recycled": 0})
+    done, size = 0, 0
+    for path, item_size, _ in plan:
+        try:
+            result = recycle(str(path))
+        except (OSError, SafetyError):
+            continue  # gone or locked since the plan was made: skip it, never substitute another file
+        if result.success:
+            done, size = done + 1, size + item_size
+    return Result(True, f"Sent {done} of {len(plan)} item(s), {human_size(size)}, to the Recycle Bin. "
+                        "Empty the Recycle Bin to really get the space back.", {"recycled": done})
+
+
 def plan_recycle(target: str) -> list[Path]:
     """What "delete <target>" would send to the Recycle Bin, after the safety checks."""
     if target == "temp":

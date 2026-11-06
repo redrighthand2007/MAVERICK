@@ -4,7 +4,7 @@
 #         hardware.ram, hardware.slots, hardware.cpu, hardware.battery, hardware.disks, hardware.forecast,
 #         process.list, process.origin, process.children, process.end, process.hung, process.growing, process.handles, process.unusual,
 #         search.find, search.content, search.group,
-#         cleanup.scan, cleanup.recycle, archive.create, archive.list, archive.extract,
+#         cleanup.scan, cleanup.recycle, cleanup.free, archive.create, archive.list, archive.extract,
 #         power.plan, power.brightness, jobs.list, jobs.stop, watch.start, logs.rotate,
 #         services.list, services.change, network.info, network.wifi,
 #         devices.list, devices.restart, accounts.admins, unknown
@@ -763,6 +763,38 @@ cleanup.recycle	delete the zip file archive.zip
 cleanup.recycle	remove report-final-old.pdf please
 cleanup.recycle	delete windows temp junk
 cleanup.recycle	clean temporary internet files
+
+# --- cleanup.free --- (8.26: a goal in GB; MAVERICK plans the least-missed files, then asks y/n)
+cleanup.free	free up 5 gb
+cleanup.free	i need 10 gb of free space
+cleanup.free	make 2 gb of room on D:
+cleanup.free	get me 20 gb back on C:
+cleanup.free	free 3 gb please
+cleanup.free	i need 50 gb free for a game
+cleanup.free	clear 1 gb of space
+cleanup.free	find 8 gb i can delete
+cleanup.free	reclaim 15 gb on my laptop
+cleanup.free	i want 4 gb more space on E:
+cleanup.free	make room for a 6 gb download
+cleanup.free	free 500 mb on C:
+cleanup.free	pick files to delete so i get 10 gb
+cleanup.free	what should i delete to free 5 gb
+cleanup.free	help me get 30 gb free
+cleanup.free	i have to free 12 gb today
+cleanup.free	choose what to remove for 2 gb of space
+cleanup.free	clean up 7 gb from my drive
+cleanup.free	give me back 9 gb
+cleanup.free	need 25 gb for windows update
+cleanup.free	free up 1.5 gb on D:
+cleanup.free	plan a cleanup that frees 10 gb
+cleanup.free	which files can go to free 3 gb
+cleanup.free	i must free 40 gb before installing
+cleanup.free	get rid of stuff worth 6 gb
+cleanup.free	clear out 2 gb of junk and old files
+cleanup.free	free up 100 gb on my d drive
+cleanup.free	i want 5 gigs free
+cleanup.free	make 3 gb space on c drive
+cleanup.free	how do i get 20 gb free, pick the files
 
 # --- archive.create ---
 archive.create	zip D:\projects
