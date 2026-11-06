@@ -47,6 +47,7 @@ TOOLS = {
     "network.info": Tool("IP address and network adapters"),
     "accounts.admins": Tool("which user accounts are administrators"),
     "jobs.list": Tool("list MAVERICK's background jobs"),
+    "process.unusual": Tool("programs behaving unlike all the others (odd, suspicious)", defaults={"seconds": 6}),
 }
 NONE = "none"
 

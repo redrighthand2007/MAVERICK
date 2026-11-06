@@ -2,7 +2,7 @@
 # Format: label<TAB>sentence. Lines starting with # are comments.
 # Labels: files.copy, files.move, files.rename, files.size,
 #         hardware.ram, hardware.slots, hardware.cpu, hardware.battery, hardware.disks,
-#         process.list, process.origin, process.children, process.end, process.hung, process.growing, process.handles,
+#         process.list, process.origin, process.children, process.end, process.hung, process.growing, process.handles, process.unusual,
 #         search.find, search.content,
 #         cleanup.scan, cleanup.recycle, archive.create, archive.list, archive.extract,
 #         power.plan, power.brightness, jobs.list, jobs.stop, watch.start, logs.rotate,
@@ -1242,6 +1242,38 @@ process.growing	does anything have a memory leak
 process.growing	memory leak check please
 process.growing	who keeps grabbing more ram
 process.growing	find processes with rising memory use
+
+# --- process.unusual --- (8.22: isolation forest over every running program)
+process.unusual	any unusual programs running
+process.unusual	is anything suspicious on my pc
+process.unusual	which apps are acting weird
+process.unusual	find programs behaving strangely
+process.unusual	are there any odd processes
+process.unusual	spot abnormal processes
+process.unusual	anything out of the ordinary on my pc
+process.unusual	check my programs for anomalies
+process.unusual	is some app behaving weird
+process.unusual	show me suspicious processes
+process.unusual	which program doesn't look normal
+process.unusual	check for strange activity in my apps
+process.unusual	anything weird or suspicious on this laptop
+process.unusual	find the odd one out among my programs
+process.unusual	does my computer have an unusual program
+process.unusual	detect unusual process behaviour
+process.unusual	which process looks suspicious
+process.unusual	scan my apps for anything abnormal
+process.unusual	is anything strange going on with my processes
+process.unusual	what's acting unusual on this laptop
+process.unusual	are any of my programs misbehaving
+process.unusual	something feels off with my apps
+process.unusual	find processes that stand out from the rest
+process.unusual	does any program look abnormal right now
+process.unusual	odd behaviour check on my programs
+process.unusual	is there a strange app on my system
+process.unusual	spot weird processes
+process.unusual	which apps are not acting normal
+process.unusual	run an anomaly check on my processes
+process.unusual	anything fishy on this pc
 
 # --- process.handles ---
 process.handles	which app has the most handles

@@ -3,6 +3,8 @@
 Only the end functions change anything, and only after y/n.
 """
 import ctypes
+import math
+import statistics
 import time
 from collections import defaultdict
 from ctypes import wintypes
@@ -298,6 +300,131 @@ def ram_by_program() -> dict[str, int]:
 
 
 MIN_GROWTH = 20 * 1024 ** 2  # less than this is normal wobble
+
+
+# What the model compares. Per COPY and relative to the program's own size, so it judges behaviour, not size:
+# with plain totals, svchost.exe (80 copies) and a big browser were "unusual" just for being big.
+COLUMNS = ["ram per copy", "ram growth %/min", "cpu per copy", "threads per copy", "handles per thread",
+           "connections per copy"]
+# Isolation-forest score from which a program is reported (about 0.5 = normal). Chosen from
+# `python -m maverick.brain.anomaly`: the three planted fakes scored 0.54-0.59, ordinary programs mostly under 0.53.
+UNUSUAL_SCORE = 0.55
+
+
+def program_snapshot() -> dict[str, dict]:
+    """Per program name (all copies added together): RAM, threads, handles, copies, CPU time so far."""
+    totals = defaultdict(lambda: {"ram": 0, "threads": 0, "handles": 0, "copies": 0, "cpu_time": 0.0, "pids": set()})
+    for proc in psutil.process_iter(["name", "memory_info", "num_threads", "num_handles", "cpu_times"]):
+        info = proc.info
+        if not proc.pid or not info["memory_info"]:
+            continue
+        row = totals[info["name"] or f"PID {proc.pid}"]
+        row["ram"] += info["memory_info"].rss
+        row["threads"] += info["num_threads"] or 0
+        row["handles"] += info["num_handles"] or 0
+        row["copies"] += 1
+        row["cpu_time"] += sum(info["cpu_times"][:2]) if info["cpu_times"] else 0.0
+        row["pids"].add(proc.pid)
+    return totals
+
+
+def connections_by_pid() -> dict[int, int]:
+    counts = defaultdict(int)
+    try:
+        for conn in psutil.net_connections(kind="inet"):
+            if conn.pid:
+                counts[conn.pid] += 1
+    except psutil.AccessDenied:
+        pass  # without the list, every program just counts 0 connections
+    return counts
+
+
+def featurize(v: dict) -> list[float]:
+    """Raw values -> the numbers the model sees, in COLUMNS order.
+
+    Log scale, because RAM goes from 1 MB to 2 GB: without it, one huge program would dwarf every other difference.
+    """
+    copies = max(v["copies"], 1)
+    mb = v["ram"] / 1024 ** 2
+    # Only growth counts: a browser freeing 100 MB is tidying up, not misbehaving (the first live run flagged those).
+    return [math.log1p(mb / copies), math.log1p(max(0.0, 100 * v["ram growth"] / max(v["ram"], 1))),
+            math.log1p(v["cpu"] / copies), math.log1p(v["threads"] / copies),
+            math.log1p(v["handles"] / max(v["threads"], 1)), math.log1p(v["connections"] / copies)]
+
+
+def program_table(seconds: int = 6) -> tuple[list[str], list[list[float]], list[dict]]:
+    """Watch every program for a few seconds: names, rows of numbers for the model, and the raw values."""
+    first = program_snapshot()
+    time.sleep(seconds)
+    second, conns = program_snapshot(), connections_by_pid()
+    names, rows, raw = [], [], []
+    for name, now in sorted(second.items()):
+        before = first.get(name)
+        if not before:
+            continue  # started during the watch: no growth to measure
+        values = {
+            "ram": now["ram"],
+            "ram growth": (now["ram"] - before["ram"]) * 60 / seconds,  # bytes per minute
+            "cpu": max(0.0, now["cpu_time"] - before["cpu_time"]) / seconds * 100,  # % of one core
+            "threads": now["threads"], "handles": now["handles"],
+            "connections": sum(conns.get(pid, 0) for pid in now["pids"]), "copies": now["copies"],
+        }
+        names.append(name)
+        raw.append(values)
+        rows.append(featurize(values))
+    return names, rows, raw
+
+
+def planted_fakes(raw: list[dict]) -> list[tuple[str, dict]]:
+    """Three made-up programs with ONE odd habit each, to check the model finds what we know is there.
+
+    Each starts as the most typical program (the median of every raw value, one copy) and gets one strange value.
+    """
+    typical = {key: statistics.median(v[key] for v in raw) for key in raw[0]}
+    typical.update({"copies": 1, "ram growth": 0, "connections": 0})
+    leaker = {**typical, "ram growth": 300 * 1024 ** 2}               # +300 MB a minute
+    chatty = {**typical, "connections": 400}                          # 400 network connections
+    threads = {**typical, "threads": 3000, "handles": 3000}           # 3000 threads, ~1 handle each
+    return [("FAKE leaker.exe", leaker), ("FAKE chatty.exe", chatty), ("FAKE threadbomb.exe", threads)]
+
+
+def describe_value(column: str, v: dict) -> str:
+    """A reason in plain numbers, e.g. 'RAM +300 MB/min' or '400 connections'."""
+    if column == "ram per copy":
+        return f"RAM {human_size(v['ram'])} in {v['copies']} cop{'y' if v['copies'] == 1 else 'ies'}"
+    if column == "ram growth %/min":
+        return f"RAM {'+' if v['ram growth'] >= 0 else '-'}{human_size(abs(v['ram growth']))}/min"
+    if column == "cpu per copy":
+        return f"CPU {v['cpu']:.0f}%"
+    if column == "threads per copy":
+        return f"{v['threads']} threads"
+    if column == "handles per thread":
+        return f"{v['handles']} handles for {v['threads']} threads"
+    return f"{v['connections']} network connections"
+
+
+def unusual(seconds: int = 6) -> Result:
+    """Programs that behave unlike all the others right now (8.22: isolation forest, no labels needed)."""
+    from maverick.brain.anomaly import IsolationForest, reasons
+
+    seconds = max(3, min(seconds, 120))
+    names, rows, raw = program_table(seconds)
+    if len(rows) < 10:
+        return Result(False, "Too few programs to compare.")
+    scores = IsolationForest().fit(rows).scores(rows)
+    # Also needs one clearly extreme number, so every report comes with a reason a person can check.
+    found = sorted(((s, i) for i, s in enumerate(scores) if s >= UNUSUAL_SCORE and reasons(rows, i, COLUMNS)),
+                   reverse=True)[:5]
+    if not found:
+        return Result(True, f"Watched {len(names)} programs for {seconds} s: none stands out from the rest.",
+                      {"unusual": []})
+    lines = [f"Watched {len(names)} programs for {seconds} s. These look least like the others:"]
+    for score, i in found:
+        why = reasons(rows, i, COLUMNS)
+        detail = ", ".join(describe_value(c, raw[i]) for c in why) or "an unusual mix of everything"
+        lines.append(f"  - {names[i]} (score {score:.2f}): {detail}")
+    lines.append("Unusual isn't the same as harmful: check the name, and say 'what started <name>' to see where it came from.")
+    return Result(True, "\n".join(lines), {"unusual": [names[i] for _, i in found]})
 
 
 def growing(seconds: int = 10, samples: int = 5) -> Result:
