@@ -11,6 +11,7 @@ from maverick.agents.cleanup.agent import CleanupAgent
 from maverick.agents.devices.agent import DevicesAgent
 from maverick.agents.files.agent import FileAgent
 from maverick.agents.hardware.agent import HardwareAgent
+from maverick.agents.hardware.ops import record_disks
 from maverick.agents.jobs.agent import JobsAgent
 from maverick.agents.logs.agent import LogsAgent
 from maverick.agents.network.agent import NetworkAgent
@@ -104,7 +105,8 @@ def background_only(background: Background) -> None:
     print(f"MAVERICK background mode: {len(background.list())} job(s) running. Ctrl+C to stop.")
     try:
         while True:
-            time.sleep(1)
+            record_disks()  # at most one row an hour: the history behind "C: will be full in ..." (8.24)
+            time.sleep(60)
     except KeyboardInterrupt:
         print("Background mode stopped; the jobs stay saved for next time.")
 
@@ -114,6 +116,7 @@ if __name__ == "__main__":
     if sys.argv[1:] == ["--background"]:
         background_only(background)
         sys.exit(0)
+    record_disks()  # disk history for the 8.24 forecast; skipped if the last reading is under an hour old
     brain = Brain.load()
     if brain is None:
         print("(Brain not trained yet; using keyword rules. Train it with: python -m maverick.brain.train)")

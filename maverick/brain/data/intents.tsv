@@ -1,7 +1,7 @@
 # MAVERICK brain training data.
 # Format: label<TAB>sentence. Lines starting with # are comments.
 # Labels: files.copy, files.move, files.rename, files.size,
-#         hardware.ram, hardware.slots, hardware.cpu, hardware.battery, hardware.disks,
+#         hardware.ram, hardware.slots, hardware.cpu, hardware.battery, hardware.disks, hardware.forecast,
 #         process.list, process.origin, process.children, process.end, process.hung, process.growing, process.handles, process.unusual,
 #         search.find, search.content, search.group,
 #         cleanup.scan, cleanup.recycle, archive.create, archive.list, archive.extract,
@@ -347,6 +347,38 @@ hardware.disks	how full is my C: drive
 hardware.disks	disk space status
 hardware.disks	free gb on each disk
 hardware.disks	space remaining on all drives
+
+# --- hardware.forecast --- (8.24: a straight line through the disk history, followed until the drive is full)
+hardware.forecast	when will my C drive be full
+hardware.forecast	when will C: run out of space
+hardware.forecast	how fast is my disk filling up
+hardware.forecast	am i running out of space on D:
+hardware.forecast	predict when my storage will be full
+hardware.forecast	forecast my disk space
+hardware.forecast	how long until my drive is full
+hardware.forecast	how many days until C fills up
+hardware.forecast	is my disk going to fill up soon
+hardware.forecast	at this rate when will D: be full
+hardware.forecast	how quickly is my disk getting full
+hardware.forecast	will my ssd fill up this month
+hardware.forecast	how much time before i run out of disk space
+hardware.forecast	predict free space on E: next month
+hardware.forecast	disk space forecast for C:
+hardware.forecast	when do i need to clean up my drive
+hardware.forecast	how fast am i using up storage
+hardware.forecast	when will my laptop run out of storage
+hardware.forecast	estimate when the disk gets full
+hardware.forecast	is C: filling up fast
+hardware.forecast	how many weeks until my D drive is full
+hardware.forecast	trend of my disk filling up
+hardware.forecast	how much space do i use per day
+hardware.forecast	when will the hard drive be full
+hardware.forecast	project my disk usage
+hardware.forecast	how soon will my drive be full
+hardware.forecast	my drive keeps filling up, when will it be full
+hardware.forecast	disk filling rate until full
+hardware.forecast	will i run out of room on C: soon
+hardware.forecast	how long will my disk space last
 
 # --- process.list ---
 process.list	what programs are running

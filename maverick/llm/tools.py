@@ -44,6 +44,7 @@ TOOLS = {
     "hardware.cpu": Tool("which processor (CPU) the PC has"),
     "hardware.battery": Tool("battery level and whether it is charging"),
     "hardware.disks": Tool("free space on the drives", optional=("drive",)),
+    "hardware.forecast": Tool("when a drive will be full at the current rate", optional=("drive",)),
     "network.info": Tool("IP address and network adapters"),
     "accounts.admins": Tool("which user accounts are administrators"),
     "jobs.list": Tool("list MAVERICK's background jobs"),
