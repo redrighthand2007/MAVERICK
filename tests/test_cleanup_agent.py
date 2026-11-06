@@ -105,4 +105,4 @@ def test_scan_finds_big_files_and_old_downloads(tmp_path, monkeypatch):
 
 
 def test_only_deleting_asks_for_confirmation():
-    assert CleanupAgent.risky == {"recycle"}
+    assert CleanupAgent.risky == {"recycle", "free"}  # "free up 5 GB" recycles its plan (8.26)

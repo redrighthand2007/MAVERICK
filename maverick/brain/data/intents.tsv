@@ -4,8 +4,8 @@
 #         hardware.ram, hardware.slots, hardware.cpu, hardware.battery, hardware.disks, hardware.forecast,
 #         process.list, process.origin, process.children, process.end, process.hung, process.growing, process.handles, process.unusual,
 #         search.find, search.content, search.group,
-#         cleanup.scan, cleanup.recycle, archive.create, archive.list, archive.extract,
-#         power.plan, power.brightness, jobs.list, jobs.stop, watch.start, logs.rotate,
+#         cleanup.scan, cleanup.recycle, cleanup.free, archive.create, archive.list, archive.extract,
+#         power.plan, power.brightness, jobs.list, jobs.stop, jobs.plan, watch.start, logs.rotate,
 #         services.list, services.change, network.info, network.wifi,
 #         devices.list, devices.restart, accounts.admins, unknown
 
@@ -764,6 +764,38 @@ cleanup.recycle	remove report-final-old.pdf please
 cleanup.recycle	delete windows temp junk
 cleanup.recycle	clean temporary internet files
 
+# --- cleanup.free --- (8.26: a goal in GB; MAVERICK plans the least-missed files, then asks y/n)
+cleanup.free	free up 5 gb
+cleanup.free	i need 10 gb of free space
+cleanup.free	make 2 gb of room on D:
+cleanup.free	get me 20 gb back on C:
+cleanup.free	free 3 gb please
+cleanup.free	i need 50 gb free for a game
+cleanup.free	clear 1 gb of space
+cleanup.free	find 8 gb i can delete
+cleanup.free	reclaim 15 gb on my laptop
+cleanup.free	i want 4 gb more space on E:
+cleanup.free	make room for a 6 gb download
+cleanup.free	free 500 mb on C:
+cleanup.free	pick files to delete so i get 10 gb
+cleanup.free	what should i delete to free 5 gb
+cleanup.free	help me get 30 gb free
+cleanup.free	i have to free 12 gb today
+cleanup.free	choose what to remove for 2 gb of space
+cleanup.free	clean up 7 gb from my drive
+cleanup.free	give me back 9 gb
+cleanup.free	need 25 gb for windows update
+cleanup.free	free up 1.5 gb on D:
+cleanup.free	plan a cleanup that frees 10 gb
+cleanup.free	which files can go to free 3 gb
+cleanup.free	i must free 40 gb before installing
+cleanup.free	get rid of stuff worth 6 gb
+cleanup.free	clear out 2 gb of junk and old files
+cleanup.free	free up 100 gb on my d drive
+cleanup.free	i want 5 gigs free
+cleanup.free	make 3 gb space on c drive
+cleanup.free	how do i get 20 gb free, pick the files
+
 # --- archive.create ---
 archive.create	zip D:\projects
 archive.create	make a zip of my photos folder
@@ -1019,6 +1051,38 @@ jobs.stop	turn off the folder watcher
 jobs.stop	stop rotating app.log
 jobs.stop	remove every background job
 jobs.stop	stop the watcher
+
+# --- jobs.plan --- (8.27: a constraint solver fits MAVERICK's maintenance jobs into a time window)
+jobs.plan	plan my maintenance
+jobs.plan	schedule maintenance between 10 pm and 2 am
+jobs.plan	plan maintenance from 23:00 to 01:00
+jobs.plan	when should my maintenance run
+jobs.plan	make a maintenance timetable for tonight
+jobs.plan	schedule my cleanup chores at night
+jobs.plan	plan the nightly chores
+jobs.plan	fit my maintenance into 11 pm to 1 am
+jobs.plan	timetable for maintenance jobs
+jobs.plan	when can the maintenance tasks run without clashing
+jobs.plan	schedule maintenance tasks so they don't overlap
+jobs.plan	plan maintenance between midnight and 3 am
+jobs.plan	work out a maintenance schedule
+jobs.plan	arrange my maintenance chores between 9 pm and 11 pm
+jobs.plan	plan pc maintenance for the night
+jobs.plan	give me a maintenance plan
+jobs.plan	schedule the chores from 1 am to 4 am
+jobs.plan	when should the cleanup and scans happen
+jobs.plan	create a maintenance timetable
+jobs.plan	plan when to run temp cleanup and junk scan
+jobs.plan	maintenance schedule please
+jobs.plan	plan my pc chores
+jobs.plan	can you schedule maintenance for tonight
+jobs.plan	find a time slot for each maintenance job
+jobs.plan	plan maintenance between 22:00 and 23:00
+jobs.plan	schedule the nightly maintenance tasks
+jobs.plan	timetable my pc chores between 10 pm and midnight
+jobs.plan	when do i run my maintenance chores
+jobs.plan	sort out a schedule for maintenance
+jobs.plan	plan the maintenance jobs so the disk isn't busy twice
 
 # --- watch.start ---
 watch.start	move every new pdf in downloads to documents

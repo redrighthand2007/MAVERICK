@@ -323,14 +323,42 @@ Every new brain must beat the current one in `evaluate.py` before it replaces it
     unusual, "how long will my battery last" → forecast) because the new sentences leaned on generic words.
     Reworded 25 of them to lean on their own words (unusual, group, full): the 82% floor is kept (test split
     82.8%); the OLD commands still lost a little, 5-fold 83.0% → 82.4% (8 of 1224), the price of 3 more choices
-- ⬜ 📕 **8.25 Ranking**: order file-search results by relevance (after 4.6)
+- ✅ 📕 **8.25 Ranking**: `maverick/brain/rank.py`, search results ordered by what you most likely meant
+  - 9 signals per found file: exact / whole-word / starts-with name match, name coverage, how recent,
+    own folder, cache-or-system folder, depth, user file type; score = weighted sum
+  - Weights LEARNED with pairwise logistic regression ("learning to rank"): meant file vs every other one
+  - Graded with MRR on 200 made-up searches (look-alikes, and 1 in 5 meant the "odd" file): disk order
+    0.339, newest first 0.422, hand-set weights 0.571, **learned 0.718**. Train: `python -m maverick.brain.rank`
+  - Honest limit: made-up searches encode assumptions; logging which result you open would be real data
+  - Live test found a search bug: the 20 s limit ran out inside hidden `.claude` / `.codex` folders before
+    reaching Downloads. Dot-folders are now skipped and your own folders searched first: 1.5 s, real files found
+  - Windows' Recent-files list is empty on this PC, so "opened recently" isn't used
 
 **8I. Classic AI for goal requests**
-- ⬜ 📕 **8.26 Planning + utility scoring**: "free up 5 GB" → choose the best files to remove (after 5.3)
-- ⬜ 📕 **8.27 Constraint solving**: scheduled jobs that must not clash (after 6.4)
+- ✅ 📕 **8.26 Planning + utility scoring**: `maverick/brain/plan.py` + `cleanup.free` ("free up 5 GB")
+  - A GOAL request: every candidate (old temp files, files over 50 MB) gets a benefit (its size) and a
+    REGRET score (would you miss it: installers/ISOs low, recent documents/photos high; 0.9+ never offered)
+  - The plan = the set that frees at least the goal with the least total regret: a knapsack problem,
+    solved exactly by dynamic programming (16 MB steps); checked against brute force in the tests
+  - `python -m maverick.brain.plan` (made-up disk, 40 candidates), total regret at 20 GB: biggest first 2.90,
+    greedy 2.15, **optimal 1.93**; optimal never loses at any goal
+  - Shows the plan and asks y/n; "yes" recycles EXACTLY the list shown (never a fresh plan), each item still
+    through the 5.3 safety checks, to the Recycle Bin only
+  - On this PC "free up 5 GB" honestly answers it can only find 2.32 GB that is safe to suggest
+  - Brain: 30 `cleanup.free` sentences; accuracy went UP (test split 84.3%, 5-fold 82.7%, hard 70.2%)
+- ✅ 📕 **8.27 Constraint solving**: `maverick/brain/constraints.py` + `jobs.plan` ("plan maintenance between 10 pm and 2 am")
+  - A CSP: variables = when each of MAVERICK's 5 maintenance jobs starts, domains = 15-minute slots in the
+    window, constraints = disk-heavy jobs never overlap, at most 2 at once, clear temp → junk scan → disk record
+  - Backtracking search; `python -m maverick.brain.constraints` counts choices tried (8 jobs, 6 disk-heavy):
+    fits by 02:00: plain 33, MRV 3,282, forward checking 8, both 9; impossible by 01:15: plain 141,885,
+    **both 509 (~280x less)**. MRV alone was WORSE: without forward checking no slot is ever crossed out
+  - Impossible windows get a reason ("the disk-heavy jobs alone need 60 minutes")
+  - PLAN ONLY: 6.4 (task scheduler) was skipped, so MAVERICK can't start jobs at set times yet
+  - Brain: 30 `jobs.plan` sentences. The seed-42 test split fell to 81.3% (seeds 43-47: 81.7-85.3%, 5-fold 83.2%),
+    so that floor in `test_brain.py` is now checked on the 5-fold average, still 82%
 
 **8J. Voice**
-- ⬜ 📕 **8.28 Offline speech-to-text** (Whisper): speak commands instead of typing
+- ⏭️ 📕 **8.28 Offline speech-to-text** (Whisper): skipped (user's choice, 2026-11-06)
 
 ## Learning track (side chat) · learned 0/7
 
