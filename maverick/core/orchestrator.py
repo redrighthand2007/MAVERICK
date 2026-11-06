@@ -27,6 +27,7 @@ class Orchestrator:
     1. The brain (if trained) guesses "agent.operation" with a confidence.
     2. Confident and a real operation -> that agent extracts the arguments and runs.
     3. Otherwise -> fall back to each agent's keyword rules, like before the brain existed.
+    4. Still nothing -> ask the local LLM (8.18), if it is running.
 
     Risky operations are not run straight away: handle() returns a question with
     data["confirm"] = True, and the caller answers it with confirm(yes).
@@ -36,11 +37,13 @@ class Orchestrator:
     The pieces then run in order, and a failed piece stops the rest.
     """
 
-    def __init__(self, agents: list[SubAgent], brain=None, splitter=None):
+    def __init__(self, agents: list[SubAgent], brain=None, splitter=None, tool_caller=None):
         self.agents = agents
         self.by_name = {agent.name: agent for agent in agents}
         self.brain = brain
         self.splitter = splitter
+        # The local LLM: last try before "I don't understand". ToolCaller (8.18) or AgentLoop (8.21): solve(text, run).
+        self.tool_caller = tool_caller
         self.pending: tuple[SubAgent, Intent] | None = None  # a risky action waiting for y/n
         self.queue: list[str] = []  # pieces of a multi-action request still to run
         self.done: list[str] = []   # what the earlier pieces reported
@@ -102,9 +105,19 @@ class Orchestrator:
             if intent is not None:
                 return self.run(agent, intent)
 
+        # Slowest, so last: the LLM picks actions from its menu (one, or a loop of them since 8.21);
+        # tools.check() has already thrown away made-up actions and values, and run() still does the safety checks.
+        result = self.tool_caller.solve(text, self.run_named) if self.tool_caller else None
+        if result is not None:
+            return result
+
         if guess != "unknown" and confidence >= SUGGEST_THRESHOLD:
             return Result(False, f"I'm not sure what you mean. Did you want {guess}? Try rephrasing.")
         return Result(False, "No MAVERICK agent handles that yet. Type 'help' to see what I can do.")
+
+    def run_named(self, agent_name: str, intent: Intent) -> Result | None:
+        agent = self.by_name.get(agent_name)
+        return self.run(agent, intent) if agent else None
 
     def run(self, agent: SubAgent, intent: Intent) -> Result:
         if intent.missing:

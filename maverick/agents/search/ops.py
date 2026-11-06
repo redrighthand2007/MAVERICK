@@ -1,9 +1,14 @@
 """Read-only file search. Nothing here changes, moves or opens a file."""
 import os
+import re
 import time
+from collections import Counter
 from datetime import datetime
 from pathlib import Path
 
+import numpy as np
+
+from maverick.agents.search.filters import ARCHIVES, AUDIO, DOCS, IMAGES, VIDEOS
 from maverick.core.agent_base import Result
 from maverick.core.safety import require_existing
 from maverick.core.units import human_size
@@ -91,3 +96,111 @@ def first_matching_line(path: Path, size: int, needle: str) -> str | None:
     except OSError:
         return None
     return None
+
+
+# --- Grouping similar files (8.23: k-means clustering) ---
+
+KIND_OF = {ext: kind for kind, exts in [("image", IMAGES), ("video", VIDEOS), ("audio", AUDIO), ("document", DOCS),
+                                        ("archive", ARCHIVES), ("installer", ["exe", "msi"])] for ext in exts}
+# Letters only: dates and IDs make names of the same kind look different. Keeping 5+ digit numbers was tried
+# (a shared ID could tie files together) and scored worse, 96.8% -> 93.9%: screenshot and photo dates split them.
+NAME_WORD_RE = re.compile(r"[a-zA-Z]{2,}")
+GROUP_LIMIT = 400  # files; k-means and the silhouette compare every pair, so keep it quick
+SYSTEM_FILES = {"desktop.ini", "thumbs.db"}  # hidden Windows files, not yours to group
+# How much "it's a document / an image" counts next to the name words. Measured with python -m maverick.brain.cluster
+# (pair agreement): 1.0 -> 92.4%, 0.5 -> 92.4%, 0.25 -> 94.3%, 0 -> 96.8%. The extension alone says enough;
+# the kind is still used to NAME a group ("installers").
+KIND_WEIGHT = 0.0
+
+
+def name_words(name: str) -> list[str]:
+    """'Invoice_March-2024.pdf' -> ['invoice', 'march', 'ext:pdf', 'kind:document']"""
+    stem, _, ext = name.rpartition(".") if "." in name else (name, "", "")
+    stem = re.sub(r"([a-z])([A-Z])", r"\1 \2", stem)  # camelCase -> camel Case
+    words = [w.lower() for w in NAME_WORD_RE.findall(stem)]
+    ext = ext.lower()
+    return words + ([f"ext:{ext}"] if ext else []) + [f"kind:{KIND_OF.get(ext, 'other')}"]
+
+
+def vectors(names: list[str]) -> tuple[np.ndarray, list[str]]:
+    """TF-IDF over the name words (like the 8.2 brain): words shared by FEW files say the most about a group."""
+    docs = [name_words(n) for n in names]
+    vocab = sorted({w for doc in docs for w in doc})
+    index = {w: i for i, w in enumerate(vocab)}
+    X = np.zeros((len(docs), len(vocab)))
+    for row, doc in enumerate(docs):
+        for w in doc:
+            X[row, index[w]] += 1
+    df = (X > 0).sum(axis=0)
+    X *= np.log((1 + len(docs)) / (1 + df)) + 1
+    # At full weight, "kind:document" glued invoices, lecture notes and a CV into one big group.
+    X[:, [index[w] for w in vocab if w.startswith("kind:")]] *= KIND_WEIGHT
+    X /= np.maximum(np.linalg.norm(X, axis=1, keepdims=True), 1e-12)
+    return X, vocab
+
+
+def group_title(members: list[str]) -> str:
+    """The words most of the group share, e.g. 'invoice (pdf)'; otherwise just the kind, e.g. 'images'."""
+    counts = Counter(w for name in members for w in set(name_words(name)))
+    shared = [w for w, c in counts.most_common() if c >= max(2, len(members) / 2)]
+    words = [w for w in shared if ":" not in w][:2]
+    exts = [w[4:] for w in shared if w.startswith("ext:")][:1]
+    kinds = [w[5:] for w in shared if w.startswith("kind:") and counts[w] == len(members)][:1]
+    if words:
+        return " ".join(words) + (f" ({exts[0]})" if exts else "")
+    if kinds and kinds[0] != "other":
+        return f"{kinds[0]}s"  # 'installers' for .exe + .msi, rather than '.exe files'
+    return f".{exts[0]} files" if exts else "mixed"
+
+
+def group_files(names: list[str], model, X, vocab) -> list[tuple[str, list[str]]]:
+    """(title, members) for every group, biggest first."""
+    groups = [[n for n, label in zip(names, model.labels) if label == j] for j in range(model.k)]
+    return sorted(((group_title(g), g) for g in groups if g), key=lambda tg: -len(tg[1]))
+
+
+def group(root: str = "") -> Result:
+    """Read-only: which files in a folder belong together. Nothing is moved."""
+    from maverick.brain.cluster import best_kmeans
+
+    folder = require_existing(root) if root else Path.home() / "Downloads"
+    files = sorted((p for p in folder.iterdir() if p.is_file() and p.name.lower() not in SYSTEM_FILES
+                    and not p.name.startswith(".")), key=lambda p: p.stat().st_mtime, reverse=True)
+    files = files[:GROUP_LIMIT]
+    if len(files) < 4:
+        return Result(True, f"Only {len(files)} file(s) in {folder}: nothing to group.", {"groups": []})
+    names = [p.name for p in files]
+    sizes = {p.name: p.stat().st_size for p in files}
+    X, vocab = vectors(names)
+    found = group_files(names, best_kmeans(X), X, vocab)
+    lines = [f"{len(names)} files in {folder}, grouped by what their names have in common:"]
+    alone = [members[0] for _, members in found if len(members) == 1]
+    for title, members in found:
+        if len(members) == 1:
+            continue
+        examples = ", ".join(members[:3]) + (", ..." if len(members) > 3 else "")
+        lines.append(f"  - {title}: {len(members)} files, {human_size(sum(sizes[m] for m in members))}  ({examples})")
+    if alone:
+        lines.append(f"  - on their own: {', '.join(alone[:5])}{', ...' if len(alone) > 5 else ''}")
+    lines.append("Nothing was moved; this only shows which files belong together.")
+    return Result(True, "\n".join(lines), {"groups": [[t, m] for t, m in found]})
+
+
+# Made-up file names whose true groups we know, to check the clustering honestly (python -m maverick.brain.cluster).
+SAMPLE_GROUPS = [
+    ("invoices", ["invoice_march_2024.pdf", "Invoice-April-2024.pdf", "invoice_0423_amazon.pdf", "invoice_may.pdf",
+                  "electricity_invoice_june.pdf"]),
+    ("screenshots", ["Screenshot 2026-10-01 101233.png", "Screenshot 2026-10-03 090112.png",
+                     "Screenshot 2026-10-07 181501.png", "Screenshot 2026-10-09 223015.png"]),
+    ("installers", ["vlc-3.0.20-win64.exe", "ChromeSetup.exe", "python-3.14.0-amd64.exe", "7z2408-x64.msi",
+                    "OllamaSetup.exe"]),
+    ("phone photos", ["IMG_20260912_141501.jpg", "IMG_20260912_141533.jpg", "IMG_20260915_090001.jpg",
+                      "IMG_20260920_183344.jpg"]),
+    ("lecture notes", ["lecture_01_intro.pdf", "lecture_02_linear_algebra.pdf", "lecture_03_probability.pdf",
+                       "lecture_04_gradient_descent.pdf"]),
+    ("songs", ["Imagine Dragons - Believer.mp3", "Coldplay - Yellow.mp3", "Arijit Singh - Kesariya.mp3",
+               "AR Rahman - Jai Ho.mp3"]),
+    ("archives", ["project_backup.zip", "photos_2025.zip", "fonts.zip", "old_logs.zip"]),
+    # Real folders also hold one-offs that belong nowhere; k-means MUST put each somewhere, so these cost points.
+    ("one-offs", ["resume_final.docx", "notes.txt", "budget.xlsx"]),
+]

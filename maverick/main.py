@@ -11,6 +11,7 @@ from maverick.agents.cleanup.agent import CleanupAgent
 from maverick.agents.devices.agent import DevicesAgent
 from maverick.agents.files.agent import FileAgent
 from maverick.agents.hardware.agent import HardwareAgent
+from maverick.agents.hardware.ops import record_disks
 from maverick.agents.jobs.agent import JobsAgent
 from maverick.agents.logs.agent import LogsAgent
 from maverick.agents.network.agent import NetworkAgent
@@ -25,13 +26,17 @@ from maverick.brain.slots import SlotTagger
 from maverick.core.agent_base import Result
 from maverick.core.background import JOBS_PATH, Background
 from maverick.core.orchestrator import Orchestrator
+from maverick.llm.loop import AgentLoop
+from maverick.llm.ollama import Ollama
+from maverick.llm.tools import ToolCaller
 
 
 LOG_PATH = JOBS_PATH.parent / "background.log"
 
 
 def build(brain: Brain | None = None, background: Background | None = None,
-          tagger: SlotTagger | None = None, splitter: Splitter | None = None) -> Orchestrator:
+          tagger: SlotTagger | None = None, splitter: Splitter | None = None,
+          tool_caller: ToolCaller | AgentLoop | None = None) -> Orchestrator:
     # Jobs that keep running in the background (6.1). Without one passed in, jobs live in memory only.
     background = background or Background()
     # Register sub-agents here. Order matters for keyword rules: the first agent that understands a request wins.
@@ -52,7 +57,7 @@ def build(brain: Brain | None = None, background: Background | None = None,
         NetworkAgent(), DevicesAgent(), AccountsAgent(), PowerAgent(), CleanupAgent(), HardwareAgent(),
         SearchAgent(), ArchiveAgent(), FileAgent(tagger),
     ]
-    maverick = Orchestrator(agents, brain, splitter)
+    maverick = Orchestrator(agents, brain, splitter, tool_caller)
     maverick.background = background
     return maverick
 
@@ -100,7 +105,8 @@ def background_only(background: Background) -> None:
     print(f"MAVERICK background mode: {len(background.list())} job(s) running. Ctrl+C to stop.")
     try:
         while True:
-            time.sleep(1)
+            record_disks()  # at most one row an hour: the history behind "C: will be full in ..." (8.24)
+            time.sleep(60)
     except KeyboardInterrupt:
         print("Background mode stopped; the jobs stay saved for next time.")
 
@@ -110,12 +116,19 @@ if __name__ == "__main__":
     if sys.argv[1:] == ["--background"]:
         background_only(background)
         sys.exit(0)
+    record_disks()  # disk history for the 8.24 forecast; skipped if the last reading is under an hour old
     brain = Brain.load()
     if brain is None:
         print("(Brain not trained yet; using keyword rules. Train it with: python -m maverick.brain.train)")
     # The 8.15 slot tagger finds file names in sentences; untrained, the file agent's regex rules do.
     # The 8.16 splitter cuts "copy a.txt to D:\x and zip it" into steps; it needs the brain to read each piece.
-    maverick = build(brain, background, SlotTagger.load(), Splitter.load(brain.model if brain else None))
+    # The local LLM is the last try for requests nothing else understood; without Ollama, MAVERICK skips it.
+    # AgentLoop (8.21) can take several steps; ToolCaller (8.18) takes exactly one.
+    llm = Ollama()
+    tool_caller = AgentLoop(llm) if llm.available() else None
+    if tool_caller is None:
+        print(f"(Local LLM off. To use it: install Ollama, then: ollama pull {llm.model})")
+    maverick = build(brain, background, SlotTagger.load(), Splitter.load(brain.model if brain else None), tool_caller)
     if len(sys.argv) > 1:
         # The shell already removed the quotes, so put them back around args with spaces,
         # unless the whole request was passed as one quoted sentence.

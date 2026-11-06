@@ -1,9 +1,9 @@
 # MAVERICK brain training data.
 # Format: label<TAB>sentence. Lines starting with # are comments.
 # Labels: files.copy, files.move, files.rename, files.size,
-#         hardware.ram, hardware.slots, hardware.cpu, hardware.battery, hardware.disks,
-#         process.list, process.origin, process.children, process.end, process.hung, process.growing, process.handles,
-#         search.find, search.content,
+#         hardware.ram, hardware.slots, hardware.cpu, hardware.battery, hardware.disks, hardware.forecast,
+#         process.list, process.origin, process.children, process.end, process.hung, process.growing, process.handles, process.unusual,
+#         search.find, search.content, search.group,
 #         cleanup.scan, cleanup.recycle, archive.create, archive.list, archive.extract,
 #         power.plan, power.brightness, jobs.list, jobs.stop, watch.start, logs.rotate,
 #         services.list, services.change, network.info, network.wifi,
@@ -348,6 +348,38 @@ hardware.disks	disk space status
 hardware.disks	free gb on each disk
 hardware.disks	space remaining on all drives
 
+# --- hardware.forecast --- (8.24: a straight line through the disk history, followed until the drive is full)
+hardware.forecast	when will my C drive be full
+hardware.forecast	when will C: run out of space
+hardware.forecast	how fast is my disk filling up
+hardware.forecast	am i running out of space on D:
+hardware.forecast	predict when my storage will be full
+hardware.forecast	forecast my disk space
+hardware.forecast	how long until my drive is full
+hardware.forecast	how many days until C fills up
+hardware.forecast	is my disk going to fill up soon
+hardware.forecast	at this rate when will D: be full
+hardware.forecast	how quickly is my disk getting full
+hardware.forecast	will my ssd fill up this month
+hardware.forecast	how much time before i run out of disk space
+hardware.forecast	predict free space on E: next month
+hardware.forecast	disk space forecast for C:
+hardware.forecast	when do i need to clean up my drive
+hardware.forecast	how fast am i using up storage
+hardware.forecast	when will my laptop run out of storage
+hardware.forecast	estimate when the disk gets full
+hardware.forecast	is C: filling up fast
+hardware.forecast	how many weeks until my D drive is full
+hardware.forecast	trend of my disk filling up
+hardware.forecast	how much space do i use per day
+hardware.forecast	when will the hard drive be full
+hardware.forecast	project my disk usage
+hardware.forecast	how soon will my drive be full
+hardware.forecast	my drive keeps filling up, when will it be full
+hardware.forecast	disk filling rate until full
+hardware.forecast	will i run out of room on C: soon
+hardware.forecast	how long will my disk space last
+
 # --- process.list ---
 process.list	what programs are running
 process.list	list running processes
@@ -507,6 +539,38 @@ search.content	find csv files containing marks
 search.content	which md files mention brain
 search.content	search all files for the text deadline
 search.content	find documents that contain my roll number
+
+# --- search.group --- (8.23: k-means groups the files in a folder; read-only)
+search.group	group the files in my downloads
+search.group	group similar files in downloads
+search.group	cluster the files on my desktop
+search.group	what kinds of files make up my downloads
+search.group	organize my downloads into groups
+search.group	group my downloads by type
+search.group	categorize the files in documents
+search.group	which files in downloads belong together
+search.group	show my downloads grouped
+search.group	put my desktop files into groups
+search.group	group my downloads into sorts of files
+search.group	group up the stuff in my downloads
+search.group	find groups of similar files in documents
+search.group	cluster my documents
+search.group	how are the files in downloads related
+search.group	group the files in D:\work
+search.group	organise the files in E:\notes into groups
+search.group	what types of files are on my desktop
+search.group	group files by what they have in common
+search.group	which downloads go together
+search.group	make sense of my messy downloads
+search.group	split my downloads into categories
+search.group	what's in my downloads, grouped
+search.group	categorise my desktop files
+search.group	group similar documents together
+search.group	are there files in downloads that belong together
+search.group	split my downloads into clusters
+search.group	group my pictures
+search.group	what groups of files are in D:\projects
+search.group	tidy view of my downloads by kind
 
 # --- unknown: things MAVERICK cannot do (yet) ---
 unknown	hi
@@ -1242,6 +1306,38 @@ process.growing	does anything have a memory leak
 process.growing	memory leak check please
 process.growing	who keeps grabbing more ram
 process.growing	find processes with rising memory use
+
+# --- process.unusual --- (8.22: isolation forest over every running program)
+process.unusual	any unusual programs running
+process.unusual	is anything suspicious on my pc
+process.unusual	which apps are acting weird
+process.unusual	find programs behaving strangely
+process.unusual	are there any odd processes
+process.unusual	spot abnormal processes
+process.unusual	anything out of the ordinary on my pc
+process.unusual	check my programs for anomalies
+process.unusual	is some app behaving weird
+process.unusual	show me suspicious processes
+process.unusual	which program doesn't look normal
+process.unusual	check for strange activity in my apps
+process.unusual	anything weird or suspicious on this laptop
+process.unusual	find the odd one out among my programs
+process.unusual	does my computer have an unusual program
+process.unusual	detect unusual process behaviour
+process.unusual	which process looks suspicious
+process.unusual	scan my apps for anything abnormal
+process.unusual	is anything strange going on with my processes
+process.unusual	what's acting unusual on this laptop
+process.unusual	are any of my programs misbehaving
+process.unusual	something feels off with my apps
+process.unusual	find processes that stand out from the rest
+process.unusual	does any program look abnormal right now
+process.unusual	odd behaviour check on my programs
+process.unusual	is there a strange app on my system
+process.unusual	spot weird processes
+process.unusual	which apps are not acting normal
+process.unusual	run an anomaly check on my processes
+process.unusual	anything fishy on this pc
 
 # --- process.handles ---
 process.handles	which app has the most handles

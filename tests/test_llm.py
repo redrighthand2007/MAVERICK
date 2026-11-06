@@ -70,6 +70,19 @@ def test_ask_sends_the_system_message_first_and_temperature(server):
 def test_no_system_message_means_only_the_question(server):
     Ollama(url=server).ask("hi")
     assert FakeOllama.received[0]["messages"] == [{"role": "user", "content": "hi"}]
+    assert "format" not in FakeOllama.received[0]
+
+
+def test_examples_go_between_the_system_message_and_the_question(server):
+    Ollama(url=server).ask("hi", system="S", examples=[("q1", "a1")])
+    assert [m["role"] for m in FakeOllama.received[0]["messages"]] == ["system", "user", "assistant", "user"]
+    assert FakeOllama.received[0]["messages"][1:3] == [{"role": "user", "content": "q1"},
+                                                      {"role": "assistant", "content": "a1"}]
+
+
+def test_json_only_asks_ollama_for_json(server):
+    Ollama(url=server).ask("hi", json_only=True)
+    assert FakeOllama.received[0]["format"] == "json"
 
 
 def test_available_needs_the_model_downloaded(server):
