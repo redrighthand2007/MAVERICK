@@ -264,15 +264,65 @@ Every new brain must beat the current one in `evaluate.py` before it replaces it
   - temperature 0 by default, so the same question gets the same answer
   - Setup: install Ollama, then `ollama pull llama3.2:3b`. Try: `python -m maverick.llm.ollama "what is RAM?"`
   - Tests use a fake Ollama server, so they need no model or GPU
-- ⬜ 📕 **8.18 LLM tool calling**: describe `ops` functions; the model returns function + arguments as JSON; safety checks still run
-- ⬜ 📕 **8.19 Prompting / few-shot**: tune the instructions given to the local model
-- ⬜ 📕 **8.20 LoRA fine-tune** of a 0.5–1.5B model on `intents.tsv`
-- ⬜ 📕 **8.21 LLM agent loop** for multi-step requests (think → tool → result → repeat)
+- ✅ 📕 **8.18 LLM tool calling**: `maverick/llm/tools.py`, a menu of 14 actions whose arguments are simple text
+  - The model answers `{"action": "files.copy", "args": {...}}`; Ollama's JSON mode keeps the answer valid JSON
+  - `check()` drops made-up actions, unknown arguments, and any value the user never typed (asked for instead)
+  - The orchestrator asks the LLM only after the brain and the keyword rules failed; safety checks and y/n still run
+  - Real model, 12 hand-picked requests: 10 right ("stash notes.txt over in E:\x" → files.move), 2 invented
+    paths caught and asked for, "delete all my files" → none. About 3 s per request (the menu is a long prompt)
+  - Off automatically when Ollama isn't running
+- ✅ 📕 **8.19 Prompting / few-shot**: 8 worked examples (`tools.EXAMPLES`) sent before each request
+  - Test set `data/llm_eval.tsv`: 42 unseen requests (36 actions, 6 that must be "none"), with expected arguments
+  - `python -m maverick.llm.evaluate`: zero-shot **88.1%** fully right → few-shot **95.2%**, same ~2.8 s per request
+  - Few-shot fixed: rename vs move, leaving out what wasn't said, "delete everything on D:" → none
+  - Found a real bug: "c" inside "much" counted as the user typing drive C; values must now match whole words
+- ✅ 📕 **8.20 LoRA fine-tune**: `maverick/llm/lora.py`, SmolLM2-360M-Instruct (Hugging Face) on `intents.tsv`
+  - LoRA rank 16 on the attention layers: trains 3.3M of 365M numbers (0.9%); 3 epochs = 48 s on the RTX 2050
+  - Predicts by SCORING every real label (it can't invent one); softmax over the scores = confidence
+  - Same 80/20 split: brain **82.7%** test / **72.6%** hard cases vs LoRA 81.5% / 65.5%, 250 ms per sentence
+  - Verdict: the 360M model doesn't beat our own brain, so the brain stays; adapter kept in `models/lora/`
+  - Needs PyTorch (GPU), transformers, peft: installed only in `.venv`, MAVERICK itself doesn't use them
+  - Run: `.venv\Scripts\python -m maverick.llm.lora`
+- ✅ 📕 **8.21 LLM agent loop**: `maverick/llm/loop.py`, think → act → read the result → next action or "done"
+  - Each result goes back to the model as the next message; it answers with another action or a short final answer
+  - Safety stays with MAVERICK: every step goes through `check()` + `run()`; a y/n question, a failure,
+    a repeated action or 4 steps end the loop; values may come from the request OR an earlier result
+  - Replaces the 8.18 single call as the last-resort fallback (`ToolCaller` and `AgentLoop` share `solve()`)
+  - Real model: "which one is heavier, a or b" → sizes both → "big.txt is heavier"; "weigh small.txt and if
+    over 1 KB squash it" → "under 1 KB, so no action needed". It first repeated itself instead of answering;
+    a reminder after each result ("reply done if answered") fixed that
+  - Still weak: for big.txt it picked rename instead of zip, but rename is risky so it only got a y/n question
+  - ~5 s per step; requests the keyword rules catch (e.g. with "zip" or "copy") never reach the loop
 
 **8H. Unsupervised and prediction (used inside agents)**
-- ⬜ 📕 **8.22 Anomaly detection** (isolation forest / autoencoder): unusual RAM growth and connections (7.11, 7.13)
-- ⬜ 📕 **8.23 Clustering**: group similar files, e.g. in Downloads (after 4.6)
-- ⬜ 📕 **8.24 Regression / forecasting**: "C: will be full in about 3 weeks" (after 4.1)
+- ✅ 📕 **8.22 Anomaly detection**: isolation forest in NumPy (`maverick/brain/anomaly.py`), the first UNSUPERVISED model
+  - `process.unusual` ("any unusual programs running"): watches every program ~6 s, scores how unlike the rest each is
+  - Numbers per program, by behaviour not size: RAM per copy, RAM growth %/min (growth only), CPU, threads per copy,
+    handles per thread, network connections per copy. Every report names the extreme numbers behind it
+  - First try used plain totals: it just flagged the BIG programs (svchost x90, VS Code, Brave)
+  - `python -m maverick.brain.anomaly` plants 3 fake programs (a leaker, 400 connections, 3000 threads):
+    ranked **3rd, 5th, 6th of 113** by the forest vs ~57th when sorting by RAM like Task Manager
+  - Brain: 30 new `process.unusual` sentences, retrained; splitter retrained too (CV now 95.0% / 82.7%:
+    the refolded data moved it by 2-3 sentences); `process.unusual` is also on the LLM's menu
+- ✅ 📕 **8.23 Clustering**: k-means in NumPy (`maverick/brain/cluster.py`) + `search.group`, read-only
+  - "group the files in my downloads": each file name → TF-IDF of its words + extension, k-means++ with restarts,
+    the number of groups chosen by the silhouette score; each group is named by the words most of it shares
+  - Check: `python -m maverick.brain.cluster`, 33 made-up names in 8 known groups (incl. 3 one-offs),
+    scored by pair agreement: k-means **96.8%** vs one group per extension 94.9%
+  - Measured, not guessed: the file kind ("document") at full weight glued invoices + lecture notes + a CV
+    together (92.4%), so it now only names groups; keeping long numbers (IDs) scored worse (93.9%), dropped
+  - On the real Downloads: found the 3 copies of one .pptx, the .pdf + .docx of one report, the review files;
+    hidden files (desktop.ini) skipped. Brain: 30 new `search.group` sentences, retrained (+ splitter)
+- ✅ 📕 **8.24 Regression / forecasting**: "when will C: be full" (`hardware.forecast`)
+  - `maverick/brain/forecast.py`: least-squares line (slope, intercept, R², slope ± 2 standard errors)
+  - `hardware.forecast`: line through the last 30 days of `~/.maverick/disk_history.tsv`, followed until full;
+    needs 2+ days of history (recorded at most hourly: on MAVERICK start, on "space left", in --background mode)
+  - Backtest (made-up 60-day disk, last 14 days hidden): line misses 2.1 GB vs 7.3 (no change), 35.5 (yesterday's change)
+  - `tests/conftest.py` gives every test its own history file, so faked drives never touch the real one
+  - Cost of 3 new commands (8.22-8.24, 90 sentences): first they stole old sentences ("list running processes" →
+    unusual, "how long will my battery last" → forecast) because the new sentences leaned on generic words.
+    Reworded 25 of them to lean on their own words (unusual, group, full): the 82% floor is kept (test split
+    82.8%); the OLD commands still lost a little, 5-fold 83.0% → 82.4% (8 of 1224), the price of 3 more choices
 - ⬜ 📕 **8.25 Ranking**: order file-search results by relevance (after 4.6)
 
 **8I. Classic AI for goal requests**
