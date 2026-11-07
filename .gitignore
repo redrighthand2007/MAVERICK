@@ -6,3 +6,8 @@ maverick/brain/models/
 maverick/brain/data/inbox.tsv
 maverick/brain/data/learned.tsv
 MAVERICK.code-workspace
+
+# packaging leftovers
+*.egg-info/
+build/
+dist/

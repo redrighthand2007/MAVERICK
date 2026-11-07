@@ -111,7 +111,8 @@ def background_only(background: Background) -> None:
         print("Background mode stopped; the jobs stay saved for next time.")
 
 
-if __name__ == "__main__":
+def main() -> None:
+    """Start MAVERICK: `python maverick\\main.py`, or just `maverick` after `pip install -e .`."""
     background = Background(JOBS_PATH, notify=lambda message: print(f"\nMAVERICK (background): {message}"))
     if sys.argv[1:] == ["--background"]:
         background_only(background)
@@ -142,3 +143,7 @@ if __name__ == "__main__":
     if restored:
         print(f"({restored} background job(s) restored; say 'show background jobs'.)")
     repl(maverick)
+
+
+if __name__ == "__main__":
+    main()

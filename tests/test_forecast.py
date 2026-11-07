@@ -69,6 +69,13 @@ def test_too_little_history_says_so(tmp_path):
     assert "No history for D:" in ops.forecast("D:", path, now=NOW).message
 
 
+def test_two_readings_far_apart_ask_for_a_third(tmp_path):
+    # The old message said "2 readings over 5.7 days. I need at least 2 days", which made no sense.
+    path = history(tmp_path, [(5.7, 300), (0, 301)])
+    message = ops.forecast("C:", path, now=NOW).message
+    assert "2 reading(s) over 5.7 days" in message and "at least 3 readings" in message
+
+
 def test_old_readings_are_ignored(tmp_path):
     # Fast growth 60 days ago, flat for the last 30: only the recent past counts.
     path = history(tmp_path, [(d, 100 + 5 * (60 - d)) for d in range(60, 31, -1)] + [(d, 300) for d in range(29, -1, -1)])

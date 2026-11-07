@@ -9,10 +9,30 @@ agent and which operation** it means:
 "what's the weather like"                →   unknown
 ```
 
-We are building it **ourselves, from scratch**: first by hand in pure Python,
-then with scikit-learn to compare. No LLM, no Ollama, no internet. Everything
-runs offline on this laptop (16 GB RAM, RTX 2050 4 GB — plenty; none of
-Phases 1–6 even need the GPU).
+The plan was to build it **ourselves, from scratch**, in pure Python first. Everything runs offline
+on one laptop (16 GB RAM, RTX 2050 4 GB).
+
+## How it actually turned out
+
+The phases below are the original plan, kept as written. What happened:
+
+| Plan | What was built instead, or in addition |
+|---|---|
+| Phase 3: Naive Bayes from scratch | ✅ as planned |
+| Phase 4: scikit-learn version | Replaced by **from-scratch NumPy** versions: logistic regression, SVM, k-NN, decision tree, Bernoulli NB, MLP, ensemble (Stage 8.2–8.9) |
+| Phase 5: evaluation | ✅ plus 5-fold cross-validation, per-label F1, cut-off sweeps |
+| Phase 6: integration | ✅ plus a learned slot tagger and a multi-action splitter |
+| Phase 7: "optional, much later: LLM" | ✅ LoRA experiment (didn't beat the brain), Llama 3.2 3B via Ollama as a last-resort tool-calling agent |
+| Not planned | A **pretrained MiniLM encoder**, exported to ONNX, is now the brain: 91.6% vs 84.5% |
+
+| Brain over time | As MAVERICK runs (5-fold) | Hard cases |
+|---|---|---|
+| Naive Bayes | 83.8% | 60% |
+| Logistic regression (TF-IDF + word pairs) | 83.2% | 73% |
+| Ensemble (LR + Bernoulli NB + linear SVM) | 84.5% | 75% |
+| **MiniLM (ONNX) + logistic regression** | **91.6%** | **86%** |
+
+Every experiment, including the failures: [RESULTS.md](RESULTS.md).
 
 ## What the brain does and does NOT do
 
@@ -33,10 +53,9 @@ decides *what* you asked for, never *whether it is allowed*.
 
 - Work one phase at a time. Each phase has a **goal**, small **steps**, and a
   **done when** check. Don't move on until "done when" is true.
-- You write the code; Claude explains, reviews, and answers questions.
 - Commit small (on `build`), one step at a time.
 
-## Planned layout
+## Planned layout (original plan; the real one has many more models, see the README)
 
 ```
 maverick/brain/
@@ -388,15 +407,13 @@ cases, and a passing brain test.
 
 ## Progress
 
-- [ ] Phase 1: Concepts (learning in the side chat)
-- [x] Phase 2: Dataset (built, 220 examples + 26 hard cases)
-- [x] Phase 3: Naive Bayes from scratch (built, to be studied)
-- [ ] Phase 4: scikit-learn version
-- [x] Phase 5: Evaluation (test 82%, hard cases 81%; keyword rules 75% / 46%)
-- [x] Phase 6: Integration (threshold 0.6, rules fallback, inbox logging)
-- [ ] Phase 7: Growing (ongoing)
+- [x] Phase 1: Concepts
+- [x] Phase 2: Dataset (started at 220 examples + 26 hard cases; now 1,374 + 84)
+- [x] Phase 3: Naive Bayes from scratch
+- [x] Phase 4: comparison models, written from scratch in NumPy instead of scikit-learn
+- [x] Phase 5: Evaluation (5-fold cross-validation, per-label F1, cut-off sweeps)
+- [x] Phase 6: Integration (per-model cut-off, rules fallback, inbox logging)
+- [x] Phase 7: Grew to 14 agents and 46 operations; the brain is now MiniLM + logistic regression
 
-Note: built first, learned later (user's choice). Phases 2-6 are in the code;
-walk through them in the learning chat. A confident `unknown` still lets
-keyword rules try, so an explicit command like "copy a b" can never be
-blocked by a wrong brain guess.
+A confident `unknown` still lets keyword rules try, so an explicit command like "copy a b" can never
+be blocked by a wrong brain guess.

@@ -1,0 +1,49 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "maverick-assistant"
+version = "1.0.0"
+description = "Offline multi-agent AI assistant for Windows, with its own trained intent models"
+readme = "README.md"
+requires-python = ">=3.12"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{ name = "Kush Aghera" }]
+keywords = ["ai-agent", "multi-agent", "windows", "offline", "nlp", "intent-classification", "onnx", "ollama"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: Microsoft :: Windows",
+    "Environment :: Console",
+    "Topic :: System :: Systems Administration",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+dependencies = [
+    "numpy>=2.0",
+    "psutil>=7.0",
+    "pyzipper>=0.3",
+]
+
+[project.optional-dependencies]
+# The MiniLM brain (91.6% instead of 84.5%); without it MAVERICK uses its own ensemble.
+minilm = ["onnxruntime>=1.31", "tokenizers>=0.23"]
+# Only to re-create the ONNX file (python -m maverick.llm.export_onnx) and the 8.12 / 8.20 experiments.
+train = ["torch>=2.5", "transformers>=4.45", "onnx>=1.17", "peft>=0.13"]
+dev = ["pytest>=8.0"]
+
+[project.scripts]
+maverick = "maverick.main:main"
+
+[project.urls]
+Homepage = "https://github.com/redrighthand2007/MAVERICK"
+
+[tool.setuptools.packages.find]
+include = ["maverick*"]
+
+[tool.setuptools.package-data]
+"maverick.brain" = ["data/*.tsv"]
+
+[tool.setuptools.exclude-package-data]
+# Your own logged and reviewed requests: private, never packaged (also gitignored).
+"maverick.brain" = ["data/inbox.tsv", "data/learned.tsv"]
