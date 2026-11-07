@@ -23,10 +23,9 @@ or works on throwaway files in a demo folder, so recording it never changes anyt
 | 4 | `duplicate notes.txt into backup` | Safety: refuses to overwrite |
 | 5 | `which programs use the most memory` | Process agent, copies grouped (`chrome.exe x18`) |
 | 6 | `any unusual programs running` | Isolation forest anomaly detection (takes about 6 s) |
-| 7 | `when will c drive be full` | Regression forecast (needs 3+ readings over 2+ days of use) |
-| 8 | `free up 5 gb on c drive`, then answer **n** | Optimal clean-up plan + the y/n safety prompt |
-| 9 | `zip C:\demo\backup` | Archive agent (give the full path) |
-| 10 | `exit` | |
+| 7 | `free up 5 gb on c drive`, then answer **n** | Optimal clean-up plan + the y/n safety prompt |
+| 8 | `zip C:\demo\backup` | Archive agent (give the full path) |
+| 9 | `exit` | |
 
 ## After recording
 
