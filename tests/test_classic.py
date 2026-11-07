@@ -4,7 +4,9 @@ import pytest
 from maverick.brain import DEFAULT_KIND, MODELS
 from maverick.brain.bernoulli_nb import BernoulliNB
 from maverick.brain.classic import DecisionTree, KNearest, LinearSVM
+from maverick.brain.embeddings import MeaningLR, SynonymSwap, similar
 from maverick.brain.ensemble import Ensemble
+from maverick.brain.logistic_regression import LogisticRegression
 
 TOY = [("files.copy", ["copy", "<path>", "to", "<path>"]), ("files.copy", ["copy", "this", "file"]),
        ("files.copy", ["please", "copy", "<path>"]), ("process.end", ["kill", "chrome"]),
@@ -70,3 +72,26 @@ def test_ensemble_saves_its_members_next_to_it(tmp_path):
 def test_the_ensemble_is_the_default_brain():
     assert DEFAULT_KIND == "ensemble" and set(Ensemble.MEMBERS) <= MODELS.keys()
 
+
+FAKE_GLOVE = {w: v / np.linalg.norm(v) for w, v in {
+    "copy": np.array([1.0, 0.1, 0.0]), "duplicate": np.array([0.95, 0.15, 0.0]),
+    "kill": np.array([0.0, 1.0, 0.1]), "banana": np.array([0.0, 0.0, 1.0])}.items()}
+
+
+def test_similar_words():
+    assert similar(FAKE_GLOVE, "duplicate", sorted(FAKE_GLOVE), n=1)[0][0] == "copy"
+
+
+def test_unknown_word_swap():
+    model = LogisticRegression().fit(TOY)
+    swap = SynonymSwap(model, FAKE_GLOVE, {w for _, t in TOY for w in t})
+    assert swap.translate(["duplicate", "<path>"]) == ["copy", "<path>"]
+    assert swap.translate(["banana"]) == ["banana"]  # nothing similar enough among the known words
+    assert swap.predict(["duplicate", "<path>"])[0] == "files.copy"
+
+
+def test_meaning_features_add_the_average_vector():
+    glove = {w: np.ones(50) for w in ["copy", "kill"]}
+    model = MeaningLR(glove).fit(TOY)
+    x = model.features([["copy", "unknown"]])
+    assert x.shape[1] == len(model.vectorizer.index) + 50

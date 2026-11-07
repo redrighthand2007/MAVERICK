@@ -41,7 +41,8 @@ class LogisticRegression:
     def fit(self, examples: list[tuple[str, list[str]]]) -> "LogisticRegression":
         docs = [tokens for _, tokens in examples]
         self.labels = sorted({label for label, _ in examples})
-        x = self.vectorizer.fit(docs).transform(docs)
+        self.vectorizer.fit(docs)
+        x = self.features(docs)
         y = np.zeros((len(examples), len(self.labels)))     # one-hot: a 1 in the right label's column
         for row, (label, _) in enumerate(examples):
             y[row, self.labels.index(label)] = 1
@@ -62,8 +63,12 @@ class LogisticRegression:
             self.bias += velocity_b
         return self
 
+    def features(self, docs: list[list[str]]) -> np.ndarray:
+        """The numbers each sentence becomes; 8.10 adds GloVe word vectors by overriding this."""
+        return self.vectorizer.transform(docs)
+
     def predict_proba(self, tokens: list[str]) -> dict[str, float]:
-        probs = softmax(self.vectorizer.transform([tokens]) @ self.weights + self.bias)[0]
+        probs = softmax(self.features([tokens]) @ self.weights + self.bias)[0]
         return dict(zip(self.labels, probs.tolist()))
 
     def predict(self, tokens: list[str]) -> tuple[str, float]:
