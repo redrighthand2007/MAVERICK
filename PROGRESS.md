@@ -19,8 +19,8 @@ Only tick **Learned** when you can explain the point without looking.
 | 5 | Action agents | 5 / 5 | 0 / 5 |
 | 6 | Background agents | 3 / 3 | 0 / 3 |
 | 7 | Admin-level agents | 6 / 6 | 0 / 6 |
-| 8 | AI methods | 27 / 27 | 0 / 27 |
-| **All** | | **61 / 61** | **0 / 73** |
+| 8 | AI methods | 30 / 30 | 0 / 30 |
+| **All** | | **64 / 64** | **0 / 76** |
 
 Numbers keep their original step number (code comments say "8.5", "8.22", ...), so a few numbers are missing
 where skipped agents were removed.
@@ -168,7 +168,7 @@ Every new brain must beat the current one in `evaluate.py` before it replaces it
 | ✅ | ⬜ | 8.2 | Logistic regression | Learns a weight per (word, label) by gradient descent | Hard cases 60% → 76% |
 | ✅ | ⬜ | 8.3 | SVM, k-NN, decision tree | Three more classic models, from scratch | SVM 80.8%, k-NN 78.6%, tree 79.4%; LR 83.2% stayed best alone |
 | ✅ | ⬜ | 8.4 | Bernoulli Naive Bayes | Missing words count as evidence too | 5.8% with +1 smoothing → 77.6% with 0.1 |
-| ✅ | ⬜ | 8.5 | Ensemble / voting | LR + Bernoulli NB + SVM average their answers | **84.5%**, hard 75%: **the current brain** |
+| ✅ | ⬜ | 8.5 | Ensemble / voting | LR + Bernoulli NB + SVM average their answers | **84.5%**, hard 75%; now the fallback brain |
 
 **8C. Better evaluation**
 
@@ -184,8 +184,8 @@ Every new brain must beat the current one in `evaluate.py` before it replaces it
 |---|---|---|---|---|---|
 | ✅ | ⬜ | 8.9 | Neural brain (MLP) | 128 neurons, backpropagation, Adam, dropout | Tied with LR (79.5%); kept as an option |
 | ✅ | ⬜ | 8.10 | Word embeddings | GloVe: each word becomes 50 numbers of "meaning" | Synonym swap failed; as extra features 84.0%; not used at runtime |
-| ✅ | ⬜ | 8.11 | Sentence embedding model | MiniLM (frozen) turns a sentence into 384 numbers; our LR on top | **91.1%**, hard 83% |
-| ✅ | ⬜ | 8.12 | Pretrained transformer, fine-tuned | The whole MiniLM retrained on our sentences | **92.3%**, hard 81%; not in MAVERICK yet (needs PyTorch or ONNX) |
+| ✅ | ⬜ | 8.11 | Sentence embedding model | MiniLM (frozen) turns a sentence into 384 numbers; our LR on top | **91.6%**, hard 86% (cut-off 0.3): **the current brain**, see below |
+| ✅ | ⬜ | 8.12 | Pretrained transformer, fine-tuned | The whole MiniLM retrained on our sentences | 92.3%, hard 81%; not shipped: frozen is as good and retrains in seconds without a GPU |
 
 **8E. Learning from real use**
 
@@ -229,7 +229,14 @@ Every new brain must beat the current one in `evaluate.py` before it replaces it
 
 ---
 
-## Open decisions
+## MiniLM shipped (8.11 via ONNX)
 
-- **MiniLM into MAVERICK (8.11 / 8.12)**: the biggest accuracy jump (~92% vs 84.5%). Needs PyTorch (3 GB) in
-  MAVERICK's own Python, or exporting MiniLM to ONNX (~90 MB file + a ~15 MB runtime).
+| Built | Learned | # | Name | What it means | Result |
+|---|---|---|---|---|---|
+| ✅ | ⬜ | 8.11b | ONNX export | Convert MiniLM once (in `.venv`, needs PyTorch) to one portable file | `maverick/llm/export_onnx.py` → `maverick/brain/models/minilm/` (90 MB, gitignored) |
+| ✅ | ⬜ | 8.11c | MiniLM brain | `onnxruntime` + `tokenizers` run it in MAVERICK's own Python, no PyTorch | `maverick/brain/minilm.py`; same numbers as PyTorch (diff 0.00000015); 2.5 ms per request |
+| ✅ | ⬜ | 8.11d | Fallback | Also trains and saves the 8.5 ensemble; used when the files are missing | Nothing breaks on a PC without the model |
+
+- Setup on a new PC: `pip install -r requirements.txt`, then `.venv\Scripts\python -m maverick.llm.export_onnx`,
+  then `python -m maverick.brain.train` and `python -m maverick.brain.multi`
+- Fixed wordings, old → new: "clone this folder" recycle 0.18 → copy 0.98; "get rid of chrome" process.origin → process.end
