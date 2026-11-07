@@ -240,3 +240,16 @@ Every new brain must beat the current one in `evaluate.py` before it replaces it
 - Setup on a new PC: `pip install -r requirements.txt`, then `.venv\Scripts\python -m maverick.llm.export_onnx`,
   then `python -m maverick.brain.train` and `python -m maverick.brain.multi`
 - Fixed wordings, old → new: "clone this folder" recycle 0.18 → copy 0.98; "get rid of chrome" process.origin → process.end
+
+## Release polish (v1.0, GitHub-ready)
+
+| Done | What | Where |
+|---|---|---|
+| ✅ | README rewritten: highlights, request flow diagram, 14 agents, results, setup | `README.md` |
+| ✅ | Docs brought up to date; full results incl. failures; demo recording script | `docs/` |
+| ✅ | MIT license | `LICENSE` |
+| ✅ | Installable: `pip install -e .` gives a `maverick` command; private data excluded from packages | `pyproject.toml` |
+| ✅ | CI: tests on Windows, Python 3.12 + 3.14, on every push and PR | `.github/workflows/tests.yml` |
+| ✅ | Fixed: forecast said "2 readings over 5.7 days, I need 2 days" (it needs 3 readings) | `agents/hardware/ops.py` |
+| ✅ | Fixed: `numpy` was missing from `requirements.txt` | |
+| ⬜ | Your part: push, check CI is green, About + topics, demo GIF, v1.0 release | GitHub |
