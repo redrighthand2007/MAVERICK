@@ -252,4 +252,7 @@ Every new brain must beat the current one in `evaluate.py` before it replaces it
 | ✅ | CI: tests on Windows, Python 3.12 + 3.14, on every push and PR | `.github/workflows/tests.yml` |
 | ✅ | Fixed: forecast said "2 readings over 5.7 days, I need 2 days" (it needs 3 readings) | `agents/hardware/ops.py` |
 | ✅ | Fixed: `numpy` was missing from `requirements.txt` | |
-| ⬜ | Your part: push, check CI is green, About + topics, demo GIF, v1.0 release | GitHub |
+| ✅ | Pushed and merged; CI green on Windows (Python 3.12 + 3.14) | GitHub Actions |
+| ✅ | About text + topics, repo pinned on the profile | GitHub |
+| ✅ | Release **v1.0.0** published | GitHub Releases |
+| ⬜ | Demo GIF (`docs/demo.gif`, script in `docs/DEMO.md`) | later |

@@ -23,15 +23,16 @@ or works on throwaway files in a demo folder, so recording it never changes anyt
 | 4 | `duplicate notes.txt into backup` | Safety: refuses to overwrite |
 | 5 | `which programs use the most memory` | Process agent, copies grouped (`chrome.exe x18`) |
 | 6 | `any unusual programs running` | Isolation forest anomaly detection (takes about 6 s) |
-| 7 | `when will c drive be full` | Regression forecast (needs 3+ readings over 2+ days of use) |
-| 8 | `free up 5 gb on c drive`, then answer **n** | Optimal clean-up plan + the y/n safety prompt |
-| 9 | `zip C:\demo\backup` | Archive agent (give the full path) |
-| 10 | `exit` | |
+| 7 | `free up 5 gb on c drive`, then answer **n** | Optimal clean-up plan + the y/n safety prompt |
+| 8 | `zip C:\demo\backup` | Archive agent (give the full path) |
+| 9 | `exit` | |
 
 ## After recording
 
-- Save the GIF as `docs/demo.gif` and add `![MAVERICK demo](docs/demo.gif)` under the first paragraph
-  of the README.
+- Save the GIF as `docs/demo.gif` (keep it under ~10 MB so GitHub shows it quickly).
+- In `README.md`, find the `<!-- DEMO GIF` comment under the first paragraph. Delete its first two
+  lines and its last line (`-->`), so only the `<p align="center"><img src="docs/demo.gif" ...></p>`
+  line is left.
 - Check the recording shows nothing private (file names in Downloads, user names, Wi-Fi names).
 - Your real requests during the recording are logged to `maverick/brain/data/inbox.tsv`, which stays
   on your PC and is never uploaded.
