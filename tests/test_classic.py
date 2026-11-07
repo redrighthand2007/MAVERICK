@@ -69,8 +69,10 @@ def test_ensemble_saves_its_members_next_to_it(tmp_path):
     assert abs(saved_confidence - confidence) < 1e-6  # weights are saved rounded to 6 decimals
 
 
-def test_the_ensemble_is_the_default_brain():
-    assert DEFAULT_KIND == "ensemble" and set(Ensemble.MEMBERS) <= MODELS.keys()
+def test_the_default_brain_is_minilm_or_the_ensemble():
+    from maverick.brain.minilm import MiniLM
+    assert DEFAULT_KIND == ("minilm" if MiniLM.usable() else "ensemble")
+    assert set(Ensemble.MEMBERS) <= MODELS.keys()
 
 
 FAKE_GLOVE = {w: v / np.linalg.norm(v) for w, v in {
