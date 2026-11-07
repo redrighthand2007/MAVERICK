@@ -123,6 +123,8 @@ def test_brain_sees_word_order(full_brain, sentence, label):
 
 @pytest.mark.parametrize("kind", sorted(MODELS))
 def test_every_brain_kind_trains_saves_and_loads(tmp_path, kind):
+    if not getattr(MODELS[kind], "usable", lambda: True)():
+        pytest.skip(f"{kind}: its model files aren't on this PC")
     model = train(load_examples(INTENTS_PATH), kind)
     model.save(tmp_path / "brain.json")
     loaded = load_model(tmp_path / "brain.json")
