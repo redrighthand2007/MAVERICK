@@ -211,9 +211,18 @@ Every new brain must beat the current one in `evaluate.py` before it replaces it
   - Now the default brain; `python -m maverick.brain.train naive_bayes` still trains the old one
   - Each brain has its own confidence cut-off (logistic regression 0.4, Naive Bayes 0.6)
   - Fixed: "what started chrome" vs "what did chrome start", "what is eating my memory"
-- ⬜ 📕 **8.3 SVM, k-nearest neighbours, decision tree**: extra comparisons, keep the winner
-- ⬜ 📕 **8.4 Bernoulli Naive Bayes**: variant of the current brain, for short sentences
-- ⬜ 📕 **8.5 Ensemble / voting**: combine the best models' answers
+- ✅ 📕 **8.3 SVM, k-nearest neighbours, decision tree**: `maverick/brain/classic.py`, from scratch in NumPy
+  - 5-fold, brain alone / as MAVERICK runs: logistic regression 78.9% / 83.2%, linear SVM 77.4% / 80.8%,
+    k-NN 63.0% / 78.6%, decision tree 55.2% / 79.4%. Logistic regression stayed the best single model
+- ✅ 📕 **8.4 Bernoulli Naive Bayes**: `maverick/brain/bernoulli_nb.py`, absent words count as evidence too
+  - With the usual +1 smoothing: **5.8%**. The 71-sentence "unknown" label paid far less for the words a sentence
+    lacks, and won almost everything. Smoothing tuned by CV: 0.3 → 63.0%, **0.1 → 77.6%**, 0.01 → 76.1%
+  - Beats the original multinomial NB (73.3%; short sentences 77.0% vs 72.0%), not logistic regression
+- ✅ 📕 **8.5 Ensemble / voting**: `maverick/brain/ensemble.py`, soft voting (averaged probabilities)
+  - Best set: logistic regression + Bernoulli NB + linear SVM; adding NB or the MLP didn't help overall
+  - Cut-off sweep, as MAVERICK runs: at **0.3** it beats logistic regression on both counts
+    (5-fold **84.5% vs 83.2%**, hard cases **75% vs 73%**), so it is now the DEFAULT brain
+  - Members are saved next to `brain.json` (`brain.logistic_regression.json`, ...)
 
 **8C. Better evaluation**
 - ✅ 📕 **8.6 Cross-validation**: `folds()` in `dataset.py`, `cross_validate()` in `evaluate.py`
@@ -232,9 +241,18 @@ Every new brain must beat the current one in `evaluate.py` before it replaces it
   - 5-fold: brain alone 79.5% vs logistic regression 79.4% (a tie); hard as MAVERICK runs 81% vs 76%; 4x slower to train
   - Lesson: with ~1,200 sentences a deeper model has little extra to learn; more data (8.13) matters more
   - Kept as an option (`python -m maverick.brain.train mlp`); logistic regression stays the default
-- ⬜ 📕 **8.10 Word embeddings**: "duplicate" ≈ "copy" without examples (small offline model)
-- ⬜ 📕 **8.11 Sentence embedding model**: match meaning, not exact words (pretrained, offline)
-- ⬜ 📕 **8.12 Small pretrained transformer encoder**: fine-tuned for intent (transfer learning)
+- ✅ 📕 **8.10 Word embeddings**: `maverick/brain/embeddings.py`, GloVe 6B 50d (Stanford NLP, 171 MB, `models/`)
+  - The goal failed: in GloVe's 50 numbers "duplicate" is nearest "categorize" / "replicate", not "copy"
+    (trained on news, too coarse for command words), so swapping unknown words didn't help (79.0% vs 78.9%)
+  - Adding the sentence's average word vector to the TF-IDF features did: brain 78.9% → **81.1%**, as MAVERICK
+    runs 84.0%, hard 80%. Not used at runtime (needs the 171 MB file); stanford.edu timed out, got it from HF
+- ✅ 📕 **8.11 Sentence embedding model**: `maverick/llm/encoder.py`, all-MiniLM-L6-v2 FROZEN + our LR on its 384 numbers
+  - "duplicate this file" / "copy this file" similarity 0.72 vs "kill chrome" 0.07: real meaning, unlike GloVe
+  - 5-fold: brain **90.2%** (ensemble 80.7%), as MAVERICK runs **91.1%** (84.5%), hard cases 83% (75%); 10 s
+- ✅ 📕 **8.12 Small pretrained transformer encoder**: the same MiniLM FINE-TUNED end to end (+ a 384 → labels layer)
+  - 5-fold: brain **91.9%**, as MAVERICK runs **92.3%**, hard cases 81%; 2 min on the RTX 2050
+  - The biggest jump of Stage 8 (+7-8 points), but NOT in MAVERICK yet: it needs PyTorch (3 GB) in MAVERICK's
+    own Python, which only `.venv` has. Decide: install it, or export MiniLM to a lighter format (ONNX)
 
 **8E. Learning from real use**
 - ✅ 📕 **8.13 Online learning**: `python -m maverick.brain.review` then `python -m maverick.brain.train`

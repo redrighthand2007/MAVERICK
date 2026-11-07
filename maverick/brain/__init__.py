@@ -2,7 +2,10 @@ from pathlib import Path
 
 import json
 
+from maverick.brain.bernoulli_nb import BernoulliNB
+from maverick.brain.classic import DecisionTree, KNearest, LinearSVM
 from maverick.brain.dataset import DATA_DIR
+from maverick.brain.ensemble import Ensemble
 from maverick.brain.logistic_regression import LogisticRegression
 from maverick.brain.mlp import MLP
 from maverick.brain.naive_bayes import NaiveBayes
@@ -13,9 +16,11 @@ MODEL_PATH = MODELS_DIR / "brain.json"
 OLD_MODEL_PATH = MODELS_DIR / "naive_bayes.json"  # what Stages 2-7 saved; still loads until you retrain
 INBOX_PATH = DATA_DIR / "inbox.tsv"
 # Every kind of brain MAVERICK can train; the saved file says which one it is.
-MODELS = {model.kind: model for model in (NaiveBayes, LogisticRegression, MLP)}
-# Won the Stage 8.2 comparison. The 8.9 neural net ties it (79.5% vs 79.4%) but trains 4x slower: not worth it yet.
-DEFAULT_KIND = "logistic_regression"
+MODELS = {model.kind: model for model in (NaiveBayes, LogisticRegression, MLP, LinearSVM, KNearest, DecisionTree,
+                                          BernoulliNB, Ensemble)}
+# Logistic regression won 8.2 (the 8.9 neural net tied it but trains 4x slower). Since 8.5 an ensemble of it,
+# Bernoulli NB and the linear SVM beats it as MAVERICK runs (5-fold 84.5% vs 83.2%, hard cases 75% vs 73%).
+DEFAULT_KIND = "ensemble"
 
 
 def load_model(path: Path):
