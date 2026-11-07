@@ -109,6 +109,9 @@ def compare(examples, hard, k: int = 5) -> None:
     """Every kind of brain side by side. A new brain must beat the current one here before it replaces it."""
     print(f"{k}-fold cross-validation, every sentence tested once (hard cases: trained on everything):")
     for kind in MODELS:
+        if not getattr(MODELS[kind], "usable", lambda: True)():
+            print(f"  {kind:<20} skipped: its model files aren't on this PC")
+            continue
         brain_scores, maverick_scores = [], []
         for train_part, test_part in folds(examples, k):
             model = train(train_part, kind)

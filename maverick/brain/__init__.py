@@ -7,6 +7,7 @@ from maverick.brain.classic import DecisionTree, KNearest, LinearSVM
 from maverick.brain.dataset import DATA_DIR
 from maverick.brain.ensemble import Ensemble
 from maverick.brain.logistic_regression import LogisticRegression
+from maverick.brain.minilm import MiniLM
 from maverick.brain.mlp import MLP
 from maverick.brain.naive_bayes import NaiveBayes
 from maverick.brain.text import tokenize
@@ -17,10 +18,12 @@ OLD_MODEL_PATH = MODELS_DIR / "naive_bayes.json"  # what Stages 2-7 saved; still
 INBOX_PATH = DATA_DIR / "inbox.tsv"
 # Every kind of brain MAVERICK can train; the saved file says which one it is.
 MODELS = {model.kind: model for model in (NaiveBayes, LogisticRegression, MLP, LinearSVM, KNearest, DecisionTree,
-                                          BernoulliNB, Ensemble)}
+                                          BernoulliNB, Ensemble, MiniLM)}
 # Logistic regression won 8.2 (the 8.9 neural net tied it but trains 4x slower). Since 8.5 an ensemble of it,
 # Bernoulli NB and the linear SVM beats it as MAVERICK runs (5-fold 84.5% vs 83.2%, hard cases 75% vs 73%).
-DEFAULT_KIND = "ensemble"
+# Since 8.11 shipped (ONNX), MiniLM + logistic regression beats it clearly: 91.6% vs 84.5%, hard 86% vs 75%.
+# It needs the exported files (python -m maverick.llm.export_onnx in .venv); without them, the ensemble.
+DEFAULT_KIND = "minilm" if MiniLM.usable() else "ensemble"
 
 
 def load_model(path: Path):
