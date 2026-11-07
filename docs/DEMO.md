@@ -29,8 +29,10 @@ or works on throwaway files in a demo folder, so recording it never changes anyt
 
 ## After recording
 
-- Save the GIF as `docs/demo.gif` and add `![MAVERICK demo](docs/demo.gif)` under the first paragraph
-  of the README.
+- Save the GIF as `docs/demo.gif` (keep it under ~10 MB so GitHub shows it quickly).
+- In `README.md`, find the `<!-- DEMO GIF` comment under the first paragraph. Delete its first two
+  lines and its last line (`-->`), so only the `<p align="center"><img src="docs/demo.gif" ...></p>`
+  line is left.
 - Check the recording shows nothing private (file names in Downloads, user names, Wi-Fi names).
 - Your real requests during the recording are logged to `maverick/brain/data/inbox.tsv`, which stays
   on your PC and is never uploaded.

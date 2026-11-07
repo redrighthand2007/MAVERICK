@@ -10,6 +10,11 @@
 understands it with its own trained models, hands it to one of 14 specialist agents, checks it for
 safety, asks before anything risky, and does it. No cloud, no API keys, nothing leaves your PC.
 
+<!-- DEMO GIF: record it with docs/DEMO.md and save it as docs/demo.gif. Then delete these two
+     lines and the closing line below the image, so the image line shows.
+<p align="center"><img src="docs/demo.gif" alt="MAVERICK demo" width="800"></p>
+-->
+
 ```text
 you> clone notes.txt into D:\backup
 MAVERICK: Copied C:\Users\you\notes.txt -> D:\backup\notes.txt
