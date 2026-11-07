@@ -1,0 +1,28 @@
+name: tests
+
+on:
+  push:
+    branches: [main, build]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    # MAVERICK is Windows-only (power modes, services, devices); system calls are faked in the tests.
+    runs-on: windows-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.12", "3.14"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+      - name: Install
+        run: python -m pip install -e ".[dev,minilm]"
+      - name: Test
+        # No MiniLM model files here (they're gitignored), so this also proves the ensemble fallback works.
+        run: python -m pytest -q
