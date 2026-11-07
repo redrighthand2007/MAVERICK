@@ -102,6 +102,7 @@ HISTORY_PATH = Path.home() / ".maverick" / "disk_history.tsv"
 RECORD_GAP = 3600       # seconds: at most one row per drive per hour, so the file stays small
 WINDOW_DAYS = 30        # only the recent past: how you use a disk changes over months
 MIN_SPAN_DAYS = 2       # less history than this can't tell a trend from one big download
+MIN_READINGS = 3        # two points always make a perfect line; a third shows whether it's a trend
 
 
 def record_disks(path: Path | None = None, now: float | None = None, usage=None) -> int:
@@ -153,10 +154,10 @@ def forecast(drive: str = "C:", path: Path | None = None, now: float | None = No
         return Result(False, f"No history for {drive} yet. I record it whenever MAVERICK starts or you ask about drives.")
     span_days = (rows[-1][0] - rows[0][0]) / 86400
     total = rows[-1][2]
-    if len(rows) < 3 or span_days < MIN_SPAN_DAYS:
+    if len(rows) < MIN_READINGS or span_days < MIN_SPAN_DAYS:
         return Result(True, f"Not enough history for {drive} yet: {len(rows)} reading(s) over {span_days:.1f} days. "
-                            f"I need at least {MIN_SPAN_DAYS} days; I record whenever MAVERICK starts or you ask "
-                            "about drives, so ask again later.", {"days": None})
+                            f"I need at least {MIN_READINGS} readings spread over {MIN_SPAN_DAYS}+ days; I record "
+                            "whenever MAVERICK starts or you ask about drives, so ask again later.", {"days": None})
     days = [(t - now) / 86400 for t, _, _ in rows]  # today = 0, the past is negative
     used_gb = [used / 1024 ** 3 for _, used, _ in rows]
     line = LinearRegression().fit(days, used_gb)
