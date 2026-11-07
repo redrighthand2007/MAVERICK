@@ -1,10 +1,14 @@
 name: tests
 
+# Once per PR into main, and once more after it's merged. Pushes to build don't run it (the PR does),
+# and changes that only touch docs (.md files, docs/) skip it: they can't break a test.
 on:
-  push:
-    branches: [main, build]
   pull_request:
     branches: [main]
+    paths-ignore: ["**.md", "docs/**"]
+  push:
+    branches: [main]
+    paths-ignore: ["**.md", "docs/**"]
 
 jobs:
   test:
