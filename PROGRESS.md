@@ -255,4 +255,5 @@ Every new brain must beat the current one in `evaluate.py` before it replaces it
 | ✅ | Pushed and merged; CI green on Windows (Python 3.12 + 3.14) | GitHub Actions |
 | ✅ | About text + topics, repo pinned on the profile | GitHub |
 | ✅ | Release **v1.0.0** published | GitHub Releases |
+| ✅ | Learning guide: every stage from atoms to the whole system, for study and revision | `docs/LEARN.html` |
 | ⬜ | Demo GIF (`docs/demo.gif`, script in `docs/DEMO.md`) | later |

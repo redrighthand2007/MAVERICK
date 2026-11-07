@@ -1,0 +1,2083 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MAVERICK Learning Guide</title>
+<style>
+:root{
+  --bg:#f7f6f2; --panel:#ffffff; --panel2:#f0eee8; --ink:#1d1f23; --ink2:#4a4f57; --mute:#7a808a;
+  --line:#d9d6cd; --accent:#2f5bd3; --accent-soft:#e3eafb; --good:#1f8a4c; --good-soft:#e1f3e8;
+  --warn:#b36b00; --warn-soft:#fbefd9; --bad:#b3261e; --bad-soft:#f9e1df; --violet:#6b3fb8; --violet-soft:#eee6fa;
+  --code-bg:#1e2230; --code-ink:#e6e9f2; --code-mute:#8d96ad; --code-key:#ffb86b; --code-str:#9be59b;
+  --shadow:0 1px 2px rgba(0,0,0,.05),0 4px 14px rgba(0,0,0,.04);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#14161b; --panel:#1c1f26; --panel2:#232731; --ink:#e7e9ee; --ink2:#b9bfca; --mute:#8a91a0;
+    --line:#333846; --accent:#7ea2ff; --accent-soft:#1f2a47; --good:#5fd08f; --good-soft:#173324;
+    --warn:#f0b35a; --warn-soft:#3a2c14; --bad:#ff8a80; --bad-soft:#3d1c1a; --violet:#b99cff; --violet-soft:#2b2240;
+    --code-bg:#0f1117; --shadow:none;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#14161b; --panel:#1c1f26; --panel2:#232731; --ink:#e7e9ee; --ink2:#b9bfca; --mute:#8a91a0;
+  --line:#333846; --accent:#7ea2ff; --accent-soft:#1f2a47; --good:#5fd08f; --good-soft:#173324;
+  --warn:#f0b35a; --warn-soft:#3a2c14; --bad:#ff8a80; --bad-soft:#3d1c1a; --violet:#b99cff; --violet-soft:#2b2240;
+  --code-bg:#0f1117; --shadow:none;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:16px}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 "Segoe UI",system-ui,-apple-system,Roboto,sans-serif}
+a{color:var(--accent)}
+code,pre,kbd{font-family:"Cascadia Code",Consolas,"SF Mono",Menlo,monospace}
+code{background:var(--panel2);border:1px solid var(--line);border-radius:5px;padding:0 .3em;font-size:.88em}
+pre{background:var(--code-bg);color:var(--code-ink);border-radius:10px;padding:14px 16px;overflow-x:auto;font-size:.85em;line-height:1.55;margin:12px 0}
+pre code{background:none;border:0;padding:0;font-size:1em;color:inherit}
+pre .c{color:var(--code-mute)} pre .k{color:var(--code-key)} pre .s{color:var(--code-str)}
+/* layout */
+.layout{display:grid;grid-template-columns:290px minmax(0,1fr);min-height:100vh}
+nav.side{position:sticky;top:0;height:100vh;overflow-y:auto;background:var(--panel);border-right:1px solid var(--line);padding:18px 14px 40px}
+nav.side h1{font-size:1.15rem;margin:0 0 2px;letter-spacing:.04em}
+nav.side .sub{color:var(--mute);font-size:.8rem;margin-bottom:12px}
+nav.side input{width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font:inherit;font-size:.9rem}
+nav.side .tools{display:flex;gap:6px;margin:10px 0}
+nav.side button{flex:1;padding:6px 8px;border:1px solid var(--line);background:var(--panel2);color:var(--ink);border-radius:8px;font:inherit;font-size:.8rem;cursor:pointer}
+nav.side button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+nav.side .meter{font-size:.8rem;color:var(--ink2);margin:6px 0 4px}
+nav.side .bar{height:6px;background:var(--panel2);border-radius:4px;overflow:hidden;margin-bottom:12px}
+nav.side .bar i{display:block;height:100%;width:0;background:var(--good);transition:width .3s}
+nav.side .grp{font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;color:var(--mute);margin:14px 6px 4px}
+nav.side a{display:flex;justify-content:space-between;gap:6px;padding:4px 8px;border-radius:6px;color:var(--ink2);text-decoration:none;font-size:.88rem}
+nav.side a:hover{background:var(--panel2);color:var(--ink)}
+nav.side a.active{background:var(--accent-soft);color:var(--accent);font-weight:600}
+nav.side a .tick{color:var(--good);font-size:.8rem}
+main{padding:28px 40px 120px;max-width:1040px}
+.menu-btn{display:none}
+@media (max-width:900px){
+  .layout{grid-template-columns:1fr}
+  nav.side{position:fixed;z-index:20;left:0;top:0;width:86vw;max-width:320px;transform:translateX(-105%);transition:transform .25s;box-shadow:0 0 30px rgba(0,0,0,.3)}
+  nav.side.open{transform:none}
+  main{padding:64px 16px 100px}
+  .menu-btn{display:block;position:fixed;z-index:21;top:10px;left:10px;padding:8px 12px;border-radius:8px;border:1px solid var(--line);background:var(--panel);color:var(--ink);font:inherit}
+}
+/* content */
+.hero{background:linear-gradient(135deg,var(--accent-soft),var(--violet-soft));border:1px solid var(--line);border-radius:16px;padding:26px 28px;margin-bottom:28px}
+.hero h1{margin:0 0 6px;font-size:2rem;letter-spacing:.02em}
+.hero p{margin:6px 0;color:var(--ink2);max-width:760px}
+section{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:22px 26px;margin:0 0 22px;box-shadow:var(--shadow)}
+.part{margin:44px 0 14px;padding:0 4px}
+.part .tag{display:inline-block;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);font-weight:700}
+.part h2{margin:2px 0 4px;font-size:1.7rem}
+.part p{margin:0;color:var(--ink2)}
+section h2{margin:0 0 4px;font-size:1.35rem;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+section h2 .num{font-size:.8rem;font-weight:700;color:#fff;background:var(--accent);border-radius:6px;padding:1px 8px}
+section h3{margin:22px 0 6px;font-size:1.08rem}
+section h4{margin:16px 0 4px;font-size:.98rem;color:var(--ink2)}
+.lead{color:var(--ink2);margin:2px 0 12px}
+.where{font-size:.82rem;color:var(--mute);margin:0 0 10px}
+.learned{display:flex;align-items:center;gap:8px;margin-top:16px;padding-top:12px;border-top:1px dashed var(--line);font-size:.88rem;color:var(--ink2);cursor:pointer;user-select:none}
+.learned input{width:18px;height:18px;accent-color:var(--good)}
+/* boxes */
+.box{border-radius:10px;padding:12px 16px;margin:14px 0;border:1px solid}
+.box > :first-child{margin-top:0} .box > :last-child{margin-bottom:0}
+.box .t{font-weight:700;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;display:block;margin-bottom:4px}
+.remember{background:var(--good-soft);border-color:color-mix(in srgb,var(--good) 35%,transparent)}
+.remember .t{color:var(--good)}
+.analogy{background:var(--violet-soft);border-color:color-mix(in srgb,var(--violet) 30%,transparent)}
+.analogy .t{color:var(--violet)}
+.why{background:var(--accent-soft);border-color:color-mix(in srgb,var(--accent) 30%,transparent)}
+.why .t{color:var(--accent)}
+.careful{background:var(--warn-soft);border-color:color-mix(in srgb,var(--warn) 35%,transparent)}
+.careful .t{color:var(--warn)}
+.danger{background:var(--bad-soft);border-color:color-mix(in srgb,var(--bad) 30%,transparent)}
+.danger .t{color:var(--bad)}
+details.deep{border:1px solid var(--line);border-radius:10px;margin:12px 0;background:var(--panel2)}
+details.deep summary{cursor:pointer;padding:10px 14px;font-weight:600;font-size:.92rem}
+details.deep > div{padding:0 16px 12px}
+/* tables */
+.tw{overflow-x:auto;margin:12px 0}
+table{border-collapse:collapse;width:100%;font-size:.9rem}
+th,td{border-bottom:1px solid var(--line);padding:7px 10px;text-align:left;vertical-align:top}
+th{background:var(--panel2);font-weight:600;font-size:.82rem;text-transform:uppercase;letter-spacing:.04em;color:var(--ink2)}
+td code{white-space:nowrap}
+/* flow */
+.flow{display:flex;flex-direction:column;align-items:stretch;gap:0;margin:14px 0;max-width:640px}
+.flow .st{background:var(--panel2);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:8px;padding:8px 12px}
+.flow .st b{display:block}
+.flow .st small{color:var(--ink2)}
+.flow .ar{text-align:center;color:var(--mute);line-height:1.1;font-size:1.1rem;padding:2px 0}
+.flow .ar span{font-size:.75rem;color:var(--ink2)}
+.flow .st.ai{border-left-color:var(--violet)} .flow .st.safe{border-left-color:var(--bad)} .flow .st.ok{border-left-color:var(--good)} .flow .st.io{border-left-color:var(--warn)}
+.row{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin:12px 0}
+.tile{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:10px 14px}
+.tile b{display:block;margin-bottom:2px}
+.tile small{color:var(--ink2)}
+.tile small b{display:inline;margin:0}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.chip{font-size:.78rem;padding:2px 9px;border-radius:999px;border:1px solid var(--line);background:var(--panel2);color:var(--ink2)}
+.chip.ai{border-color:var(--violet);color:var(--violet)} .chip.safe{border-color:var(--bad);color:var(--bad)} .chip.ok{border-color:var(--good);color:var(--good)}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:.8rem;color:var(--ink2);margin:6px 0}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+/* svg */
+.fig{margin:16px 0;overflow-x:auto}
+.fig svg{display:block;max-width:100%;height:auto;margin:0 auto}
+.fig figcaption{text-align:center;font-size:.82rem;color:var(--mute);margin-top:6px}
+svg text{fill:var(--ink);font-family:"Segoe UI",system-ui,sans-serif}
+svg .bx{fill:var(--panel2);stroke:var(--line);stroke-width:1.5}
+svg .bx-ai{fill:var(--violet-soft);stroke:var(--violet);stroke-width:1.5}
+svg .bx-safe{fill:var(--bad-soft);stroke:var(--bad);stroke-width:1.5}
+svg .bx-ok{fill:var(--good-soft);stroke:var(--good);stroke-width:1.5}
+svg .bx-io{fill:var(--warn-soft);stroke:var(--warn);stroke-width:1.5}
+svg .bx-acc{fill:var(--accent-soft);stroke:var(--accent);stroke-width:1.5}
+svg .ln{stroke:var(--mute);stroke-width:1.6;fill:none}
+svg .ln-d{stroke:var(--mute);stroke-width:1.4;fill:none;stroke-dasharray:5 4}
+svg .mk{fill:var(--mute)}
+svg .sm{font-size:11px;fill:var(--ink2)}
+svg .md{font-size:13px}
+svg .b{font-weight:700}
+svg .bar-a{fill:var(--accent)} svg .bar-v{fill:var(--violet)} svg .bar-g{fill:var(--good)} svg .bar-m{fill:var(--mute)}
+/* revision mode: only headings, remember boxes and cheat sheets stay */
+body.revise section > :not(h2):not(.remember):not(.keep):not(.learned){display:none}
+body.revise section{padding-bottom:14px}
+.kbd-row{display:flex;flex-wrap:wrap;gap:8px}
+hr.soft{border:0;border-top:1px dashed var(--line);margin:18px 0}
+.small{font-size:.86rem;color:var(--ink2)}
+ol.steps li,ul.tight li{margin:3px 0}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media (max-width:700px){.two{grid-template-columns:1fr} section{padding:18px 16px} .hero{padding:20px 18px} .hero h1{font-size:1.6rem}}
+</style>
+</head>
+<body>
+<button class="menu-btn" id="menuBtn" aria-label="Open contents">☰ Contents</button>
+<div class="layout">
+<nav class="side" id="side">
+  <h1>MAVERICK</h1>
+  <div class="sub">The complete learning guide · atoms → whole system</div>
+  <input id="filter" type="search" placeholder="Filter topics… (e.g. softmax)">
+  <div class="tools">
+    <button id="reviseBtn" title="Show only headings + Remember boxes">Revision mode</button>
+    <button id="themeBtn" title="Switch light / dark">Theme</button>
+  </div>
+  <div class="meter"><span id="meterText">0 learned</span></div>
+  <div class="bar"><i id="meterBar"></i></div>
+  <div id="toc"></div>
+</nav>
+<main id="main">
+
+<div class="hero">
+  <h1>MAVERICK, from atoms to the whole machine</h1>
+  <p>Everything in your project explained from zero: every stage, every file, every idea, and how they plug into each other. Written for reading once to <b>learn</b>, again to <b>revise</b>, and with the green <b>Remember</b> boxes to <b>memorise</b>.</p>
+  <p class="small">Built from the actual code in <code>E:\MAVERICK</code> (v1.0.0, 64 steps, 14 agents, 490 tests). Numbers come from <code>PROGRESS.md</code> and <code>docs/RESULTS.md</code>.</p>
+</div>
+
+<section id="howto">
+  <h2>How to use this guide</h2>
+  <p class="lead">Three passes. Each one is shorter than the last.</p>
+  <div class="row">
+    <div class="tile"><b>1 · Learn</b><small>Read top to bottom once. Part A gives you the atoms (tiny ideas). Parts B–C build stages on top of them. Part D glues everything into one picture.</small></div>
+    <div class="tile"><b>2 · Revise</b><small>Click <b>Revision mode</b> in the sidebar. Only headings and green Remember boxes stay. Read those; open full mode for anything that feels fuzzy.</small></div>
+    <div class="tile"><b>3 · Memorise</b><small>Use Part E: the one-line-per-step cheat sheet, the numbers table and the glossary. Tick “I can explain this” only when you can say it without looking.</small></div>
+  </div>
+  <div class="legend">
+    <span><i style="background:var(--good-soft);border:1px solid var(--good)"></i>Remember (memorise this)</span>
+    <span><i style="background:var(--violet-soft);border:1px solid var(--violet)"></i>Analogy</span>
+    <span><i style="background:var(--accent-soft);border:1px solid var(--accent)"></i>Why it's built this way</span>
+    <span><i style="background:var(--warn-soft);border:1px solid var(--warn)"></i>Careful / common confusion</span>
+    <span><i style="background:var(--bad-soft);border:1px solid var(--bad)"></i>Safety rule</span>
+  </div>
+  <p class="small">Your ticks are saved in this browser only (localStorage), like the <b>Learned</b> column in <code>PROGRESS.md</code>. Nothing is sent anywhere; the page works fully offline.</p>
+</section>
+
+<section id="bigpicture">
+  <h2>The one picture to keep in your head</h2>
+  <p class="lead">Every stage of MAVERICK adds a piece to this diagram. Come back to it after each stage and point at the piece you just learned.</p>
+  <figure class="fig">
+  <svg viewBox="0 0 860 600" width="860" role="img" aria-label="MAVERICK request flow">
+    <defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="mk"/></marker></defs>
+    <rect x="330" y="10" width="200" height="44" rx="10" class="bx-io"/><text x="430" y="30" text-anchor="middle" class="md b">You type a request</text><text x="430" y="46" text-anchor="middle" class="sm">main.py: chat · one-shot · --background</text>
+    <line x1="430" y1="54" x2="430" y2="78" class="ln" marker-end="url(#ah)"/>
+    <rect x="310" y="80" width="240" height="44" rx="10" class="bx-ai"/><text x="430" y="100" text-anchor="middle" class="md b">Splitter (8.16)</text><text x="430" y="116" text-anchor="middle" class="sm">one action or several? brain/multi.py</text>
+    <line x1="430" y1="124" x2="430" y2="148" class="ln" marker-end="url(#ah)"/>
+    <rect x="290" y="150" width="280" height="50" rx="10" class="bx-ai"/><text x="430" y="171" text-anchor="middle" class="md b">Brain: MiniLM + logistic regression</text><text x="430" y="189" text-anchor="middle" class="sm">→ ("files.copy", 0.98)   brain/minilm.py</text>
+    <line x1="430" y1="200" x2="430" y2="234" class="ln" marker-end="url(#ah)"/><text x="440" y="222" class="sm">confident (≥ 0.3)</text>
+    <line x1="570" y1="175" x2="660" y2="175" class="ln" marker-end="url(#ah)"/><text x="575" y="168" class="sm">unsure</text>
+    <rect x="662" y="150" width="180" height="50" rx="10" class="bx"/><text x="752" y="171" text-anchor="middle" class="md b">Keyword rules</text><text x="752" y="189" text-anchor="middle" class="sm">each agent's parse()</text>
+    <line x1="752" y1="200" x2="752" y2="250" class="ln" marker-end="url(#ah)"/><text x="760" y="228" class="sm">nobody understood</text>
+    <rect x="662" y="252" width="180" height="56" rx="10" class="bx-ai"/><text x="752" y="274" text-anchor="middle" class="md b">Local LLM (Ollama)</text><text x="752" y="292" text-anchor="middle" class="sm">tool calling + agent loop</text>
+    <path d="M662,190 C600,215 570,240 552,252" class="ln" marker-end="url(#ah)"/><text x="575" y="232" class="sm">understood</text>
+    <path d="M662,290 C610,290 580,275 552,268" class="ln" marker-end="url(#ah)"/><text x="582" y="300" class="sm">checked action</text>
+    <rect x="310" y="236" width="240" height="50" rx="10" class="bx-acc"/><text x="430" y="257" text-anchor="middle" class="md b">Orchestrator</text><text x="430" y="275" text-anchor="middle" class="sm">picks the agent · core/orchestrator.py</text>
+    <line x1="430" y1="286" x2="430" y2="314" class="ln" marker-end="url(#ah)"/>
+    <rect x="290" y="316" width="280" height="50" rx="10" class="bx"/><text x="430" y="337" text-anchor="middle" class="md b">Agent: extract() the details</text><text x="430" y="355" text-anchor="middle" class="sm">→ Intent(operation, args, missing)</text>
+    <line x1="430" y1="366" x2="430" y2="394" class="ln" marker-end="url(#ah)"/>
+    <rect x="310" y="396" width="240" height="44" rx="10" class="bx-safe"/><text x="430" y="416" text-anchor="middle" class="md b">Safety checks</text><text x="430" y="432" text-anchor="middle" class="sm">core/safety.py · SafetyError</text>
+    <line x1="430" y1="440" x2="430" y2="462" class="ln" marker-end="url(#ah)"/>
+    <polygon points="430,464 500,494 430,524 360,494" class="bx-safe"/><text x="430" y="499" text-anchor="middle" class="md b">Risky?</text>
+    <line x1="500" y1="494" x2="600" y2="494" class="ln" marker-end="url(#ah)"/><text x="530" y="487" class="sm">yes</text>
+    <rect x="602" y="472" width="150" height="44" rx="10" class="bx-io"/><text x="677" y="492" text-anchor="middle" class="md b">Ask (y/n)</text><text x="677" y="508" text-anchor="middle" class="sm">checks run again</text>
+    <path d="M677,516 C677,550 520,556 470,556" class="ln" marker-end="url(#ah)"/><text x="610" y="548" class="sm">yes</text>
+    <line x1="430" y1="524" x2="430" y2="540" class="ln" marker-end="url(#ah)"/><text x="438" y="536" class="sm">no</text>
+    <rect x="330" y="542" width="200" height="44" rx="10" class="bx-ok"/><text x="430" y="562" text-anchor="middle" class="md b">ops.py does it</text><text x="430" y="578" text-anchor="middle" class="sm">→ Result(success, message, data)</text>
+    <rect x="20" y="236" width="220" height="132" rx="10" class="bx"/><text x="130" y="258" text-anchor="middle" class="md b">Background thread</text><text x="130" y="278" text-anchor="middle" class="sm">core/background.py</text><text x="130" y="298" text-anchor="middle" class="sm">ticks saved jobs every second:</text><text x="130" y="316" text-anchor="middle" class="sm">folder watcher (6.2)</text><text x="130" y="334" text-anchor="middle" class="sm">log rotator (6.5)</text><text x="130" y="352" text-anchor="middle" class="sm">~/.maverick/jobs.json</text>
+    <line x1="240" y1="262" x2="308" y2="262" class="ln-d"/>
+  </svg>
+  <figcaption>Purple = the only “AI” parts. Red = safety. Everything else is ordinary Python.</figcaption>
+  </figure>
+  <div class="box remember"><span class="t">Remember</span>
+    <b>Type → Split → Guess → Pick → Extract → Check → (Ask) → Do → Result.</b> Mnemonic (first letters T-S-G-P-E-C-A-D-R): <i>“Ten Small Goats Pull Every Cart And Deliver Rice.”</i> If the guess is unsure: keyword rules, then the LLM.
+  </div>
+</section>
+
+<section id="layers">
+  <h2>The five layers of the project</h2>
+  <p class="lead">Folders map to jobs. Learn the folders and you can find anything.</p>
+  <div class="tw"><table>
+    <tr><th>Layer</th><th>Folder</th><th>Job</th><th>Is it AI?</th></tr>
+    <tr><td>Entry</td><td><code>maverick/main.py</code></td><td>Starts everything, registers the 14 agents in a fixed order, runs the chat loop</td><td>No</td></tr>
+    <tr><td>Core</td><td><code>maverick/core/</code></td><td>Shapes (Intent/Result/SubAgent), orchestrator, safety, background thread, Windows helpers</td><td>No</td></tr>
+    <tr><td>Agents</td><td><code>maverick/agents/&lt;name&gt;/</code></td><td><code>agent.py</code> understands text · <code>ops.py</code> acts on Windows</td><td>No (except calling the slot tagger, ranker, etc.)</td></tr>
+    <tr><td>Brain</td><td><code>maverick/brain/</code></td><td>Every ML model (from scratch in NumPy), training data, training, evaluation, review</td><td><b>Yes</b></td></tr>
+    <tr><td>LLM</td><td><code>maverick/llm/</code></td><td>Ollama client, tool calling, agent loop, LoRA + MiniLM experiments, ONNX export</td><td><b>Yes</b></td></tr>
+    <tr><td>Proof</td><td><code>tests/</code>, <code>.github/</code></td><td>490 pytest tests with faked system calls; CI on Windows</td><td>No</td></tr>
+  </table></div>
+  <div class="box remember"><span class="t">Remember</span>
+    <b>agent.py reads, ops.py does.</b> Understanding is kept apart from acting, which is why the brain could be swapped seven times without touching a single operation.
+  </div>
+</section>
+
+<div class="part" id="partA"><span class="tag">Part A · Stage 0</span><h2>The atoms</h2><p>The smallest ideas everything else is made of. No code knowledge assumed.</p></div>
+
+<section id="a-agent" data-group="A · Atoms">
+  <h2><span class="num">B.1</span>What an “agent” is</h2>
+  <p>An <b>agent</b> is a program that takes a request and does <b>one kind of job</b>. In MAVERICK each agent is a plain Python class, not ChatGPT. The files agent copies, moves, renames and measures files. The process agent looks at running programs. That's it.</p>
+  <p>The word “agent” sounds magical. In MAVERICK it means: <i>a worker with a clear job description and the same set of buttons as every other worker</i>.</p>
+  <div class="box analogy"><span class="t">Analogy</span>A hospital. Reception (the orchestrator) listens to you and sends you to the right specialist (an agent): the eye doctor, the dentist. Each specialist has the same routine: hear the problem, find the details, check it's safe, treat, write a report.</div>
+  <div class="box remember"><span class="t">Remember</span>Agent = one job + the same shape as all the others (<code>parse</code>, <code>extract</code>, <code>describe</code>, <code>handle</code>).</div>
+  <label class="learned"><input type="checkbox">I can explain this without looking</label>
+</section>
+
+<section id="a-multi" data-group="A · Atoms">
+  <h2><span class="num">B.2</span>Multi-agent design</h2>
+  <p>One <b>orchestrator</b> (the manager) and many <b>sub-agents</b> (the workers). The manager never does the work itself. It only decides <i>who</i> should do it, passes the request on, and handles the things every request has in common: <code>help</code>, <code>exit</code>, missing details, errors, y/n questions.</p>
+  <div class="row">
+    <div class="tile"><b>Why not one giant program?</b><small>Adding a feature would mean editing the giant program. Here, a new agent = a new folder + one line in <code>main.py</code>.</small></div>
+    <div class="tile"><b>Why the same shape?</b><small>The manager can treat every worker the same way. It never needs to know <i>how</i> a worker does its job.</small></div>
+    <div class="tile"><b>Why one manager?</b><small>The shared rules (safety, confirmation, error messages) live in one place, so no agent can forget them.</small></div>
+  </div>
+  <div class="box remember"><span class="t">Remember</span>Manager decides <b>who</b>. Worker decides <b>how</b>. Shared rules live with the manager.</div>
+  <label class="learned"><input type="checkbox">I can explain this without looking</label>
+</section>
+
+<section id="a-journey" data-group="A · Atoms">
+  <h2><span class="num">B.3</span>One request, start to finish</h2>
+  <p>Follow <code>copy notes.txt to D:\backup</code> through the system in plain words:</p>
+  <div class="flow">
+    <div class="st io"><b>1. You type</b><small><code>main.py</code> reads the line in <code>repl()</code></small></div><div class="ar">↓</div>
+    <div class="st ai"><b>2. The brain guesses the intent</b><small><code>"files.copy"</code> with confidence 0.98</small></div><div class="ar">↓</div>
+    <div class="st"><b>3. The orchestrator picks the agent</b><small>“files” → <code>FileAgent</code></small></div><div class="ar">↓</div>
+    <div class="st"><b>4. The agent pulls out the details</b><small>source = <code>notes.txt</code>, destination = <code>D:\backup</code></small></div><div class="ar">↓</div>
+    <div class="st safe"><b>5. Safety checks</b><small>Source exists? Destination already there? System folder? Folder into itself?</small></div><div class="ar">↓</div>
+    <div class="st ok"><b>6. Action</b><small><code>shutil.copy2</code> copies the file (and keeps its timestamps)</small></div><div class="ar">↓</div>
+    <div class="st io"><b>7. Result</b><small><code>Copied C:\...\notes.txt -> D:\backup\notes.txt</code></small></div>
+  </div>
+  <div class="box remember"><span class="t">Remember</span>Brain → orchestrator → agent → safety → action → result. Only step 2 is “AI”.</div>
+  <label class="learned"><input type="checkbox">I can explain this without looking</label>
+</section>
+
+<section id="a-whereai" data-group="A · Atoms">
+  <h2><span class="num">B.4</span>Where the “AI” actually is</h2>
+  <p>People hear “AI assistant” and imagine the whole thing is a neural network. In MAVERICK the AI is a small set of models that answer <b>narrow questions</b>. Everything that touches your PC is ordinary, testable code.</p>
+  <div class="tw"><table>
+    <tr><th>AI part</th><th>The question it answers</th><th>Example</th></tr>
+    <tr><td>Brain (intent classifier)</td><td>Which operation did you mean?</td><td><code>"clone this folder"</code> → <code>files.copy</code></td></tr>
+    <tr><td>Slot tagger</td><td>Which words are the arguments?</td><td><code>thesis</code> = source, <code>F:\</code> = destination</td></tr>
+    <tr><td>Splitter</td><td>Is this one action or several?</td><td><code>... D:\x | and zip it</code></td></tr>
+    <tr><td>Local LLM</td><td>Last resort: which action, from a menu?</td><td>JSON <code>{"action": "files.copy", ...}</code></td></tr>
+    <tr><td>Inside agents</td><td>Anomaly, clustering, forecast, ranking, planning, scheduling</td><td>“when will C: be full”</td></tr>
+  </table></div>
+  <div class="box danger"><span class="t">Safety rule</span><b>AI decides <i>what</i> you asked for, never <i>whether it's allowed</i>.</b> Every model only <i>proposes</i>. Safety checks and the y/n prompt always run, whoever proposed the action.</div>
+  <div class="box remember"><span class="t">Remember</span>AI proposes, code disposes. The models guess; safety.py and the y/n question decide.</div>
+  <label class="learned"><input type="checkbox">I can explain this without looking</label>
+</section>
+
+<section id="a-python" data-group="A · Atoms">
+  <h2><span class="num">B.5</span>The Python you need (only what MAVERICK uses)</h2>
+  <p class="lead">Each atom below appears somewhere real in the project. The location is given so you can open it.</p>
+
+  <h3>Function</h3>
+  <p>A named, reusable piece of work. Input goes in (parameters), output comes out (<code>return</code>).</p>
+<pre><span class="c"># maverick/core/units.py — the whole file</span>
+<span class="k">def</span> human_size(num_bytes: int) -> str:
+    size = float(num_bytes)
+    <span class="k">for</span> unit <span class="k">in</span> (<span class="s">"B"</span>, <span class="s">"KB"</span>, <span class="s">"MB"</span>, <span class="s">"GB"</span>, <span class="s">"TB"</span>):
+        <span class="k">if</span> size &lt; 1024 <span class="k">or</span> unit == <span class="s">"TB"</span>:
+            <span class="k">return</span> f<span class="s">"{size:.0f} {unit}"</span> <span class="k">if</span> unit == <span class="s">"B"</span> <span class="k">else</span> f<span class="s">"{size:.2f} {unit}"</span>
+        size /= 1024</pre>
+  <p class="small"><code>human_size(5_368_709_120)</code> → <code>"5.00 GB"</code>. Divide by 1024 until the number is small enough.</p>
+
+  <h3>Type hints</h3>
+  <p><code>num_bytes: int</code> and <code>-&gt; str</code> are notes for humans and tools: “expects an int, returns a string”. Python doesn't enforce them. <code>Intent | None</code> means “an Intent, or nothing”.</p>
+
+  <h3>Class, object, inheritance</h3>
+  <p>A <b>class</b> is a blueprint; an <b>object</b> is one thing built from it. <b>Inheritance</b> means “start from this blueprint and change some parts”. Every agent inherits from <code>SubAgent</code>:</p>
+<pre><span class="k">class</span> FileAgent(SubAgent):      <span class="c"># "a FileAgent IS a SubAgent"</span>
+    name = <span class="s">"files"</span>              <span class="c"># class attribute: same for every FileAgent</span>
+    risky = {<span class="s">"move"</span>, <span class="s">"rename"</span>}
+
+    <span class="k">def</span> __init__(self, tagger=None):   <span class="c"># runs when you create one: FileAgent(tagger)</span>
+        self.tagger = tagger             <span class="c"># instance attribute: this object's own value</span>
+
+    <span class="k">def</span> parse(self, text): ...      <span class="c"># overrides SubAgent.parse</span></pre>
+  <p><b>Override</b> = a child class replaces a method of its parent. <code>SubAgent.is_risky()</code> says “risky if the operation is in <code>risky</code>”; the process agent overrides it because “show frozen apps” is safe but “end frozen apps” is not.</p>
+
+  <h3>Dataclass</h3>
+  <p><code>@dataclass</code> writes the boring <code>__init__</code> for you. Used for the two shapes everything passes around:</p>
+<pre>@dataclass
+<span class="k">class</span> Intent:
+    operation: str
+    args: dict = field(default_factory=dict)   <span class="c"># a NEW empty dict per Intent</span>
+    missing: list[str] = field(default_factory=list)</pre>
+  <div class="box careful"><span class="t">Careful</span>Why <code>field(default_factory=dict)</code> and not <code>args: dict = {}</code>? A plain <code>{}</code> default would be <b>one shared dict</b> for every Intent ever made: change it in one place, it changes everywhere. <code>default_factory</code> builds a fresh one each time.</div>
+
+  <h3>Module, package, import</h3>
+  <p>A <b>module</b> is one <code>.py</code> file. A <b>package</b> is a folder of modules with an <code>__init__.py</code>. <code>from maverick.core.safety import SafetyError</code> means: go to folder <code>maverick/core/</code>, open <code>safety.py</code>, take the name <code>SafetyError</code>. <code>python -m maverick.brain.train</code> runs a module <i>as a program</i>, which is why the training scripts end in <code>if __name__ == "__main__": main()</code>.</p>
+
+  <h3>dict, set, list, tuple</h3>
+  <div class="tw"><table>
+    <tr><th>Type</th><th>Looks like</th><th>Used in MAVERICK for</th></tr>
+    <tr><td>list</td><td><code>[a, b, c]</code></td><td>The agents in order (order matters for keyword rules)</td></tr>
+    <tr><td>dict</td><td><code>{"source": "a.txt"}</code></td><td>Intent arguments; <code>by_name</code> lookup “files” → FileAgent</td></tr>
+    <tr><td>set</td><td><code>{"move", "rename"}</code></td><td>Keyword lists, <code>risky</code>, protected names. Fast “is X in here?”, and <code>&amp;</code> gives the overlap</td></tr>
+    <tr><td>tuple</td><td><code>("files.copy", 0.98)</code></td><td>Returning two things at once: label and confidence</td></tr>
+  </table></div>
+  <p class="small"><code>words &amp; RENAME_WORDS</code> in the files agent = “the words of your sentence that are also rename words”. Empty set → false.</p>
+
+  <h3>Exceptions</h3>
+  <p>An exception is “stop, something is wrong” thrown up the call chain until someone catches it. MAVERICK defines its own, <code>SafetyError</code>, raised by any safety check. The orchestrator catches it in <code>safely()</code> and turns it into a polite <code>Blocked for safety: ...</code> message. Nothing is touched because the error happens <i>before</i> the action.</p>
+<pre><span class="k">try</span>:
+    <span class="k">return</span> action()
+<span class="k">except</span> SafetyError <span class="k">as</span> exc:
+    <span class="k">return</span> Result(False, f<span class="s">"Blocked for safety: {exc}"</span>)
+<span class="k">except</span> OSError <span class="k">as</span> exc:          <span class="c"># Windows itself said no (locked file, no permission)</span>
+    <span class="k">return</span> Result(False, f<span class="s">"Windows refused the operation: {exc}"</span>)</pre>
+
+  <h3>Lambda</h3>
+  <p>A tiny nameless function. <code>self.safely(lambda: agent.handle(intent))</code> passes “the work, not yet done” so <code>safely()</code> can run it inside its <code>try</code>.</p>
+
+  <h3>Regular expressions (regex)</h3>
+  <p>A mini-language for patterns in text. <code>r"[a-z0-9]+"</code> = “one or more lowercase letters or digits”. MAVERICK uses regex for keyword rules, path detection (<code>PATH_LIKE_RE</code>) and pronouns (<code>PRONOUN_RE</code> finds “it” / “them”).</p>
+
+  <h3>pathlib.Path</h3>
+  <p>A path as an object instead of a string. <code>Path("D:/x") / "a.txt"</code> joins paths; <code>.exists()</code>, <code>.is_dir()</code>, <code>.parent</code>, <code>.name</code>, <code>.resolve()</code> (make absolute and clean up <code>..</code>) are used all over <code>safety.py</code>.</p>
+
+  <h3>Other standard tools you'll meet</h3>
+  <div class="row">
+    <div class="tile"><b>json</b><small>Saving models, jobs and LLM answers as text. <code>json.dumps</code> / <code>json.loads</code>.</small></div>
+    <div class="tile"><b>threading</b><small>Running the background jobs at the same time as the chat (Stage 6).</small></div>
+    <div class="tile"><b>subprocess</b><small>Running PowerShell / <code>powercfg</code> with a fixed argument list (Stages 4–7).</small></div>
+    <div class="tile"><b>ctypes</b><small>Calling Windows' own C functions directly: Recycle Bin, “is admin?”, hung windows.</small></div>
+    <div class="tile"><b>psutil</b><small>Third-party: processes, RAM, CPU, disks, services.</small></div>
+    <div class="tile"><b>numpy</b><small>Third-party: fast arrays and matrix maths. Every ML model is written with it.</small></div>
+  </div>
+
+  <h3>pytest</h3>
+  <p>A test is a function named <code>test_...</code> that sets something up and <code>assert</code>s the outcome. Run all with <code>python -m pytest -q</code>. Details in Stage 1.6.</p>
+  <div class="box remember"><span class="t">Remember</span>Function · class/inheritance/override · dataclass · module/import · dict/set/list/tuple · exception · lambda · regex · Path. Those ten atoms cover almost every line.</div>
+  <label class="learned"><input type="checkbox">I can explain this without looking</label>
+</section>
+
+<section id="a-classify" data-group="A · Atoms">
+  <h2><span class="num">L.1</span>Classification</h2>
+  <p><b>Classification</b> = putting an input into one of a fixed set of boxes (<b>labels</b>). MAVERICK's brain sorts a sentence into one of <b>42 labels</b>: 41 operations like <code>files.copy</code>, <code>process.end</code>, <code>hardware.ram</code>, plus <code>unknown</code> (“nothing MAVERICK can do”).</p>
+  <p>A label is written <code>agent.operation</code>. The orchestrator splits it at the dot: <code>"files.copy".split(".", 1)</code> → <code>["files", "copy"]</code>, so it knows the agent <i>and</i> the operation.</p>
+  <p>The model learns from <b>labelled examples</b>: pairs of (label, sentence) written by hand in <code>maverick/brain/data/intents.tsv</code> (1,374 of them, ~30–40 per label). This is <b>supervised learning</b>: someone supervised it by giving the right answers.</p>
+<pre>files.copy      copy notes.txt to D:\backup
+process.end     kill chrome
+hardware.ram    how much ram do i have
+unknown         book me a flight to paris</pre>
+  <div class="box careful"><span class="t">Careful</span>README and RESULTS.md say “46 operations”. Counting the actual file gives <b>41 operations + unknown = 42 labels</b> (1,374 sentences). Trust the file; the docs number is stale.</div>
+  <div class="box why"><span class="t">Why an “unknown” label?</span>Without it, the model must pick a real operation even for “tell me a joke”. With 71 “unknown” examples it can say “none of these”.</div>
+  <div class="box remember"><span class="t">Remember</span>Classification = sentence → one label from a fixed list. 42 labels (41 operations + unknown), written <code>agent.operation</code>. Learned from 1,374 hand-labelled sentences.</div>
+  <label class="learned"><input type="checkbox">I can explain this without looking</label>
+</section>
+
+<section id="a-bow" data-group="A · Atoms">
+  <h2><span class="num">L.2</span>Tokens and bag of words</h2>
+  <p>Computers can't read. They count. First a sentence is cut into <b>tokens</b> (words) by <code>tokenize()</code> in <code>brain/text.py</code>:</p>
+<pre>tokenize(<span class="s">'copy notes.txt to D:\\backup'</span>)
+→ [<span class="s">"copy"</span>, <span class="s">"&lt;path&gt;"</span>, <span class="s">"to"</span>, <span class="s">"&lt;path&gt;"</span>]</pre>
+  <ol class="steps">
+    <li>Anything in quotes becomes <code>&lt;path&gt;</code>.</li>
+    <li>Each piece is stripped of <code>?!.,;</code> at the end.</li>
+    <li>If it looks like a path (has a slash, starts with <code>D:</code>, or ends in <code>.txt</code>-style extension) → <code>&lt;path&gt;</code>.</li>
+    <li>Otherwise it's lowercased, apostrophes removed, and split into letter/digit runs.</li>
+  </ol>
+  <div class="box why"><span class="t">Why replace paths?</span>File names say nothing about <i>which operation</i> you want. “copy budget.xlsx” and “copy cat.jpg” are the same request. Hiding the name stops the model from learning silly things like “.jpg means copy”.</div>
+  <p>A <b>bag of words</b> then forgets order and just counts: <code>{"copy":1, "&lt;path&gt;":2, "to":1}</code>. Like tipping the words into a bag and shaking it.</p>
+  <div class="box careful"><span class="t">Careful</span>A bag can't tell “what started chrome” from “what did chrome start” (same words, opposite meaning: parent vs children). That weakness is exactly what Stage 8.1 (word pairs) fixes.</div>
+  <div class="box remember"><span class="t">Remember</span>tokenize = lowercase words, paths → <code>&lt;path&gt;</code>. Bag of words = counts, no order.</div>
+  <label class="learned"><input type="checkbox">I can explain this without looking</label>
+</section>
+
+<section id="a-tfidf" data-group="A · Atoms">
+  <h2><span class="num">L.3</span>TF-IDF</h2>
+  <p>Not all words are equally useful. “the” appears everywhere and tells you nothing; “rename” is rare and tells you almost everything. <b>TF-IDF</b> gives each word a weight:</p>
+  <ul class="tight">
+    <li><b>TF</b> (term frequency): how many times the word is in <i>this</i> sentence.</li>
+    <li><b>IDF</b> (inverse document frequency): how <i>rare</i> it is across all sentences. MAVERICK uses <code>idf = log((1+n)/(1+df)) + 1</code>, where n = number of sentences and df = how many contain the word.</li>
+    <li><b>weight = TF × IDF</b>. Then each sentence's numbers are scaled to length 1, so long and short sentences compare fairly.</li>
+  </ul>
+  <div class="tw"><table>
+    <tr><th>Word</th><th>In how many of 1,000 sentences</th><th>IDF (roughly)</th><th>Meaning</th></tr>
+    <tr><td><code>to</code></td><td>400</td><td>1.9</td><td>Common, weak signal</td></tr>
+    <tr><td><code>rename</code></td><td>30</td><td>4.5</td><td>Rare, strong signal</td></tr>
+  </table></div>
+  <p class="where">Code: <code>TfidfVectorizer</code> in <code>maverick/brain/features.py</code> (Stage 8.1).</p>
+  <div class="box remember"><span class="t">Remember</span>TF-IDF = how often here × how rare everywhere. Rare, telling words weigh more.</div>
+  <label class="learned"><input type="checkbox">I can explain this without looking</label>
+</section>
+
+<section id="a-split" data-group="A · Atoms">
+  <h2><span class="num">L.4</span>Train / test split and accuracy</h2>
+  <p>To grade a model honestly, never test it on sentences it learned from. That would be like giving students the exam questions as homework.</p>
+  <ul class="tight">
+    <li><b>Training set</b>: the model learns from these.</li>
+    <li><b>Test set</b>: the model never sees these until grading.</li>
+    <li><b>Accuracy</b> = right answers ÷ total answers.</li>
+    <li><b>Stratified</b> split (<code>dataset.split()</code>): every label keeps the same share in train and test, so a rare label isn't missing from the test.</li>
+    <li><b>Hard cases</b> (<code>hard_cases.tsv</code>, 84 sentences): deliberately tricky wordings that are <i>never</i> trained on. The “final exam”.</li>
+  </ul>
+  <p>Stage 8.6 upgrades this to <b>5-fold cross-validation</b>: one split swung between 75% and 86% depending on luck.</p>
+  <div class="box remember"><span class="t">Remember</span>Train on some, test on the rest, never mix. Accuracy = right ÷ total. Hard cases = the never-trained final exam.</div>
+  <label class="learned"><input type="checkbox">I can explain this without looking</label>
+</section>
+
+<section id="a-overfit" data-group="A · Atoms">
+  <h2><span class="num">L.5</span>Overfitting</h2>
+  <p><b>Overfitting</b> = memorising the training sentences instead of learning the pattern. The model scores 100% on training data and badly on new data. The opposite, <b>underfitting</b>, means the model is too simple to learn even the training data.</p>
+  <div class="box analogy"><span class="t">Analogy</span>A student who memorises last year's answers word for word fails when the teacher changes one number. A student who learned the method passes.</div>
+  <p>How MAVERICK fights it:</p>
+  <ul class="tight">
+    <li><b>L2 regularisation</b> (logistic regression, SVM, MLP): a small penalty on big weights, so no single word dominates.</li>
+    <li><b>Dropout</b> (MLP): randomly switch off 30% of neurons while training.</li>
+    <li><b>Smoothing</b> (Naive Bayes): pretend every word was seen a little, so an unseen word doesn't zero everything.</li>
+    <li><b>Cross-validation + hard cases</b>: measure on data the model never saw.</li>
+    <li><b>Freezing MiniLM</b>: only a small layer learns, so 1,374 sentences can't overfit 22.7M numbers.</li>
+  </ul>
+  <div class="box remember"><span class="t">Remember</span>Overfitting = memorising, not learning. Fight it with L2, dropout, smoothing, and honest testing.</div>
+  <label class="learned"><input type="checkbox">I can explain this without looking</label>
+</section>
+
+<section id="a-conf" data-group="A · Atoms">
+  <h2><span class="num">L.6</span>Confidence, softmax and the cut-off</h2>
+  <p>Every brain returns <b>(label, confidence)</b>. Confidence is a probability between 0 and 1: “how sure am I?”.</p>
+  <h3>Softmax: scores → probabilities</h3>
+  <p>A model first gives each label a raw <b>score</b> (any number). <b>Softmax</b> turns scores into probabilities that add up to 1: <code>p_i = e^(score_i) / Σ e^(score_j)</code>. Bigger score → much bigger share, because of the exponential.</p>
+<pre>scores:  files.copy 4.0   files.move 2.0   unknown 0.0
+e^score:          54.6              7.4            1.0     (sum 63.0)
+softmax:          0.87              0.12           0.02</pre>
+  <p class="small">Code trick: subtract the biggest score first (<code>scores - scores.max()</code>). The answer is identical but <code>e^1000</code> would overflow.</p>
+  <h3>The cut-off (threshold)</h3>
+  <p>If confidence ≥ the brain's <code>threshold</code>, the orchestrator trusts the brain. Below it, MAVERICK falls back to <b>keyword rules</b>. Between 0.5 and the threshold, if nobody understands, it suggests: “Did you want files.copy? Try rephrasing.”</p>
+  <div class="tw"><table>
+    <tr><th>Brain</th><th>Cut-off</th><th>Why that value</th></tr>
+    <tr><td>Naive Bayes</td><td>0.6</td><td>Its confidences run high</td></tr>
+    <tr><td>Logistic regression / SVM / MLP</td><td>0.4</td><td>Probability spread over ~40 labels</td></tr>
+    <tr><td>Ensemble</td><td>0.3</td><td>Averaging lowers confidences</td></tr>
+    <tr><td><b>MiniLM (current)</b></td><td><b>0.3</b></td><td>Sweep: 0.3 gave 91.6% / hard 86%</td></tr>
+  </table></div>
+  <div class="box careful"><span class="t">Careful</span>Each cut-off was <b>chosen by measuring</b> (a “sweep”: try 0.2, 0.3, 0.4, 0.5 and keep the best), not guessed. The model carries its own <code>threshold</code>; <code>CONFIDENCE_THRESHOLD = 0.6</code> in the orchestrator is only the fallback.</div>
+  <div class="box remember"><span class="t">Remember</span>Softmax turns scores into probabilities. Confident (≥ cut-off) → trust the brain; else → keyword rules. MiniLM's cut-off is 0.3.</div>
+  <label class="learned"><input type="checkbox">I can explain this without looking</label>
+</section>
+
+<section id="a-log" data-group="A · Atoms">
+  <h2><span class="num">L.6b</span>Logs, probabilities and gradient descent (the maths atoms)</h2>
+  <h3>Why logarithms?</h3>
+  <p>Multiplying many small probabilities (0.01 × 0.02 × 0.005 …) quickly becomes a number too small for a computer (“underflow”). Logs turn multiplication into addition: <code>log(a×b) = log a + log b</code>. So Naive Bayes <i>adds</i> log-probabilities instead of multiplying probabilities. Same winner, no underflow.</p>
+  <h3>Loss</h3>
+  <p>A <b>loss</b> measures how wrong the model is. MAVERICK's models use <b>cross-entropy</b>: <code>loss = −log(probability given to the right label)</code>. Right label at 0.9 → loss 0.1 (small). At 0.01 → loss 4.6 (big). “How surprised was the model by the truth?”</p>
+  <h3>Gradient descent</h3>
+  <p>The model has weights (numbers). The <b>gradient</b> says, for every weight, “which way and how steeply does the loss change if I nudge you?”. Gradient descent repeats: compute the loss, nudge every weight a little <i>downhill</i>. <b>Learning rate</b> = step size. <b>Epoch</b> = one pass over all training data.</p>
+  <div class="box analogy"><span class="t">Analogy</span>Walking down a foggy hill: you can't see the valley, but you can feel which way the ground slopes under your feet. Take a small step that way. Repeat 800 times.</div>
+  <p><b>Momentum</b> (used in MAVERICK's logistic regression): keep 90% of the last step's direction, so learning “rolls” through flat stretches faster. <b>Adam</b> (used in the MLP): a step size per weight that adapts itself.</p>
+  <h3>Vector, matrix, dot product, cosine</h3>
+  <ul class="tight">
+    <li><b>Vector</b>: a list of numbers. A sentence after TF-IDF, or MiniLM's 384 numbers.</li>
+    <li><b>Matrix</b>: a table of numbers. All sentences stacked = one matrix <code>x</code>.</li>
+    <li><b>Dot product</b> <code>x @ weights</code>: multiply matching numbers and add. One line computes every label's score for every sentence.</li>
+    <li><b>Cosine similarity</b>: the angle between two vectors. 1 = same direction (same meaning), 0 = unrelated. Used by k-NN, GloVe and MiniLM.</li>
+  </ul>
+  <div class="box remember"><span class="t">Remember</span>Logs turn × into +. Loss = how surprised by the truth. Gradient descent = small downhill steps. Cosine = how similar in meaning.</div>
+  <label class="learned"><input type="checkbox">I can explain this without looking</label>
+</section>
+
+<section id="a-walk" data-group="A · Atoms">
+  <h2><span class="num">L.7</span>Code walkthrough of the first brain</h2>
+  <p>The path a sentence takes through the first (Stage 2) brain. Later brains swap the middle box; everything around it stays.</p>
+  <div class="flow">
+    <div class="st"><b>text.py · tokenize()</b><small>sentence → tokens, paths hidden</small></div><div class="ar">↓</div>
+    <div class="st ai"><b>naive_bayes.py · predict()</b><small>tokens → (label, confidence)</small></div><div class="ar">↓</div>
+    <div class="st"><b>brain/__init__.py · Brain.predict()</b><small>also logs the request to <code>inbox.tsv</code></small></div><div class="ar">↓</div>
+    <div class="st"><b>orchestrator.py · trusted()</b><small>confidence ≥ threshold and not unknown?</small></div><div class="ar">↓</div>
+    <div class="st"><b>evaluate.py</b><small>grades the whole thing against keyword rules</small></div>
+  </div>
+  <div class="box remember"><span class="t">Remember</span>text → model → Brain wrapper (logs) → orchestrator decides trust → evaluate grades it.</div>
+  <label class="learned"><input type="checkbox">I can explain this without looking</label>
+</section>
+
+<div class="part" id="partB"><span class="tag">Part B · Stages 1–2</span><h2>Foundation, the files agent, and the first brain</h2><p>The skeleton every later stage hangs on.</p></div>
+
+<section id="s1-1" data-group="Stage 1 · Foundation">
+  <h2><span class="num">1.1</span>Vision and design rules</h2>
+  <p class="where"><code>docs/VISION.md</code></p>
+  <p>MAVERICK is an <b>offline AI assistant for Windows</b>: plain-English requests, a central agent that routes them, specialist agents that act safely in Python. No internet, no cloud, no API keys. It grew out of a single-purpose Linux course project (a smart archive agent).</p>
+  <h3>The six design rules</h3>
+  <ol class="steps">
+    <li><b>Every agent has the same shape</b> (<code>parse</code>, <code>extract</code>, <code>handle</code>, plus <code>risky</code> and <code>describe</code>). New agent = one folder + one line in <code>main.py</code>.</li>
+    <li><b>Understanding is separate from doing.</b> <code>agent.py</code> only reads text; <code>ops.py</code> only acts.</li>
+    <li><b>AI decides <i>what</i>, never <i>whether it's allowed</i>.</b></li>
+    <li><b>Safe by default.</b> Never overwrite · never system folders or whole drives · delete only to the Recycle Bin · never stop core Windows services · fixed argument lists, user names quoted · passwords at a hidden prompt, never logged.</li>
+    <li><b>Measured, not guessed.</b> A new model replaces the old one only if it scores higher on the same 5-fold cross-validation. Failures are written down too.</li>
+    <li><b>Testable without side effects.</b> Every system call sits behind a small function the tests replace with a fake.</li>
+  </ol>
+  <div class="box remember"><span class="t">Remember</span><b>Same shape · read≠do · AI proposes · safe by default · measured · fakeable.</b> (S-R-A-S-M-F: “Six Rules Always Save My Files”.)</div>
+  <label class="learned"><input type="checkbox">I can explain this without looking</label>
+</section>
+
+<section id="s1-2" data-group="Stage 1 · Foundation">
+  <h2><span class="num">1.2</span>Core shapes: Intent, Result, SubAgent</h2>
+  <p class="where"><code>maverick/core/agent_base.py</code> (50 lines, the most important file to know by heart)</p>
+  <div class="two">
+    <div class="tile"><b>Intent: what you want</b><small><code>operation</code>: e.g. <code>"copy"</code><br><code>args</code>: <code>{"source": "notes.txt", "destination": "D:\\backup"}</code><br><code>missing</code>: argument names not found, e.g. <code>["destination"]</code></small></div>
+    <div class="tile"><b>Result: what happened</b><small><code>success</code>: True / False<br><code>message</code>: text shown to you<br><code>data</code>: extras for the code: <code>{"confirm": True}</code>, <code>{"output": path}</code>, <code>{"exit": True}</code></small></div>
+  </div>
+  <h3>SubAgent: the shape every agent follows</h3>
+  <div class="tw"><table>
+    <tr><th>Member</th><th>Job</th><th>Called when</th></tr>
+    <tr><td><code>name</code></td><td>e.g. <code>"files"</code>; first half of the brain's label</td><td>Building <code>by_name</code></td></tr>
+    <tr><td><code>description</code></td><td>Shown by <code>help</code></td><td><code>help</code></td></tr>
+    <tr><td><code>parse(text)</code></td><td><b>Keyword rules.</b> Returns an Intent if this agent owns the request, else <code>None</code></td><td>Brain unsure</td></tr>
+    <tr><td><code>extract(operation, text)</code></td><td>The brain already chose the operation; only find the arguments</td><td>Brain confident</td></tr>
+    <tr><td><code>risky</code> / <code>is_risky(intent)</code></td><td>Operations that change or remove something existing</td><td>Before running</td></tr>
+    <tr><td><code>describe(intent)</code></td><td>Runs the safety checks and returns the y/n question</td><td>Risky only</td></tr>
+    <tr><td><code>handle(intent)</code></td><td>Actually does the work → <code>Result</code></td><td>Always last</td></tr>
+  </table></div>
+  <div class="box why"><span class="t">Why two ways in (parse and extract)?</span><code>parse</code> must answer two questions: “is this mine, and which operation?” <code>extract</code> only answers “with what arguments?”, because the brain already answered the first. Notice that the files agent's <code>parse()</code> ends by calling <code>self.extract(operation, text)</code>: the argument-finding code is shared.</div>
+  <div class="box remember"><span class="t">Remember</span>Intent = <b>operation + args + missing</b>. Result = <b>success + message + data</b>. SubAgent = <b>parse · extract · is_risky · describe · handle</b>.</div>
+  <label class="learned"><input type="checkbox">I can explain this without looking</label>
+</section>
+
+<section id="s1-3" data-group="Stage 1 · Foundation">
+  <h2><span class="num">1.3</span>The orchestrator</h2>
+  <p class="where"><code>maverick/core/orchestrator.py</code> (155 lines)</p>
+  <p>The central agent. It holds the list of agents, a lookup <code>by_name</code>, the brain, the splitter, the LLM tool caller, and three pieces of memory: <code>pending</code> (a risky action waiting for y/n), <code>queue</code> (pieces of a multi-action request still to run) and <code>done</code> (what earlier pieces reported).</p>
+  <h3><code>handle(text)</code>: the front door</h3>
+  <ol class="steps">
+    <li>Forget any unanswered question and queue (a new request drops them).</li>
+    <li>Empty → “Please type a request.” · <code>exit/quit/bye/goodbye</code> → Result with <code>{"exit": True}</code> · <code>help</code> → list agents.</li>
+    <li>Ask the splitter for pieces. If several: guess each one, and only if <b>every</b> piece is understood, run the first and queue the rest (<code>chain</code>). Otherwise treat the whole text as one request.</li>
+    <li><code>handle_one(text)</code>.</li>
+  </ol>
+  <h3><code>handle_one(text)</code>: the decision ladder</h3>
+  <figure class="fig">
+  <svg viewBox="0 0 760 330" width="760" role="img" aria-label="handle_one decision ladder">
+    <defs><marker id="ah2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="mk"/></marker></defs>
+    <rect x="20" y="20" width="200" height="54" rx="10" class="bx-ai"/><text x="120" y="42" text-anchor="middle" class="md b">1. Brain guess</text><text x="120" y="60" text-anchor="middle" class="sm">trusted()? → agent.extract()</text>
+    <rect x="280" y="20" width="200" height="54" rx="10" class="bx"/><text x="380" y="42" text-anchor="middle" class="md b">2. Keyword rules</text><text x="380" y="60" text-anchor="middle" class="sm">first agent.parse() ≠ None</text>
+    <rect x="540" y="20" width="200" height="54" rx="10" class="bx-ai"/><text x="640" y="42" text-anchor="middle" class="md b">3. Local LLM</text><text x="640" y="60" text-anchor="middle" class="sm">tool_caller.solve(text, run_named)</text>
+    <line x1="220" y1="47" x2="278" y2="47" class="ln" marker-end="url(#ah2)"/><text x="226" y="40" class="sm">no</text>
+    <line x1="480" y1="47" x2="538" y2="47" class="ln" marker-end="url(#ah2)"/><text x="486" y="40" class="sm">no</text>
+    <line x1="640" y1="74" x2="640" y2="128" class="ln" marker-end="url(#ah2)"/><text x="648" y="104" class="sm">no</text>
+    <rect x="520" y="130" width="230" height="64" rx="10" class="bx-io"/><text x="635" y="152" text-anchor="middle" class="md b">4. Give up politely</text><text x="635" y="170" text-anchor="middle" class="sm">conf ≥ 0.5: “Did you want X?”</text><text x="635" y="186" text-anchor="middle" class="sm">else: “No MAVERICK agent handles that”</text>
+    <line x1="120" y1="74" x2="120" y2="240" class="ln" marker-end="url(#ah2)"/><text x="128" y="160" class="sm">yes</text>
+    <path d="M380,74 C380,170 300,230 252,248" class="ln" marker-end="url(#ah2)"/><text x="330" y="160" class="sm">yes</text>
+    <path d="M560,74 C520,200 330,250 252,262" class="ln" marker-end="url(#ah2)"/><text x="470" y="120" class="sm">checked action</text>
+    <rect x="20" y="242" width="230" height="70" rx="10" class="bx-acc"/><text x="135" y="264" text-anchor="middle" class="md b">run(agent, intent)</text><text x="135" y="282" text-anchor="middle" class="sm">missing? → “I need: …”</text><text x="135" y="298" text-anchor="middle" class="sm">risky? → describe() → y/n · else handle()</text>
+  </svg>
+  <figcaption>Cheapest and most reliable first; slowest (the LLM, ~1 s) last.</figcaption>
+  </figure>
+  <h3><code>run(agent, intent)</code> and <code>confirm(yes)</code></h3>
+<pre><span class="k">def</span> run(self, agent, intent):
+    <span class="k">if</span> intent.missing:
+        <span class="k">return</span> Result(False, f<span class="s">"[{agent.name}] I need: "</span> + <span class="s">", "</span>.join(intent.missing))
+    <span class="k">if</span> agent.is_risky(intent):
+        <span class="c"># describe() runs the safety checks first, so a blocked action is never even asked about.</span>
+        question = self.safely(<span class="k">lambda</span>: Result(False, agent.describe(intent), {<span class="s">"confirm"</span>: True}))
+        <span class="k">if</span> question.data.get(<span class="s">"confirm"</span>):
+            self.pending = (agent, intent)
+        <span class="k">return</span> question
+    <span class="k">return</span> self.safely(<span class="k">lambda</span>: agent.handle(intent))</pre>
+  <p><code>safely()</code> wraps every call: <code>SafetyError</code> → “Blocked for safety: …”, <code>OSError</code> → “Windows refused the operation: …”. The program never crashes on a bad request.</p>
+  <div class="box remember"><span class="t">Remember</span>Ladder: <b>brain → keywords → LLM → polite give-up</b>. <code>run()</code>: <b>missing? risky? do.</b> Every call goes through <code>safely()</code>.</div>
+  <label class="learned"><input type="checkbox">I can explain this without looking</label>
+</section>
+
+<section id="s1-4" data-group="Stage 1 · Foundation">
+  <h2><span class="num">1.4</span>Safety checks</h2>
+  <p class="where"><code>maverick/core/safety.py</code> (61 lines)</p>
+  <div class="tw"><table>
+    <tr><th>Function</th><th>What it guarantees</th></tr>
+    <tr><td><code>SafetyError</code></td><td>The one exception every safety check raises. Raised <i>before</i> anything is touched.</td></tr>
+    <tr><td><code>to_path(raw)</code></td><td>Turns text into a clean absolute Path: strips quotes, expands <code>~</code> and <code>%VARS%</code>, resolves <code>..</code>. Empty → “No path given.”</td></tr>
+    <tr><td><code>require_existing(raw)</code></td><td>The path must exist.</td></tr>
+    <tr><td><code>is_inside(child, parent)</code></td><td>True if child is parent or anywhere under it.</td></tr>
+    <tr><td><code>require_not_protected(path)</code></td><td>Not inside <code>C:\Windows</code>, <code>Program Files</code>, <code>Program Files (x86)</code>, <code>ProgramData</code> (read from environment variables), and not a whole drive (<code>path.parent == path</code>, true only for <code>C:\</code>).</td></tr>
+    <tr><td><code>plan_destination(source, raw_dest)</code></td><td>Works out the final target for copy/move: an existing folder means “put it inside” (like dragging onto a folder). Then: parent must exist · <b>target must not exist (never overwrite)</b> · not the same as source · a folder not into itself · not protected.</td></tr>
+  </table></div>
+  <div class="box danger"><span class="t">Safety rule</span>The pattern <b>plan_… then do</b> appears everywhere: <code>plan_move</code>, <code>plan_rename</code>, <code>plan_end</code>, <code>plan_destination</code>. The plan function only checks and calculates; it never touches anything. That's what lets <code>describe()</code> run every check before asking you.</div>
+  <div class="box remember"><span class="t">Remember</span>Never overwrite · never system folders · never a whole drive · never a folder into itself · source must exist. Check first (plan), act second.</div>
+  <label class="learned"><input type="checkbox">I can explain this without looking</label>
+</section>
+
+<section id="s1-5" data-group="Stage 1 · Foundation">
+  <h2><span class="num">1.5</span>The command line: main.py</h2>
+  <p class="where"><code>maverick/main.py</code> (149 lines)</p>
+  <h3>Three ways to run</h3>
+  <div class="tw"><table>
+    <tr><th>Command</th><th>Mode</th><th>What happens</th></tr>
+    <tr><td><code>python maverick\main.py</code> or <code>maverick</code></td><td>Interactive (REPL)</td><td><code>repl()</code>: read a line, <code>handle</code>, ask y/n if needed, print, loop until exit</td></tr>
+    <tr><td><code>maverick "copy a.txt to D:\x"</code></td><td>One-shot</td><td>One request, print, exit code 0 = success, 1 = failure</td></tr>
+    <tr><td><code>maverick --background</code></td><td>Background only</td><td>No chat; keeps saved jobs running, logs to <code>~/.maverick/background.log</code></td></tr>
+  </table></div>
+  <h3><code>main()</code> step by step</h3>
+  <ol class="steps">
+    <li>Create <code>Background(JOBS_PATH)</code>. If <code>--background</code>: run only that.</li>
+    <li><code>record_disks()</code>: one disk-usage reading per hour, the history for the “when will C: be full” forecast.</li>
+    <li><code>Brain.load()</code>: <code>None</code> if never trained → keyword rules only.</li>
+    <li>Start the LLM if Ollama is running: <code>AgentLoop(Ollama())</code>, else <code>None</code>.</li>
+    <li><code>build(brain, background, SlotTagger.load(), Splitter.load(...), tool_caller)</code>.</li>
+    <li>One-shot? Put quotes back around arguments with spaces (the shell removed them), handle, exit. Else restore saved jobs and start <code>repl()</code>.</li>
+  </ol>
+  <h3><code>build()</code> and why agent ORDER matters</h3>
+  <p>Keyword rules ask agents one by one; <b>the first that says “mine” wins</b>. So order encodes tie-breaks:</p>
+  <div class="chips">
+    <span class="chip">Process</span><span class="chip">Jobs</span><span class="chip">Watch</span><span class="chip">Logs</span><span class="chip">Services</span><span class="chip">Network</span><span class="chip">Devices</span><span class="chip">Accounts</span><span class="chip">Power</span><span class="chip">Cleanup</span><span class="chip">Hardware</span><span class="chip">Search</span><span class="chip">Archive</span><span class="chip">Files</span>
+  </div>
+  <ul class="tight small">
+    <li>Watch before files: “move every new pdf in downloads to documents” is a watcher, not a one-off move.</li>
+    <li>Logs before cleanup and archive: “compress server.log” rotates a log, it doesn't zip it.</li>
+    <li>Process before hardware: “which programs use the most memory” is about programs, not RAM size.</li>
+    <li>Power before hardware: “turn on battery saver” is a mode, not a battery reading.</li>
+    <li>Cleanup before hardware: “free up space on D:” wants space back, not a number.</li>
+    <li>Search before files and archive: “find big files”, “find zip files” are searches.</li>
+    <li>Files last: its words (“size”, “big”, “copy”) are the most generic.</li>
+  </ul>
+  <p><code>ask_if_needed()</code>: if a Result has <code>data["confirm"]</code>, ask <code>(y/n)</code>. Only <code>y</code> or <code>yes</code> runs it; anything else (even Enter or Ctrl+C) cancels.</p>
+  <div class="box remember"><span class="t">Remember</span>Three modes: chat · one-shot · <code>--background</code>. In <code>build()</code> the <b>specific agents come first, generic Files last</b>, because the first keyword match wins.</div>
+  <label class="learned"><input type="checkbox">I can explain this without looking</label>
+</section>
+
+<section id="s1-6" data-group="Stage 1 · Foundation">
+  <h2><span class="num">1.6</span>Tests</h2>
+  <p class="where"><code>tests/</code> (34 files, 490 tests) · <code>pytest.ini</code> · <code>tests/conftest.py</code></p>
+  <p>A test sets something up, runs real MAVERICK code, and <code>assert</code>s the outcome. Example from <code>tests/test_confirm.py</code>:</p>
+<pre><span class="k">def</span> test_move_asks_first_and_changes_nothing(tmp_path):
+    src = make_file(tmp_path)                       <span class="c"># a real file in a throwaway folder</span>
+    result = build().handle(f<span class="s">'move "{src}" to "{tmp_path / "b.txt"}"'</span>)
+    <span class="k">assert</span> result.data == {<span class="s">"confirm"</span>: True}        <span class="c"># it asked</span>
+    <span class="k">assert</span> src.exists()                              <span class="c"># and touched nothing</span></pre>
+  <h3>Key ideas</h3>
+  <ul class="tight">
+    <li><b>Fixture</b>: something pytest prepares for a test. <code>tmp_path</code> is a fresh empty folder, deleted afterwards.</li>
+    <li><b>monkeypatch / fakes</b>: replace a real system call with a pretend one. Killing processes, changing services, power modes: all faked, so the suite <b>never changes your PC</b>.</li>
+    <li><b>autouse fixture</b> in <code>conftest.py</code>: every test gets its own disk-history file, so fake drive readings never land in your real <code>~/.maverick/disk_history.tsv</code>.</li>
+    <li><b>Accuracy floor</b>: <code>test_brain.py</code> fails if the brain's accuracy drops below a minimum. A test that guards a model.</li>
+  </ul>
+  <div class="box remember"><span class="t">Remember</span>Real code, fake system calls, throwaway folders. <code>python -m pytest -q</code> (~5 min). 490 tests.</div>
+  <label class="learned"><input type="checkbox">I can explain this without looking</label>
+</section>
+
+<section id="s1-7" data-group="Stage 1 · Foundation">
+  <h2><span class="num">1.7</span>Git, PRs and CI</h2>
+  <p>Two branches only: <code>main</code> (finished, published) and <code>build</code> (work in progress).</p>
+  <div class="flow">
+    <div class="st"><b>Commit on build</b><small>small commits, short messages (≤ 3 words), each one works on its own</small></div><div class="ar">↓</div>
+    <div class="st"><b>Push build → open a Pull Request into main</b><small>a PR = “please merge these commits”, reviewable on GitHub</small></div><div class="ar">↓</div>
+    <div class="st io"><b>CI runs</b><small><code>.github/workflows/tests.yml</code>: Windows, Python 3.12 + 3.14, <code>pip install -e ".[dev,minilm]"</code>, <code>pytest -q</code></small></div><div class="ar">↓</div>
+    <div class="st ok"><b>You merge the PR on GitHub, then pull main back</b></div>
+  </div>
+  <p><b>CI</b> (continuous integration) = a fresh machine runs the tests automatically on every PR into main and every push to main. It skips changes that touch only <code>.md</code> files or <code>docs/</code>, since those can't break a test. CI has no MiniLM model files (they're gitignored), so it also proves the ensemble fallback works.</p>
+  <div class="box remember"><span class="t">Remember</span><b>build → PR → CI green → merge into main → pull.</b> CI = tests on a clean Windows machine, two Python versions.</div>
+  <label class="learned"><input type="checkbox">I can explain this without looking</label>
+</section>
+
+<section id="s2-files" data-group="Stage 2 · Files + brain">
+  <h2><span class="num">2.1–2.4</span>The files agent: copy, move, size, rename</h2>
+  <p class="where"><code>maverick/agents/files/agent.py</code> (understanding) · <code>maverick/agents/files/ops.py</code> (doing)</p>
+  <h3>Understanding: <code>parse()</code></h3>
+  <p><code>split_words_and_paths(text)</code> sorts every token into three buckets:</p>
+  <ul class="tight">
+    <li><b>words</b>: known keywords (<code>rename</code>, <code>move</code>, <code>copy</code>, <code>size</code>, filler like <code>the</code>, <code>to</code>, <code>please</code>)</li>
+    <li><b>sure paths</b>: quoted, or path-shaped (<code>D:\x</code>, <code>notes.txt</code>)</li>
+    <li><b>possible paths</b>: anything not a known word (<code>photos</code> in “size of photos”)</li>
+  </ul>
+  <p>Then a priority check: <b>rename → move → copy → size</b>. “move a copy of notes.txt” contains both move and copy; move is checked first. (The brain learned that this one is actually a copy: it's a hard case.)</p>
+  <h3>Arguments: <code>extract()</code></h3>
+  <p>If the slot tagger (8.15) is trained, it fills the slots. Otherwise: prefer sure paths if there are enough of them, else possible paths. The first is the source, the second the destination (or <code>new_name</code>). Anything empty goes into <code>missing</code>.</p>
+  <h3>Doing: ops.py</h3>
+  <div class="tw"><table>
+    <tr><th>Operation</th><th>Risky?</th><th>How</th><th>Special care</th></tr>
+    <tr><td>copy</td><td>No (never overwrites)</td><td><code>shutil.copy2</code> (keeps timestamps) / <code>copytree</code> for folders</td><td><code>plan_destination</code></td></tr>
+    <tr><td>move</td><td><b>Yes</b></td><td><code>shutil.move</code></td><td>Source must not be in a system folder either</td></tr>
+    <tr><td>rename</td><td><b>Yes</b></td><td><code>Path.rename</code> in the same folder</td><td>Name with <code>&lt;&gt;:"/\|?*</code> is refused (that's a path: use move). Case-only rename allowed (<code>samefile</code>)</td></tr>
+    <tr><td>size</td><td>No (read-only)</td><td><code>os.walk</code> and add up file sizes</td><td>Locked files counted as “could not be read”, not a crash</td></tr>
+  </table></div>
+  <p>copy, move and rename put the new path into <code>data["output"]</code>. That's how “and zip it” later knows what “it” is.</p>
+  <div class="box remember"><span class="t">Remember</span>Priority <b>rename › move › copy › size</b>. Risky = <b>move, rename</b>. Every action returns its new path as <code>output</code>.</div>
+  <label class="learned"><input type="checkbox">I can explain this without looking</label>
+</section>
+
+<section id="s2-roadmap" data-group="Stage 2 · Files + brain">
+  <h2><span class="num">2.5</span>Brain roadmap</h2>
+  <p class="where"><code>docs/BRAIN_ROADMAP.md</code></p>
+  <p>The plan for how the brain grows, with one rule: <b>a new brain must beat the current one in <code>evaluate.py</code> before it replaces it.</b></p>
+  <figure class="fig">
+  <svg viewBox="0 0 760 300" width="760" role="img" aria-label="Brain accuracy over time">
+    <text x="20" y="22" class="md b">“As MAVERICK runs” accuracy (5-fold) · hard cases in purple</text>
+    <g transform="translate(0,40)">
+      <text x="210" y="16" text-anchor="end" class="sm">Naive Bayes (2.7)</text><rect x="220" y="4" width="419" height="16" rx="3" class="bar-m"/><text x="645" y="16" class="sm">83.8% *</text>
+      <rect x="220" y="22" width="300" height="8" rx="2" class="bar-v"/><text x="526" y="30" class="sm">60%</text>
+      <text x="210" y="56" text-anchor="end" class="sm">Logistic regression (8.2)</text><rect x="220" y="44" width="416" height="16" rx="3" class="bar-a"/><text x="642" y="56" class="sm">83.2%</text>
+      <rect x="220" y="62" width="365" height="8" rx="2" class="bar-v"/><text x="591" y="70" class="sm">73%</text>
+      <text x="210" y="96" text-anchor="end" class="sm">Ensemble (8.5)</text><rect x="220" y="84" width="423" height="16" rx="3" class="bar-a"/><text x="649" y="96" class="sm">84.5%</text>
+      <rect x="220" y="102" width="375" height="8" rx="2" class="bar-v"/><text x="601" y="110" class="sm">75% · fallback brain</text>
+      <text x="210" y="136" text-anchor="end" class="sm">MiniLM fine-tuned (8.12)</text><rect x="220" y="124" width="462" height="16" rx="3" class="bar-m"/><text x="688" y="136" class="sm">92.3%</text>
+      <rect x="220" y="142" width="405" height="8" rx="2" class="bar-v"/><text x="631" y="150" class="sm">81% · not shipped</text>
+      <text x="210" y="176" text-anchor="end" class="sm b">MiniLM frozen (8.11)</text><rect x="220" y="164" width="458" height="16" rx="3" class="bar-g"/><text x="684" y="176" class="sm b">91.6%</text>
+      <rect x="220" y="182" width="430" height="8" rx="2" class="bar-v"/><text x="656" y="190" class="sm b">86% · CURRENT</text>
+      <line x1="220" y1="0" x2="220" y2="200" class="ln"/>
+      <text x="220" y="222" class="sm">0%</text><text x="720" y="222" text-anchor="end" class="sm">100%</text>
+    </g>
+  </svg>
+  <figcaption>* Naive Bayes was measured earlier on a smaller dataset. Bars scaled 0–100%.</figcaption>
+  </figure>
+  <div class="box remember"><span class="t">Remember</span>NB 83.8 → LR 83.2 → Ensemble <b>84.5</b> → MiniLM <b>91.6</b> (hard 60 → 73 → 75 → <b>86</b>). New brain must win on the same test.</div>
+  <label class="learned"><input type="checkbox">I can explain this without looking</label>
+</section>
+
+<section id="s2-data" data-group="Stage 2 · Files + brain">
+  <h2><span class="num">2.6</span>Training data</h2>
+  <p class="where"><code>maverick/brain/data/</code> · loader: <code>maverick/brain/dataset.py</code></p>
+  <div class="tw"><table>
+    <tr><th>File</th><th>What it holds</th><th>Used by</th></tr>
+    <tr><td><code>intents.tsv</code></td><td>1,374 <code>label⇥sentence</code> lines (started at 220)</td><td>The brain</td></tr>
+    <tr><td><code>hard_cases.tsv</code></td><td>84 tricky sentences, never trained on (started at 26)</td><td>Grading only</td></tr>
+    <tr><td><code>slots.tsv</code></td><td>Sentences with <code>[source notes.txt]</code> marks</td><td>Slot tagger (8.15)</td></tr>
+    <tr><td><code>multi.tsv</code></td><td>Sentences with <code>|</code> where one action ends</td><td>Splitter (8.16)</td></tr>
+    <tr><td><code>llm_eval.tsv</code></td><td>Requests + expected action and arguments</td><td>LLM prompt tests (8.19)</td></tr>
+    <tr><td><code>inbox.tsv</code> <span class="chip safe">yours, gitignored</span></td><td>Every real request + the brain's guess + confidence</td><td>Review (8.13)</td></tr>
+    <tr><td><code>learned.tsv</code> <span class="chip safe">yours, gitignored</span></td><td>Your reviewed corrections</td><td>Training adds it</td></tr>
+  </table></div>
+  <p><b>TSV</b> = tab-separated values: one example per line, a tab between the label and the sentence, <code>#</code> lines are comments. <code>load_examples()</code> reads it into a list of <code>(label, sentence)</code>.</p>
+  <div class="box danger"><span class="t">Safety rule</span><code>inbox.tsv</code> holds your real paths and requests. It's user data: never deleted after demos; back it up and restore it.</div>
+  <div class="box remember"><span class="t">Remember</span>intents (learn) · hard_cases (final exam) · slots · multi · llm_eval · inbox + learned (yours, private).</div>
+  <label class="learned"><input type="checkbox">I can explain this without looking</label>
+</section>
+
+<section id="s2-nb" data-group="Stage 2 · Files + brain">
+  <h2><span class="num">2.7</span>Naive Bayes, from scratch</h2>
+  <p class="where"><code>maverick/brain/naive_bayes.py</code> (73 lines)</p>
+  <h3>The idea in one line</h3>
+  <p><code>score(label) = log P(label) + Σ log P(word | label)</code>. The label with the highest score wins.</p>
+  <ul class="tight">
+    <li><b>P(label)</b>, the <b>prior</b>: how common the label is. 40 of 1,374 sentences are <code>files.copy</code> → 0.029.</li>
+    <li><b>P(word | label)</b>, the <b>likelihood</b>: of all words in <code>files.copy</code> sentences, what share is “duplicate”?</li>
+    <li><b>Naive</b> = it pretends words are independent of each other. Wrong, but works surprisingly well.</li>
+  </ul>
+  <h3>Training = just counting</h3>
+<pre><span class="k">def</span> fit(self, examples):
+    <span class="k">for</span> label, tokens <span class="k">in</span> examples:
+        self.label_counts[label] += 1                          <span class="c"># sentences per label</span>
+        self.word_counts.setdefault(label, Counter()).update(tokens)  <span class="c"># words per label</span>
+        self.vocab.update(tokens)                             <span class="c"># every word ever seen</span></pre>
+  <h3>A tiny worked example</h3>
+  <p>Pretend training data: <code>copy</code> sentences contain the word “duplicate” 3 times in 50 words; <code>move</code> sentences 0 times in 50 words. Vocabulary: 100 words.</p>
+<pre>Laplace smoothing (+1 on every count, so 0 never happens):
+P("duplicate" | copy) = (3 + 1) / (50 + 100) = 0.027
+P("duplicate" | move) = (0 + 1) / (50 + 100) = 0.0067
+→ "duplicate" makes copy 4× more likely than move.</pre>
+  <p>Unknown words (not in <code>vocab</code>) are skipped: they say nothing. Finally <b>softmax</b> turns the log-scores into probabilities (subtracting the max first).</p>
+  <div class="box careful"><span class="t">Careful</span>Without smoothing, one word never seen with a label gives probability 0, and log(0) = −∞: that label can never win again, whatever else the sentence says.</div>
+  <div class="box remember"><span class="t">Remember</span>Naive Bayes = <b>count words per label</b>, score = log prior + sum of log word-likelihoods, <b>+1 smoothing</b>, softmax. No training loop at all.</div>
+  <label class="learned"><input type="checkbox">I can explain this without looking</label>
+</section>
+
+<section id="s2-train" data-group="Stage 2 · Files + brain">
+  <h2><span class="num">2.8</span>Training and evaluation</h2>
+  <p class="where"><code>maverick/brain/train.py</code> · <code>maverick/brain/evaluate.py</code></p>
+  <h3>train.py</h3>
+  <ol class="steps">
+    <li>Pick the brain kind (default: <code>minilm</code> if its files exist, else <code>ensemble</code>).</li>
+    <li>Load <code>intents.tsv</code>, plus <code>learned.tsv</code> if you reviewed requests.</li>
+    <li><code>MODELS[kind]().fit([(label, tokenize(sentence)) ...])</code>.</li>
+    <li><code>model.save(MODEL_PATH)</code> → <code>maverick/brain/models/brain.json</code> (gitignored). The JSON's <code>"kind"</code> says which class to rebuild on load.</li>
+  </ol>
+  <h3>evaluate.py: grading honestly</h3>
+  <ul class="tight">
+    <li><code>keyword_rules(sentence)</code>: the <b>baseline</b>. Every agent's <code>parse()</code>, in the real order. The brain must beat this to earn its place.</li>
+    <li><code>as_maverick_runs(model)</code>: brain if confident, rules otherwise. <b>The score you actually feel.</b></li>
+    <li><code>compare()</code>: every brain kind side by side with 5-fold cross-validation, plus hard cases.</li>
+    <li><code>print_report()</code>: per-label precision/recall/F1 and a <b>confusion matrix</b> (rows = real, columns = predicted; off-diagonal = mistakes, and which mistakes).</li>
+    <li><code>print_thresholds()</code>: at each cut-off, how many predictions are accepted and how many of those are wrong.</li>
+  </ul>
+  <p>First result: test 82% vs keyword rules 75%; hard cases 81% vs 46%.</p>
+  <div class="box remember"><span class="t">Remember</span>Baseline = keyword rules. Real score = “as MAVERICK runs”. Run <code>python -m maverick.brain.evaluate</code> to see everything.</div>
+  <label class="learned"><input type="checkbox">I can explain this without looking</label>
+</section>
+
+<section id="s2-wired" data-group="Stage 2 · Files + brain">
+  <h2><span class="num">2.9</span>Brain wired in</h2>
+  <p class="where"><code>maverick/brain/__init__.py</code> · class <code>Brain</code></p>
+  <p><code>Brain</code> is a thin wrapper around whatever model is saved:</p>
+  <ul class="tight">
+    <li><code>Brain.load()</code>: returns <code>None</code> if no model file exists, so MAVERICK runs on keyword rules alone. Also loads the old <code>naive_bayes.json</code> if that's all there is.</li>
+    <li><code>MODELS</code>: a dict from kind name → class (<code>naive_bayes</code>, <code>logistic_regression</code>, <code>mlp</code>, <code>linear_svm</code>, <code>k_nearest</code>, <code>decision_tree</code>, <code>bernoulli_nb</code>, <code>ensemble</code>, <code>minilm</code>). Every model has the same <code>fit / predict / save / load</code>, so they're interchangeable.</li>
+    <li><code>predict(text)</code>: tokenize → model → log one line to <code>inbox.tsv</code> (<code>label⇥confidence⇥text</code>) → return.</li>
+    <li><code>threshold</code> comes from the model, so each brain brings its own cut-off.</li>
+  </ul>
+  <div class="box why"><span class="t">Why every model has the same four methods</span>Same trick as SubAgent: a common shape. <code>train.py</code>, <code>evaluate.py</code> and the orchestrator never need to know which model is inside. Swapping brains = changing one string.</div>
+  <div class="box remember"><span class="t">Remember</span>Brain = load (or None) · predict (and log to inbox) · threshold. Every model: <b>fit, predict, save, load</b>.</div>
+  <label class="learned"><input type="checkbox">I can explain this without looking</label>
+</section>
+
+<div class="part" id="partC"><span class="tag">Part C · Stages 3–7</span><h2>Safety net and the 14 agents</h2><p>One recipe, applied fourteen times, with growing amounts of power and care.</p></div>
+
+<section id="s3-1" data-group="Stage 3 · Safety net">
+  <h2><span class="num">3.1</span>The confirmation prompt (y/n)</h2>
+  <p class="where"><code>core/orchestrator.py</code> (<code>run</code>, <code>confirm</code>, <code>pending</code>) · <code>main.py</code> (<code>ask_if_needed</code>)</p>
+  <p>Risky operations (change or remove something that exists) are never run straight away. The orchestrator returns a <b>question</b> instead, and waits.</p>
+  <figure class="fig">
+  <svg viewBox="0 0 760 360" width="760" role="img" aria-label="Confirmation sequence">
+    <defs><marker id="ah3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="mk"/></marker></defs>
+    <rect x="30" y="10" width="120" height="34" rx="8" class="bx-io"/><text x="90" y="32" text-anchor="middle" class="md b">You / main.py</text>
+    <rect x="300" y="10" width="140" height="34" rx="8" class="bx-acc"/><text x="370" y="32" text-anchor="middle" class="md b">Orchestrator</text>
+    <rect x="590" y="10" width="140" height="34" rx="8" class="bx"/><text x="660" y="32" text-anchor="middle" class="md b">FileAgent / ops</text>
+    <line x1="90" y1="44" x2="90" y2="350" class="ln-d"/><line x1="370" y1="44" x2="370" y2="350" class="ln-d"/><line x1="660" y1="44" x2="660" y2="350" class="ln-d"/>
+    <line x1="90" y1="70" x2="366" y2="70" class="ln" marker-end="url(#ah3)"/><text x="100" y="64" class="sm">handle("move a.txt to D:\x")</text>
+    <line x1="370" y1="100" x2="656" y2="100" class="ln" marker-end="url(#ah3)"/><text x="380" y="94" class="sm">is_risky(intent)? → yes · describe(intent)</text>
+    <rect x="580" y="110" width="160" height="30" rx="6" class="bx-safe"/><text x="660" y="130" text-anchor="middle" class="sm">plan_move(): checks #1</text>
+    <line x1="656" y1="152" x2="374" y2="152" class="ln" marker-end="url(#ah3)"/><text x="400" y="146" class="sm">"Move C:\..\a.txt -> D:\x\a.txt?"</text>
+    <text x="380" y="176" class="sm">pending = (agent, intent)</text>
+    <line x1="366" y1="196" x2="94" y2="196" class="ln" marker-end="url(#ah3)"/><text x="110" y="190" class="sm">Result(False, question, {"confirm": True})</text>
+    <text x="100" y="222" class="sm b">MAVERICK: Move … ? (y/n)  →  y</text>
+    <line x1="90" y1="244" x2="366" y2="244" class="ln" marker-end="url(#ah3)"/><text x="100" y="238" class="sm">confirm(True)</text>
+    <line x1="370" y1="270" x2="656" y2="270" class="ln" marker-end="url(#ah3)"/><text x="380" y="264" class="sm">handle(intent)</text>
+    <rect x="580" y="280" width="160" height="30" rx="6" class="bx-safe"/><text x="660" y="300" text-anchor="middle" class="sm">plan_move(): checks #2</text>
+    <line x1="656" y1="330" x2="94" y2="330" class="ln" marker-end="url(#ah3)"/><text x="300" y="324" class="sm">Result(True, "Moved … -> …", {"output": …})</text>
+  </svg>
+  <figcaption>The safety checks run twice: before asking, and again after “yes”.</figcaption>
+  </figure>
+  <div class="box why"><span class="t">Why check twice?</span>Time passes while you read the question. Someone could create <code>D:\x\a.txt</code> in those seconds. The second check (inside <code>handle</code>, via the same <code>plan_…</code> function) catches it. And because the first check runs <i>before</i> asking, you're never asked about something that would be blocked anyway.</div>
+  <h3>Rules for writing a new risky agent</h3>
+  <ul class="tight">
+    <li>List the operation in <code>risky</code> (or override <code>is_risky</code> when the arguments decide it).</li>
+    <li>Write <code>describe()</code> that calls the same <code>plan_…</code> function <code>handle()</code> will use, and returns a human question including consequences (“Unsaved work in it will be lost.”).</li>
+    <li>A new request clears <code>pending</code>; “no” returns “Cancelled. Nothing was changed.”</li>
+  </ul>
+  <div class="box remember"><span class="t">Remember</span>Risky → <b>describe (check #1) → pending → y/n → handle (check #2)</b>. Only <code>y</code>/<code>yes</code> runs it. A new request forgets the question.</div>
+  <label class="learned"><input type="checkbox">I can explain this without looking</label>
+</section>
+
+<section id="recipe" data-group="Stage 4 · Read-only agents">
+  <h2>The agent recipe (used from Stage 4 on)</h2>
+  <p class="lead">Every new agent from here followed the same seven steps. Learn the recipe once; then each agent is just “what's special about it”.</p>
+  <div class="flow">
+    <div class="st ok"><b>a) ops.py functions</b><small>the doing, each returning a Result; system calls behind small functions</small></div><div class="ar">↓</div>
+    <div class="st"><b>b) agent.py</b><small>keywords for <code>parse</code>, arguments in <code>extract</code>, <code>risky</code> + <code>describe</code> if needed</small></div><div class="ar">↓</div>
+    <div class="st"><b>c) register in main.py</b><small>the right place in the order</small></div><div class="ar">↓</div>
+    <div class="st ai"><b>d) training sentences + hard cases</b><small>~30 per new label in <code>intents.tsv</code></small></div><div class="ar">↓</div>
+    <div class="st ai"><b>e) retrain, check accuracy</b><small><code>train</code> then <code>evaluate</code>; nothing else may get worse</small></div><div class="ar">↓</div>
+    <div class="st io"><b>f) tests</b><small>with fakes for every system call</small></div><div class="ar">↓</div>
+    <div class="st ok"><b>g) try it live</b></div>
+  </div>
+  <div class="box remember"><span class="t">Remember</span><b>ops · agent · register · data · retrain · tests · live.</b> (“Old Agents Rarely Die; Retrain, Test, Launch.”)</div>
+  <label class="learned"><input type="checkbox">I can explain this without looking</label>
+</section>
+
+<section id="s4-1" data-group="Stage 4 · Read-only agents">
+  <h2><span class="num">4.1</span>Hardware agent</h2>
+  <p class="where"><code>maverick/agents/hardware/</code> · labels: ram, slots, cpu, battery, disks, forecast</p>
+  <ul class="tight">
+    <li><b>psutil</b> for live numbers: RAM total/used/free, CPU use (measured over half a second), battery %, disk space.</li>
+    <li><b>Windows CIM</b> for hardware facts psutil doesn't know: RAM slots, type (DDR4/DDR5), speed, CPU name. <code>windows_info()</code> runs <code>Get-CimInstance &lt;class&gt; | Select-Object … | ConvertTo-Json -Compress</code> in PowerShell and reads the JSON back.</li>
+    <li><b>Disk forecast</b> (8.24): <code>record_disks()</code> saves at most one reading per hour to <code>~/.maverick/disk_history.tsv</code>; <code>forecast()</code> fits a line through it. Needs at least 3 readings.</li>
+  </ul>
+  <div class="box remember"><span class="t">Remember</span>psutil = live numbers · CIM via PowerShell JSON = hardware facts · history file → forecast.</div>
+  <label class="learned"><input type="checkbox">I can explain this without looking</label>
+</section>
+
+<section id="s4-2" data-group="Stage 4 · Read-only agents">
+  <h2><span class="num">4.2</span>Process tree agent</h2>
+  <p class="where"><code>maverick/agents/process/</code> · labels: list, origin, children (and later end, hung, growing, handles, unusual)</p>
+  <p>Every running program is a <b>process</b> with a <b>PID</b> (process ID). Each was started by a <b>parent</b> process and may start <b>children</b>. That forms a tree.</p>
+  <ul class="tight">
+    <li><code>top(sort)</code>: biggest programs by RAM or CPU. Copies grouped: <code>chrome.exe x18</code> (Chrome runs one process per tab).</li>
+    <li><code>origin(name)</code>: “what started X?” Walk up the parents.</li>
+    <li><code>children(name)</code>: “what did X start?” Walk down.</li>
+  </ul>
+  <div class="box careful"><span class="t">Careful</span>“what started chrome” (origin) vs “what did chrome start” (children) use the same words. Keyword rules check for <code>did … start</code>; the brain needed word pairs (8.1) to tell them apart.</div>
+  <div class="box remember"><span class="t">Remember</span>Process = running program with a PID. Parent ↑ = origin, children ↓. Copies grouped.</div>
+  <label class="learned"><input type="checkbox">I can explain this without looking</label>
+</section>
+
+<section id="s4-6" data-group="Stage 4 · Read-only agents">
+  <h2><span class="num">4.6</span>File search agent</h2>
+  <p class="where"><code>maverick/agents/search/</code> (<code>filters.py</code> reads the request, <code>ops.py</code> walks the disk) · labels: find, content, group</p>
+  <ul class="tight">
+    <li><code>parse_query()</code> pulls out filters: <b>kind</b> (“pdfs”, “videos”), <b>date</b> (“from last week”), <b>size</b> (“bigger than 1 gb”), <b>place</b> (“in downloads”, “e drive”), <b>text inside</b>. Each filter is cut out of the text so it isn't mistaken for part of the file name.</li>
+    <li><code>os.walk</code> through the folders, <b>skipping</b> system/junk folders (<code>Windows</code>, <code>Program Files</code>, <code>AppData</code>, <code>$Recycle.Bin</code>, hidden dot-folders…).</li>
+    <li>Stops after <b>20 seconds</b>; shows the top 20.</li>
+    <li>Results <b>ranked</b> by a learned model (8.25); <code>group</code> clusters a folder's files with k-means (8.23).</li>
+  </ul>
+  <div class="box remember"><span class="t">Remember</span>Filters (kind, date, size, place, text) → walk, skip junk, 20 s limit → rank → top 20.</div>
+  <label class="learned"><input type="checkbox">I can explain this without looking</label>
+</section>
+
+<section id="s5-1" data-group="Stage 5 · Action agents">
+  <h2><span class="num">5.1</span>Process hunter</h2>
+  <p class="where"><code>process/ops.py</code>: <code>plan_end</code>, <code>describe_end</code>, <code>end</code>, <code>heaviest</code></p>
+  <p>“kill chrome”, “end pid 1234”, “kill whatever is using the most ram”.</p>
+  <div class="flow">
+    <div class="st safe"><b>plan_end(name)</b><small>find matches · refuse Windows' own processes (PROTECTED) · never MAVERICK itself or its terminal (its PID and parents)</small></div><div class="ar">↓</div>
+    <div class="st io"><b>describe_end</b><small>“End chrome.exe (18 copies, using 2.10 GB RAM)? Unsaved work in it will be lost.”</small></div><div class="ar">↓ <span>yes</span></div>
+    <div class="st"><b>terminate()</b><small>the polite request: “please close”</small></div><div class="ar">↓ <span>wait 3 s</span></div>
+    <div class="st"><b>kill()</b><small>force the ones still alive</small></div><div class="ar">↓ <span>wait 2 s</span></div>
+    <div class="st ok"><b>Result</b><small>“Ended …” or “Windows refused the rest (try running as Administrator)”</small></div>
+  </div>
+  <p><b>PROTECTED</b> includes <code>system</code>, <code>csrss.exe</code>, <code>wininit.exe</code>, <code>winlogon.exe</code>, <code>services.exe</code>, <code>lsass.exe</code>, <code>svchost.exe</code>, <code>dwm.exe</code>, <code>explorer.exe</code>, <code>MsMpEng.exe</code> (Defender)…: ending these crashes or locks Windows, so MAVERICK refuses even if you say yes.</p>
+  <div class="box remember"><span class="t">Remember</span><b>Polite, then force after 3 s.</b> Never Windows' own processes, never itself. Always y/n.</div>
+  <label class="learned"><input type="checkbox">I can explain this without looking</label>
+</section>
+
+<section id="s5-3" data-group="Stage 5 · Action agents">
+  <h2><span class="num">5.3</span>Disk space optimizer (cleanup)</h2>
+  <p class="where"><code>maverick/agents/cleanup/</code> · labels: scan, recycle, free · risky: recycle, free</p>
+  <ul class="tight">
+    <li><b>Finds</b>: temp files older than a day (younger may still be in use) · files ≥ 500 MB · downloads untouched for 90 days. Scans stop after 20 s.</li>
+    <li><b>Deletes only to the Recycle Bin</b> via Windows' <code>SHFileOperationW</code> with the <code>FOF_ALLOWUNDO</code> flag (that one flag is what makes it undoable). Called through <code>ctypes</code>. Never empties the bin.</li>
+    <li>“free up 5 gb” builds an optimal plan with the least regret (8.26, knapsack).</li>
+  </ul>
+  <div class="box danger"><span class="t">Safety rule</span>No permanent delete anywhere in MAVERICK. Every delete can be undone from the Recycle Bin.</div>
+  <div class="box remember"><span class="t">Remember</span>Temp > 1 day · big ≥ 500 MB · downloads > 90 days. <b>Recycle Bin only</b> (<code>FOF_ALLOWUNDO</code>).</div>
+  <label class="learned"><input type="checkbox">I can explain this without looking</label>
+</section>
+
+<section id="s5-4" data-group="Stage 5 · Action agents">
+  <h2><span class="num">5.4</span>Smart archive</h2>
+  <p class="where"><code>maverick/agents/archive/</code> · labels: create, list, extract</p>
+  <ul class="tight">
+    <li>Formats: <b>zip</b>, <b>tar</b>, <b>tar.gz</b>. Passwords: <b>AES-256</b> via <code>pyzipper</code>, typed at a hidden prompt, never logged.</li>
+    <li><b>Zip Slip guard</b>: before extracting anything, every name inside the archive is resolved against the destination. A name like <code>..\..\Windows\evil.dll</code> would land outside it → refuse, extract nothing.</li>
+    <li>For tar, Python's <code>filter="data"</code> refuses links, devices and absolute paths: the tar version of the same guard.</li>
+    <li>Never overwrites an existing file while extracting.</li>
+  </ul>
+  <div class="box analogy"><span class="t">Analogy</span>Zip Slip is a parcel labelled “deliver to the flat next door”. The guard reads every label before opening the box, and sends the whole parcel back if even one label points outside your flat.</div>
+  <div class="box remember"><span class="t">Remember</span>zip / tar / tar.gz · AES-256 · <b>Zip Slip: check every name stays inside the destination, before extracting anything.</b></div>
+  <label class="learned"><input type="checkbox">I can explain this without looking</label>
+</section>
+
+<section id="s5-6" data-group="Stage 5 · Action agents">
+  <h2><span class="num">5.6</span>Power agent</h2>
+  <p class="where"><code>maverick/agents/power/</code> · labels: plan, brightness</p>
+  <ul class="tight">
+    <li>Windows 11 <b>power modes</b> (best efficiency / balanced / best performance) through <code>powrprof.dll</code>'s <code>PowerSetActiveOverlayScheme</code> (via <code>ctypes</code>; each mode is a fixed GUID, an ID number Windows uses), plus classic plans via <code>powercfg /list</code> and <code>/setactive</code>.</li>
+    <li><b>Brightness</b> through CIM <code>WmiMonitorBrightness</code> (laptop screens only).</li>
+    <li><b>No y/n</b>: both are instantly reversible (just switch back), so asking would only annoy.</li>
+  </ul>
+  <div class="box why"><span class="t">Why no confirmation here?</span>“Risky” in MAVERICK means <i>changes or removes something that's hard to get back</i>. A power mode isn't; asking every time would teach you to press y without reading, which makes the real questions weaker.</div>
+  <div class="box remember"><span class="t">Remember</span>Power modes + brightness. Reversible, so no y/n.</div>
+  <label class="learned"><input type="checkbox">I can explain this without looking</label>
+</section>
+
+<section id="s5-7" data-group="Stage 5 · Action agents">
+  <h2><span class="num">5.7</span>Hung app reaper</h2>
+  <p class="where"><code>process/ops.py</code>: <code>hung_windows</code>, <code>end_hung</code> · <code>process/agent.py</code>: <code>is_risky</code> override</p>
+  <ul class="tight">
+    <li><code>EnumWindows</code> visits every window; <code>IsHungAppWindow</code> asks Windows whether it's “Not Responding”. All through <code>ctypes</code> calls into <code>user32.dll</code>.</li>
+    <li>Same label <code>process.hung</code> for “show frozen apps” (safe) and “end frozen apps” (risky). The <b>arguments</b> decide: <code>{"end": True}</code> → risky. That's why <code>SubAgent.is_risky()</code> exists as a method you can override.</li>
+    <li>“kill excel, it's frozen” names one program → turned into a normal <code>end</code>.</li>
+  </ul>
+  <div class="box remember"><span class="t">Remember</span>Hung = Windows' own “Not Responding” flag. Show is safe; end is risky; <code>is_risky</code> looks at the args.</div>
+  <label class="learned"><input type="checkbox">I can explain this without looking</label>
+</section>
+
+<section id="s6-1" data-group="Stage 6 · Background">
+  <h2><span class="num">6.1</span>Background mode</h2>
+  <p class="where"><code>maverick/core/background.py</code> (122 lines) · jobs saved in <code>~/.maverick/jobs.json</code></p>
+  <p>Until now MAVERICK only worked while you typed. Background jobs keep working <b>while you chat, or with no chat at all</b>.</p>
+  <h3>The pieces</h3>
+  <div class="tw"><table>
+    <tr><th>Piece</th><th>Job</th></tr>
+    <tr><td><code>Job</code></td><td>Base class: <code>kind</code> (for saving), <code>interval</code> (seconds), <code>tick()</code> (one round of work → messages), <code>describe()</code>, <code>to_dict()</code></td></tr>
+    <tr><td><code>Background.add / remove / list</code></td><td>Manage jobs; every change is saved to JSON</td></tr>
+    <tr><td><code>run_due(now)</code></td><td>Tick every job whose <code>next_run</code> has come; one broken job never stops the others (try/except)</td></tr>
+    <tr><td><code>_loop()</code></td><td>The thread: <code>while not stopping.wait(1.0): run_due()</code></td></tr>
+    <tr><td><code>register(kind, from_dict)</code></td><td>Each agent tells Background how to rebuild its jobs from JSON</td></tr>
+    <tr><td><code>load()</code></td><td>Bring back saved jobs at start; skips ones whose folder vanished</td></tr>
+  </table></div>
+  <figure class="fig">
+  <svg viewBox="0 0 760 170" width="760" role="img" aria-label="Two threads timeline">
+    <text x="10" y="40" class="md b">Main thread</text>
+    <rect x="130" y="24" width="120" height="26" rx="6" class="bx-io"/><text x="190" y="42" text-anchor="middle" class="sm">waiting for input()</text>
+    <rect x="256" y="24" width="90" height="26" rx="6" class="bx-acc"/><text x="301" y="42" text-anchor="middle" class="sm">handle()</text>
+    <rect x="352" y="24" width="390" height="26" rx="6" class="bx-io"/><text x="547" y="42" text-anchor="middle" class="sm">waiting for input()…</text>
+    <text x="10" y="110" class="md b">Background</text>
+    <g>
+      <rect x="130" y="94" width="40" height="26" rx="5" class="bx"/><rect x="200" y="94" width="40" height="26" rx="5" class="bx"/><rect x="270" y="94" width="40" height="26" rx="5" class="bx-ok"/><rect x="340" y="94" width="40" height="26" rx="5" class="bx"/><rect x="410" y="94" width="40" height="26" rx="5" class="bx"/><rect x="480" y="94" width="40" height="26" rx="5" class="bx-ok"/><rect x="550" y="94" width="40" height="26" rx="5" class="bx"/><rect x="620" y="94" width="40" height="26" rx="5" class="bx"/><rect x="690" y="94" width="40" height="26" rx="5" class="bx"/>
+    </g>
+    <text x="290" y="140" text-anchor="middle" class="sm">tick → “moved report.pdf”</text>
+    <text x="500" y="140" text-anchor="middle" class="sm">tick → message</text>
+    <text x="430" y="162" text-anchor="middle" class="sm">every 1 s: run_due() checks which jobs are due · lock protects the shared job list</text>
+  </svg>
+  </figure>
+  <h3>New ideas here</h3>
+  <ul class="tight">
+    <li><b>Thread</b>: a second line of work inside the same program. <code>daemon=True</code>: it dies when the program exits.</li>
+    <li><b>Lock</b> (<code>threading.Lock</code>): two threads touching the job list at the same moment could corrupt it; <code>with self.lock:</code> lets only one in at a time.</li>
+    <li><b>Event</b> (<code>stopping</code>): <code>wait(1.0)</code> sleeps a second <i>or</i> returns early when <code>stop()</code> is called.</li>
+    <li><b>Persistence</b>: jobs survive a restart because they're saved as JSON with their <code>kind</code>.</li>
+  </ul>
+  <p><code>maverick --background</code> (or <code>pythonw.exe</code> for no window): no chat, just keep jobs running and log to <code>~/.maverick/background.log</code>.</p>
+  <div class="box remember"><span class="t">Remember</span>Job = <b>kind + interval + tick()</b>. Thread wakes every 1 s, runs what's due, catches every error. Saved to <code>jobs.json</code>; rebuilt by <code>register</code>ed makers.</div>
+  <label class="learned"><input type="checkbox">I can explain this without looking</label>
+</section>
+
+<section id="s6-2" data-group="Stage 6 · Background">
+  <h2><span class="num">6.2</span>Folder watcher</h2>
+  <p class="where"><code>maverick/agents/watch/</code> · <code>WatchJob</code>, interval 3 s · risky: start (it'll move files on its own later, so ask once now)</p>
+  <p>“move every new pdf in downloads to documents”. Each <code>tick()</code>:</p>
+  <ol class="steps">
+    <li>Skip files already there when watching started (<code>seen</code>): only <b>new</b> arrivals count.</li>
+    <li>Skip unfinished downloads (<code>.crdownload</code>, <code>.part</code>, <code>.tmp</code>…) and Office lock files (<code>~$…</code>).</li>
+    <li><b>Wait until the size stops changing between two ticks</b>: the file has finished arriving.</li>
+    <li>Move or copy. Name taken? <code>notes.pdf</code> → <code>notes (2).pdf</code>. Never overwrites.</li>
+    <li>Still open in another program? “will retry” next tick.</li>
+  </ol>
+  <div class="box remember"><span class="t">Remember</span>New files only · skip partial downloads · <b>size stable for two ticks</b> · <code>name (2).ext</code> instead of overwrite · retry if locked.</div>
+  <label class="learned"><input type="checkbox">I can explain this without looking</label>
+</section>
+
+<section id="s6-5" data-group="Stage 6 · Background">
+  <h2><span class="num">6.5</span>Log rotator</h2>
+  <p class="where"><code>maverick/agents/logs/</code> · <code>RotateJob</code>, interval 60 s · risky: rotate</p>
+  <ol class="steps">
+    <li>Copy the log into a compressed, dated file beside it: <code>server-20261107-143000.log.gz</code> (<code>gzip</code>).</li>
+    <li><b>Only after the copy is safe</b>, empty the original <i>in place</i> (<code>truncate(0)</code>), so a program writing to it keeps working.</li>
+    <li>Optional: as a background job, rotate whenever the log grows past a size (“bigger than 50 mb”).</li>
+    <li>Old rotated copies are <b>never deleted</b>.</li>
+  </ol>
+  <div class="box remember"><span class="t">Remember</span>Copy to dated <code>.gz</code> → <b>then</b> truncate in place. Old copies kept. Can run as a size-triggered job.</div>
+  <label class="learned"><input type="checkbox">I can explain this without looking</label>
+</section>
+
+<section id="s7-win" data-group="Stage 7 · Admin agents">
+  <h2><span class="num">7.0</span>Shared Windows helpers</h2>
+  <p class="where"><code>maverick/core/windows.py</code></p>
+  <ul class="tight">
+    <li><code>is_admin()</code>: <code>ctypes.windll.shell32.IsUserAnAdmin()</code>. Admin-only actions explain how to restart as Administrator (<code>ADMIN_HINT</code>).</li>
+    <li><code>powershell(script)</code>: runs PowerShell with <code>-NoProfile -NonInteractive</code>, a <b>fixed argument list</b>, <code>shell=False</code>, a timeout, no input.</li>
+    <li><code>quote(value)</code>: wraps user text in single quotes and doubles any <code>'</code> inside.</li>
+  </ul>
+  <div class="box danger"><span class="t">Safety rule: command injection</span>If you typed a service name like <code>x; Remove-Item C:\ -Recurse</code> and MAVERICK pasted it into a command, PowerShell would run the second part. <code>quote()</code> turns it into the harmless string <code>'x; Remove-Item C:\ -Recurse'</code>: user text can never break out into a command.</div>
+  <div class="box remember"><span class="t">Remember</span>Fixed argument lists + <code>quote()</code> = no command injection. Admin needed? Say so clearly.</div>
+  <label class="learned"><input type="checkbox">I can explain this without looking</label>
+</section>
+
+<section id="s7-1" data-group="Stage 7 · Admin agents">
+  <h2><span class="num">7.1</span>Services</h2>
+  <p class="where"><code>maverick/agents/services/</code> · labels: list, change · risky: change</p>
+  <p>A <b>service</b> is a program Windows runs in the background without a window (print spooler, Windows Update…). Show/check: anyone. Start/stop/restart/enable/disable: Administrator, via PowerShell (<code>Start-Service</code>, <code>Set-Service -StartupType …</code>).</p>
+  <p><b>PROTECTED</b> core services (RPC, DCOM, event log, Plug and Play, DHCP, DNS cache, Defender, firewall, audio, Windows Modules Installer…) can be <i>started</i> but never stopped, restarted or disabled.</p>
+  <div class="box remember"><span class="t">Remember</span>Services = windowless background programs. Changes need admin. Core services: never stop/disable.</div>
+  <label class="learned"><input type="checkbox">I can explain this without looking</label>
+</section>
+
+<section id="s7-4" data-group="Stage 7 · Admin agents">
+  <h2><span class="num">7.4</span>Network adapters</h2>
+  <p class="where"><code>maverick/agents/network/</code> · labels: info, wifi · risky: wifi</p>
+  <p>IP and MAC addresses, Wi-Fi name and signal; turn an adapter on/off. The y/n question warns that you may <b>lose internet</b>. Matching a spoken name (“wifi”, “ethernet”) to the real adapter name is <code>find_adapter()</code>.</p>
+  <div class="box remember"><span class="t">Remember</span>Read: IP, MAC, Wi-Fi. Write: adapter on/off, y/n with a lose-internet warning.</div>
+  <label class="learned"><input type="checkbox">I can explain this without looking</label>
+</section>
+
+<section id="s7-6" data-group="Stage 7 · Admin agents">
+  <h2><span class="num">7.6</span>Drivers / devices</h2>
+  <p class="where"><code>maverick/agents/devices/</code> · labels: list, restart · risky: restart</p>
+  <p><code>Get-PnpDevice -PresentOnly</code> lists devices with their status; problem devices are flagged. Plain words map to Windows device classes (“webcam” → Camera/Image, “mic” → AudioEndpoint). “restart the webcam” runs <code>pnputil /restart-device &lt;id&gt;</code> (admin): like unplugging it and plugging it back in. Exit code 3010 means “done, but Windows wants a reboot”. <code>NEVER_RESTART</code> refuses System, Processor, DiskDrive, Volume, Firmware, Battery and similar: restarting those could freeze Windows or cut off its own disk.</p>
+  <div class="box remember"><span class="t">Remember</span>List, show problems, restart one. Never disks/CPU/firmware.</div>
+  <label class="learned"><input type="checkbox">I can explain this without looking</label>
+</section>
+
+<section id="s7-13" data-group="Stage 7 · Admin agents">
+  <h2><span class="num">7.13–7.14</span>Memory hogs and handle leaks</h2>
+  <p class="where"><code>process/ops.py</code>: <code>growing</code>, <code>handles</code></p>
+  <div class="two">
+    <div class="tile"><b>Memory leak (7.13)</b><small>A program that keeps asking for RAM and never gives it back. <code>growing()</code> takes <b>5 samples</b> over 10 s (or “for 2 minutes”) and reports programs whose RAM went up at <i>every</i> sample by a meaningful amount, with a per-minute rate.</small></div>
+    <div class="tile"><b>Handle leak (7.14)</b><small>A <b>handle</b> is Windows' ticket for an open file, registry key, thread or event. A program that never returns them leaks. <code>handles()</code> ranks programs; one process over <b>10,000</b> is flagged suspicious.</small></div>
+  </div>
+  <div class="box remember"><span class="t">Remember</span>Leak = keeps taking, never returns. RAM: rising at every one of 5 samples. Handles: &gt; 10,000 in one process.</div>
+  <label class="learned"><input type="checkbox">I can explain this without looking</label>
+</section>
+
+<section id="s7-15" data-group="Stage 7 · Admin agents">
+  <h2><span class="num">7.15</span>Admin-rights audit</h2>
+  <p class="where"><code>maverick/agents/accounts/</code> · label: admins · read-only</p>
+  <p>“who has admin on this pc”: members of the Administrators group (found by its fixed SID, so it works in any Windows language), whether each account is enabled, and whether MAVERICK itself is running as admin.</p>
+  <div class="box remember"><span class="t">Remember</span>Read-only audit of the Administrators group by SID.</div>
+  <label class="learned"><input type="checkbox">I can explain this without looking</label>
+</section>
+
+<section id="agents-table" data-group="Stage 7 · Admin agents">
+  <h2>All 14 agents on one page</h2>
+  <div class="tw keep"><table>
+    <tr><th>#</th><th>Agent</th><th>Operations (labels)</th><th>Risky</th><th>Try saying</th></tr>
+    <tr><td>1</td><td>process</td><td>list · origin · children · end · hung · growing · handles · unusual</td><td>end (and hung when ending)</td><td>kill chrome · what started code.exe</td></tr>
+    <tr><td>2</td><td>jobs</td><td>list · stop · plan</td><td>–</td><td>show background jobs · plan maintenance 10 pm–2 am</td></tr>
+    <tr><td>3</td><td>watch</td><td>start</td><td>start</td><td>move every new pdf in downloads to documents</td></tr>
+    <tr><td>4</td><td>logs</td><td>rotate</td><td>rotate</td><td>rotate server.log when it gets bigger than 50 mb</td></tr>
+    <tr><td>5</td><td>services</td><td>list · change</td><td>change</td><td>restart the spooler service</td></tr>
+    <tr><td>6</td><td>network</td><td>info · wifi</td><td>wifi</td><td>what's my ip · turn off wifi</td></tr>
+    <tr><td>7</td><td>devices</td><td>list · restart</td><td>restart</td><td>show devices with problems</td></tr>
+    <tr><td>8</td><td>accounts</td><td>admins</td><td>–</td><td>who has admin on this pc</td></tr>
+    <tr><td>9</td><td>power</td><td>plan · brightness</td><td>– (reversible)</td><td>switch to power saver · brightness 40</td></tr>
+    <tr><td>10</td><td>cleanup</td><td>scan · recycle · free</td><td>recycle, free</td><td>free up 5 gb · clear temp files</td></tr>
+    <tr><td>11</td><td>hardware</td><td>ram · slots · cpu · battery · disks · forecast</td><td>–</td><td>is my laptop charging · when will C: be full</td></tr>
+    <tr><td>12</td><td>search</td><td>find · content · group</td><td>–</td><td>find pdfs from last week in downloads</td></tr>
+    <tr><td>13</td><td>archive</td><td>create · list · extract</td><td>–</td><td>zip D:\work with a password</td></tr>
+    <tr><td>14</td><td>files</td><td>copy · move · rename · size</td><td>move, rename</td><td>copy notes.txt to D:\backup</td></tr>
+  </table></div>
+  <p class="small">Order = the order in <code>main.py</code> (keyword priority). 41 operations in all, plus <code>unknown</code>.</p>
+  <div class="box remember"><span class="t">Remember</span>The order: <b>Process, Jobs, Watch, Logs, Services, Network, Devices, Accounts, Power, Cleanup, Hardware, Search, Archive, Files.</b> Mnemonic: <i>“Please Just Watch Little Snakes; Never Disturb Angry Pythons Cleaning Hard Stone And Files.”</i></div>
+  <label class="learned"><input type="checkbox">I can explain this without looking</label>
+</section>
+
+<div class="part" id="partD8"><span class="tag">Part C · Stage 8</span><h2>AI methods: 30 techniques</h2><p>Nine families, each building on the last. Rule for all of them: a new model must beat the current one on the same test.</p></div>
+
+<section id="s8-map" data-group="Stage 8 · AI methods">
+  <h2>Map of Stage 8</h2>
+  <div class="tw keep"><table>
+    <tr><th>Family</th><th>Steps</th><th>Question it answers</th><th>Used at runtime?</th></tr>
+    <tr><td>A. Text features</td><td>8.1</td><td>How do sentences become better numbers?</td><td>Yes (inside LR, ensemble)</td></tr>
+    <tr><td>B. Classic models</td><td>8.2–8.5</td><td>Which classifier learns intents best?</td><td>Ensemble = fallback brain</td></tr>
+    <tr><td>C. Evaluation</td><td>8.6–8.8</td><td>How do we measure fairly and tune settings?</td><td>Tools</td></tr>
+    <tr><td>D. Neural + embeddings</td><td>8.9–8.12</td><td>Can meaning, not just words, help?</td><td><b>MiniLM = current brain</b></td></tr>
+    <tr><td>E. Learning from use</td><td>8.13–8.14</td><td>How does MAVERICK learn your words?</td><td>Review tool</td></tr>
+    <tr><td>F. Filling arguments</td><td>8.15–8.16</td><td>Which words are arguments? How many actions?</td><td>Slot tagger, splitter</td></tr>
+    <tr><td>G. Local LLM</td><td>8.17–8.21</td><td>What if nothing else understood?</td><td>Last resort</td></tr>
+    <tr><td>H. Unsupervised + prediction</td><td>8.22–8.25</td><td>Odd programs? groups? forecasts? order?</td><td>Inside agents</td></tr>
+    <tr><td>I. Classic AI</td><td>8.26–8.27</td><td>Best plan for a goal? A timetable that fits?</td><td>Inside agents</td></tr>
+  </table></div>
+  <div class="box remember"><span class="t">Remember</span><b>Features → Models → Measuring → Meaning → Learning from you → Arguments → LLM → Unsupervised → Planning.</b></div>
+</section>
+
+<section id="s8-1" data-group="Stage 8 · AI methods">
+  <h2><span class="num">8.1</span>N-grams + TF-IDF</h2>
+  <p class="where"><code>maverick/brain/features.py</code></p>
+  <p><b>N-grams</b>: besides single words (unigrams), also count word <b>pairs</b> (bigrams), so order shows up. <code>&lt;s&gt;</code> and <code>&lt;/s&gt;</code> mark the start and end, so “kill …” differs from “… kill”.</p>
+<pre>ngrams(["what", "started", "chrome"])
+→ what, started, chrome, &lt;s&gt;_what, what_started, started_chrome, chrome_&lt;/s&gt;
+ngrams(["what", "did", "chrome", "start"])
+→ ..., did_chrome, chrome_start, ...        <span class="c"># different pairs → different meaning</span></pre>
+  <p>Then <b>TF-IDF</b> (atom L.3) weights each feature, and each row is scaled to length 1.</p>
+  <p><b>Result:</b> didn't help Naive Bayes (74% → 71%): NB counts “started” and “started_chrome” as independent evidence, so the same clue counts twice. It paid off in 8.2, where logistic regression learns weights instead.</p>
+  <div class="box remember"><span class="t">Remember</span>Word pairs capture order. Same features can hurt one model (NB double-counts) and help another (LR learns weights).</div>
+  <label class="learned"><input type="checkbox">I can explain this without looking</label>
+</section>
+
+<section id="s8-2" data-group="Stage 8 · AI methods">
+  <h2><span class="num">8.2</span>Logistic regression (softmax regression)</h2>
+  <p class="where"><code>maverick/brain/logistic_regression.py</code> (93 lines)</p>
+  <p>Naive Bayes <b>counts</b>. Logistic regression <b>learns</b> one weight per (feature, label) by gradient descent.</p>
+<pre>score(label)  = Σ weight[feature, label] × feature value + bias[label]
+probabilities = softmax(scores)
+loss          = −log(probability of the right label)
+repeat 800×:  nudge every weight downhill</pre>
+  <h3>The training loop, line by line</h3>
+<pre>probs  = softmax(x @ self.weights + self.bias)     <span class="c"># predictions for ALL sentences at once</span>
+error  = (probs - y) / len(examples)               <span class="c"># y = one-hot truth; error = how far off</span>
+grad_w = x.T @ error + self.l2 * self.weights      <span class="c"># gradient, plus L2 to keep weights small</span>
+velocity_w = 0.9 * velocity_w - lr * grad_w         <span class="c"># momentum: keep 90% of the last step</span>
+self.weights += velocity_w</pre>
+  <ul class="tight">
+    <li><b>One-hot</b>: the truth as a row of 0s with a single 1 in the right label's column.</li>
+    <li><code>probs − y</code> is the gradient of cross-entropy loss w.r.t. the scores (a famously neat result).</li>
+    <li>Settings by cross-validation (8.8): 800 epochs, learning rate 4.0, L2 = 1e-5, threshold 0.4.</li>
+  </ul>
+  <p><b>Result:</b> hard cases 60% → 76%. Overlapping features (“started”, “started_chrome”) no longer double-count: the model learns how much each adds.</p>
+  <div class="box remember"><span class="t">Remember</span>LR = <b>weights × features → softmax → cross-entropy → gradient descent</b> (+ momentum, + L2). Learns, doesn't count.</div>
+  <label class="learned"><input type="checkbox">I can explain this without looking</label>
+</section>
+
+<section id="s8-3" data-group="Stage 8 · AI methods">
+  <h2><span class="num">8.3</span>SVM, k-NN, decision tree</h2>
+  <p class="where"><code>maverick/brain/classic.py</code> · all on the same TF-IDF features</p>
+  <div class="row">
+    <div class="tile"><b>Linear SVM · 80.8%</b><small>Same weights as LR, different goal: the right label must win by a <b>margin</b> of 1 (<b>hinge loss</b>). Sentences already won by that much stop mattering; only borderline ones (“support vectors”) shape the weights.</small></div>
+    <div class="tile"><b>k-nearest neighbours · 78.6%</b><small><b>No training</b> (“lazy”). For a new sentence, find the 5 most similar training sentences (cosine) and let them vote.</small></div>
+    <div class="tile"><b>Decision tree · 79.4%</b><small>A learned flowchart: at each step ask “does the sentence contain feature X?”, choosing the question that best separates labels (lowest <b>Gini impurity</b>). Readable, but jumpy on small data.</small></div>
+  </div>
+  <p>Percentages are “as MAVERICK runs”. LR (83.2%) stayed the best single model.</p>
+  <div class="box remember"><span class="t">Remember</span>SVM = win by a margin · k-NN = ask 5 neighbours · tree = learned yes/no flowchart (Gini). None beat LR alone.</div>
+  <label class="learned"><input type="checkbox">I can explain this without looking</label>
+</section>
+
+<section id="s8-4" data-group="Stage 8 · AI methods">
+  <h2><span class="num">8.4</span>Bernoulli Naive Bayes</h2>
+  <p class="where"><code>maverick/brain/bernoulli_nb.py</code></p>
+  <p>Asks a yes/no question per vocabulary word: “is it in the sentence?” <b>Every NO counts as evidence too.</b> “kill chrome” without the word “file” is a little less likely to be a files request. Repeats don't matter (present is present).</p>
+  <div class="box careful"><span class="t">Careful: a famous failure</span>With the usual +1 smoothing: <b>5.8%</b>. The big <code>unknown</code> label (71 sentences) paid the smallest penalty for all the words a short sentence <i>lacks</i>, so it won almost every time. Smoothing <b>0.1</b>, chosen by cross-validation: <b>77.6%</b>. One setting, 72 points.</div>
+  <div class="box remember"><span class="t">Remember</span>Bernoulli NB = presence/absence; missing words are evidence. Smoothing 1 → 5.8%, 0.1 → 77.6%: <b>always tune settings by measuring</b>.</div>
+  <label class="learned"><input type="checkbox">I can explain this without looking</label>
+</section>
+
+<section id="s8-5" data-group="Stage 8 · AI methods">
+  <h2><span class="num">8.5</span>Ensemble / soft voting</h2>
+  <p class="where"><code>maverick/brain/ensemble.py</code> · members: logistic regression + Bernoulli NB + linear SVM</p>
+  <p>Several models answer; their <b>probabilities are averaged</b> (“soft” voting: a confident model counts more than a hesitant one; “hard” voting would only count each one's top pick).</p>
+  <div class="box why"><span class="t">Why it works</span>Different models make <b>different mistakes</b>. LR weighs words and pairs; Bernoulli NB hears what's missing; the SVM only cares about borderline sentences. When one is wrong, the other two often outvote it. Three copies of the same model would just repeat the same mistakes.</div>
+  <p><b>Result: 84.5%, hard 75%</b>, threshold 0.3 (averaging lowers confidences). Since MiniLM shipped, the ensemble is the <b>fallback brain</b>: used automatically on a PC without the MiniLM files (and in CI).</p>
+  <div class="box remember"><span class="t">Remember</span>Ensemble = <b>average the probabilities</b> of LR + Bernoulli NB + SVM. Works because they disagree on different sentences. Today's fallback brain.</div>
+  <label class="learned"><input type="checkbox">I can explain this without looking</label>
+</section>
+
+<section id="s8-6" data-group="Stage 8 · AI methods">
+  <h2><span class="num">8.6</span>Cross-validation</h2>
+  <p class="where"><code>dataset.folds()</code> · <code>evaluate.cross_validate()</code></p>
+  <figure class="fig">
+  <svg viewBox="0 0 640 190" width="640" role="img" aria-label="5-fold cross validation">
+    <g class="sm">
+      <text x="10" y="30" class="sm">Round 1</text><text x="10" y="62" class="sm">Round 2</text><text x="10" y="94" class="sm">Round 3</text><text x="10" y="126" class="sm">Round 4</text><text x="10" y="158" class="sm">Round 5</text>
+    </g>
+    <g>
+      <rect x="80" y="16" width="100" height="22" class="bx-io"/><rect x="180" y="16" width="400" height="22" class="bx-acc"/>
+      <rect x="80" y="48" width="100" height="22" class="bx-acc"/><rect x="180" y="48" width="100" height="22" class="bx-io"/><rect x="280" y="48" width="300" height="22" class="bx-acc"/>
+      <rect x="80" y="80" width="200" height="22" class="bx-acc"/><rect x="280" y="80" width="100" height="22" class="bx-io"/><rect x="380" y="80" width="200" height="22" class="bx-acc"/>
+      <rect x="80" y="112" width="300" height="22" class="bx-acc"/><rect x="380" y="112" width="100" height="22" class="bx-io"/><rect x="480" y="112" width="100" height="22" class="bx-acc"/>
+      <rect x="80" y="144" width="400" height="22" class="bx-acc"/><rect x="480" y="144" width="100" height="22" class="bx-io"/>
+    </g>
+    <text x="590" y="88" class="sm">score =</text><text x="590" y="104" class="sm">average</text>
+    <text x="130" y="184" text-anchor="middle" class="sm">orange = test fold</text><text x="380" y="184" text-anchor="middle" class="sm">blue = train on the other four</text>
+  </svg>
+  </figure>
+  <p>Split the data into 5 equal, <b>stratified</b> buckets. Five rounds: train on four, test on the fifth. Every sentence is tested <b>exactly once</b>. Report the average. A fixed seed (42) makes it repeatable.</p>
+  <p><b>Why:</b> one 80/20 split swung between 75% and 86% depending on which sentences happened to land in the test. 5-fold is stable.</p>
+  <div class="box remember"><span class="t">Remember</span>5 buckets, 5 rounds, each sentence tested once, average the scores. Fixes “lucky split”.</div>
+  <label class="learned"><input type="checkbox">I can explain this without looking</label>
+</section>
+
+<section id="s8-7" data-group="Stage 8 · AI methods">
+  <h2><span class="num">8.7</span>Precision, recall, F1</h2>
+  <p class="where"><code>evaluate.per_label()</code>, <code>macro_f1()</code></p>
+  <div class="tw"><table>
+    <tr><th>Measure</th><th>Question</th><th>Formula</th></tr>
+    <tr><td><b>Precision</b></td><td>When the brain <i>says</i> <code>process.end</code>, how often is it right?</td><td>TP ÷ (times it said it)</td></tr>
+    <tr><td><b>Recall</b></td><td>Of the sentences that really <i>are</i> <code>process.end</code>, how many did it catch?</td><td>TP ÷ (real ones)</td></tr>
+    <tr><td><b>F1</b></td><td>One number, high only if both are high</td><td>2PR ÷ (P + R) (harmonic mean)</td></tr>
+    <tr><td><b>Macro F1</b></td><td>Average F1 over labels; every label counts equally</td><td>NB: 0.73</td></tr>
+  </table></div>
+  <div class="box analogy"><span class="t">Analogy</span>A fishing net. <b>Precision</b>: of what's in the net, how much is fish (not boots)? <b>Recall</b>: of all the fish in the lake, how many are in the net? A huge net has great recall, poor precision.</div>
+  <div class="box why"><span class="t">Why it matters for MAVERICK</span>For <code>process.end</code>, low precision means killing programs you didn't ask to kill. Accuracy alone hides which labels are weak; per-label scores show it.</div>
+  <div class="box remember"><span class="t">Remember</span>Precision = <b>of what I said, how much was right</b>. Recall = <b>of what was there, how much I caught</b>. F1 = both.</div>
+  <label class="learned"><input type="checkbox">I can explain this without looking</label>
+</section>
+
+<section id="s8-8" data-group="Stage 8 · AI methods">
+  <h2><span class="num">8.8</span>Hyperparameter tuning</h2>
+  <p><b>Parameters</b> are what a model learns (weights). <b>Hyperparameters</b> are settings <i>you</i> choose before training: epochs, learning rate, L2, smoothing, threshold, number of neighbours, hidden size.</p>
+  <p>MAVERICK picks them by <b>cross-validation sweeps</b>: try several values, keep the one with the best 5-fold score. Never by looking at the hard cases (that would be studying the final exam).</p>
+  <div class="box remember"><span class="t">Remember</span>Parameters = learned. Hyperparameters = chosen, <b>by cross-validation</b>. Used for every model since.</div>
+  <label class="learned"><input type="checkbox">I can explain this without looking</label>
+</section>
+
+<section id="s8-9" data-group="Stage 8 · AI methods">
+  <h2><span class="num">8.9</span>Neural brain (MLP)</h2>
+  <p class="where"><code>maverick/brain/mlp.py</code> (116 lines, NumPy only)</p>
+  <figure class="fig">
+  <svg viewBox="0 0 640 210" width="640" role="img" aria-label="MLP layers">
+    <defs><marker id="ah4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="mk"/></marker></defs>
+    <rect x="20" y="40" width="150" height="130" rx="10" class="bx"/><text x="95" y="96" text-anchor="middle" class="md b">Input</text><text x="95" y="114" text-anchor="middle" class="sm">TF-IDF features</text><text x="95" y="130" text-anchor="middle" class="sm">~4,000 numbers</text>
+    <line x1="170" y1="105" x2="238" y2="105" class="ln" marker-end="url(#ah4)"/><text x="176" y="98" class="sm">weights W1</text>
+    <rect x="240" y="40" width="160" height="130" rx="10" class="bx-ai"/><text x="320" y="88" text-anchor="middle" class="md b">Hidden layer</text><text x="320" y="106" text-anchor="middle" class="sm">128 neurons</text><text x="320" y="122" text-anchor="middle" class="sm">ReLU · dropout 30%</text>
+    <line x1="400" y1="105" x2="468" y2="105" class="ln" marker-end="url(#ah4)"/><text x="406" y="98" class="sm">weights W2</text>
+    <rect x="470" y="40" width="150" height="130" rx="10" class="bx-ok"/><text x="545" y="96" text-anchor="middle" class="md b">Output</text><text x="545" y="114" text-anchor="middle" class="sm">one score per label</text><text x="545" y="130" text-anchor="middle" class="sm">→ softmax</text>
+    <path d="M545,172 C545,200 95,200 95,172" class="ln-d" marker-end="url(#ah4)"/><text x="320" y="204" text-anchor="middle" class="sm">backpropagation: error flows backwards, every weight gets its gradient</text>
+  </svg>
+  </figure>
+  <ul class="tight">
+    <li><b>Neuron</b>: weighted sum of inputs, then <b>ReLU</b> (<code>max(0, x)</code>: negatives become 0). Hidden neurons learn their own in-between ideas (“this is about files”, “this is a question”).</li>
+    <li><b>Backpropagation</b>: run forward, measure loss, pass the error backwards layer by layer (chain rule) to get every weight's gradient.</li>
+    <li><b>Mini-batches</b> of 32 + <b>Adam</b> optimiser (step size per weight). <b>Dropout</b> 30% against overfitting. 40 epochs.</li>
+  </ul>
+  <p><b>Result:</b> a tie with LR (79.5% vs 79.4%) at 4× the training time. With ~1,200 sentences, a deeper model has little extra to learn. Kept as an option.</p>
+  <div class="box remember"><span class="t">Remember</span>MLP = input → hidden (128, ReLU, dropout) → output (softmax); trained by backprop + Adam. Tied LR: more power needs more data.</div>
+  <label class="learned"><input type="checkbox">I can explain this without looking</label>
+</section>
+
+<section id="s8-10" data-group="Stage 8 · AI methods">
+  <h2><span class="num">8.10</span>Word embeddings (GloVe)</h2>
+  <p class="where"><code>maverick/brain/embeddings.py</code> · GloVe 6B 50d (171 MB, offline)</p>
+  <p>Every model so far treats words as unrelated IDs: “copy” and “duplicate” are as different as “copy” and “banana”. An <b>embedding</b> gives each word a list of numbers (here 50) learned from billions of words of text, so words used the same way end up close together.</p>
+  <ul class="tight">
+    <li><b>Try 1, synonym swap</b>: replace an unknown word with its nearest known word. <b>Failed</b> (79.0% vs 78.9%): in GloVe's 50 dimensions “duplicate” sits next to “categorize”, not “copy”.</li>
+    <li><b>Try 2, meaning features</b>: add the sentence's average word vector to the TF-IDF numbers: 84.0%. Not used at runtime.</li>
+  </ul>
+  <div class="box remember"><span class="t">Remember</span>Embedding = word → numbers of meaning. Word-level GloVe wasn't enough; whole-sentence meaning (8.11) was.</div>
+  <label class="learned"><input type="checkbox">I can explain this without looking</label>
+</section>
+
+<section id="s8-11" data-group="Stage 8 · AI methods">
+  <h2><span class="num">8.11</span>Sentence embedding model: MiniLM (the current brain)</h2>
+  <p class="where"><code>maverick/llm/encoder.py</code> (experiment) · <code>maverick/brain/minilm.py</code> (shipped)</p>
+  <p><b>all-MiniLM-L6-v2</b>: a small pretrained <b>transformer</b> (22.7M numbers, 90 MB). It reads the whole sentence, every word looking at every other word (<b>attention</b>), and outputs <b>384 numbers</b> for the sentence. It was trained on a billion sentence pairs to put sentences that <i>mean</i> the same close together, even with no word in common.</p>
+  <figure class="fig">
+  <svg viewBox="0 0 760 150" width="760" role="img" aria-label="MiniLM pipeline">
+    <defs><marker id="ah5" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="mk"/></marker></defs>
+    <rect x="10" y="40" width="140" height="64" rx="10" class="bx-io"/><text x="80" y="66" text-anchor="middle" class="md b">“duplicate</text><text x="80" y="84" text-anchor="middle" class="md b">this file”</text>
+    <line x1="150" y1="72" x2="188" y2="72" class="ln" marker-end="url(#ah5)"/>
+    <rect x="190" y="40" width="150" height="64" rx="10" class="bx"/><text x="265" y="64" text-anchor="middle" class="md b">Tokenizer</text><text x="265" y="82" text-anchor="middle" class="sm">word pieces → ids</text><text x="265" y="96" text-anchor="middle" class="sm">tokenizer.json</text>
+    <line x1="340" y1="72" x2="378" y2="72" class="ln" marker-end="url(#ah5)"/>
+    <rect x="380" y="40" width="170" height="64" rx="10" class="bx-ai"/><text x="465" y="64" text-anchor="middle" class="md b">MiniLM (FROZEN)</text><text x="465" y="82" text-anchor="middle" class="sm">model.onnx · onnxruntime</text><text x="465" y="96" text-anchor="middle" class="sm">→ 384 numbers, length 1</text>
+    <line x1="550" y1="72" x2="588" y2="72" class="ln" marker-end="url(#ah5)"/>
+    <rect x="590" y="40" width="160" height="64" rx="10" class="bx-ok"/><text x="670" y="64" text-anchor="middle" class="md b">Our LR head</text><text x="670" y="82" text-anchor="middle" class="sm">the only part that learns</text><text x="670" y="96" text-anchor="middle" class="sm">→ files.copy 0.98</text>
+    <text x="380" y="134" text-anchor="middle" class="sm">“duplicate this file” ↔ “copy this file”: similarity 0.72 · vs “kill chrome”: 0.07</text>
+  </svg>
+  </figure>
+  <ul class="tight">
+    <li><b>Frozen</b>: nothing inside MiniLM changes. Only <code>VectorLR</code> (logistic regression on 384 dense numbers, 400 epochs) learns. Training takes seconds on a CPU.</li>
+    <li><b>Pooling</b>: MiniLM gives one vector per word piece; average them (ignoring padding) and scale to length 1 → one sentence vector.</li>
+    <li><b>Cache</b>: sentences already embedded are remembered (up to 20,000) since loading and running costs time.</li>
+    <li><b>Transfer learning</b>: reuse knowledge learned on a huge task (sentence similarity) for a small one (your 41 operations).</li>
+  </ul>
+  <p><b>Result: 91.6% as MAVERICK runs, hard 86%</b> (threshold 0.3), up from 84.5% / 75%.</p>
+  <div class="box remember"><span class="t">Remember</span>MiniLM turns a sentence into <b>384 numbers of meaning</b>; frozen; our small LR on top is the only learner. <b>91.6% / hard 86%.</b></div>
+  <label class="learned"><input type="checkbox">I can explain this without looking</label>
+</section>
+
+<section id="s8-12" data-group="Stage 8 · AI methods">
+  <h2><span class="num">8.12</span>Fine-tuned transformer (not shipped)</h2>
+  <p>Add one output layer (384 → labels) and train the <b>whole</b> MiniLM on <code>intents.tsv</code> with a small learning rate. 92.3% (0.7 points higher), but hard cases 81% (vs 86%).</p>
+  <div class="box why"><span class="t">Why the frozen one shipped</span>Better on hard cases · retrains in ~11 s on a CPU instead of ~2 min on a GPU · runs with <code>onnxruntime</code> (2.5 ms/request) instead of 3 GB of PyTorch. A small accuracy win isn't worth a big cost in speed, size and simplicity.</div>
+  <div class="box remember"><span class="t">Remember</span>Fine-tuned: 92.3% but hard 81%, slow, needs PyTorch + GPU. Frozen won on everything that matters.</div>
+  <label class="learned"><input type="checkbox">I can explain this without looking</label>
+</section>
+
+<section id="s8-onnx" data-group="Stage 8 · AI methods">
+  <h2><span class="num">8.11b–d</span>Shipping MiniLM: ONNX export and fallback</h2>
+  <p class="where"><code>maverick/llm/export_onnx.py</code> → <code>maverick/brain/models/minilm/</code> (90 MB, gitignored)</p>
+  <ul class="tight">
+    <li><b>ONNX</b> = a standard file format for a trained model: layers + all 22.7M numbers in one file. PyTorch is needed <b>once</b> to write it (in <code>.venv</code>); afterwards the small <code>onnxruntime</code> engine runs it. Like exporting a document to PDF.</li>
+    <li>The export bakes in pooling + scaling, so the file is: word ids in → 384 numbers out.</li>
+    <li><code>reference.npz</code> stores a few sentences + PyTorch's vectors; a test checks ONNX matches (max difference 1.5 × 10⁻⁷).</li>
+    <li><b>Fallback</b>: <code>MiniLM.fit()</code> also trains the 8.5 ensemble and saves it beside the head. If the files or <code>onnxruntime</code> are missing, <code>active</code> quietly switches to the ensemble. Nothing breaks.</li>
+  </ul>
+  <p class="small">Fixed wordings, old → new: “clone this folder” recycle 0.18 → copy 0.98; “get rid of chrome” process.origin → process.end.</p>
+  <div class="box remember"><span class="t">Remember</span>PyTorch once → <b>model.onnx</b> → onnxruntime forever (2.5 ms). Missing files → ensemble fallback.</div>
+  <label class="learned"><input type="checkbox">I can explain this without looking</label>
+</section>
+
+<section id="s8-13" data-group="Stage 8 · AI methods">
+  <h2><span class="num">8.13–8.14</span>Online and active learning</h2>
+  <p class="where"><code>maverick/brain/review.py</code> · <code>python -m maverick.brain.review</code></p>
+  <div class="flow">
+    <div class="st io"><b>You use MAVERICK</b><small>every request logged to <code>inbox.tsv</code>: guess · confidence · sentence</small></div><div class="ar">↓</div>
+    <div class="st ai"><b>review: least confident first</b><small>(active learning: ask about what the brain is most unsure of)</small></div><div class="ar">↓</div>
+    <div class="st"><b>You answer</b><small>Enter = right · type a label = correct it · s = skip · q = stop</small></div><div class="ar">↓</div>
+    <div class="st"><b>learned.tsv</b><small>your corrections; <code>inbox.tsv</code> itself is never changed</small></div><div class="ar">↓</div>
+    <div class="st ok"><b>train again</b><small>intents.tsv + learned.tsv; ~11 s with MiniLM</small></div>
+  </div>
+  <div class="box why"><span class="t">Why least confident first?</span>A sentence the brain got right at 0.99 teaches it nothing. One it guessed at 0.31 is where a correction changes the most. Your time goes where it helps most.</div>
+  <div class="box remember"><span class="t">Remember</span>Online = learn from real use. Active = <b>ask about the most uncertain first</b>. inbox → review → learned → retrain. All private.</div>
+  <label class="learned"><input type="checkbox">I can explain this without looking</label>
+</section>
+
+<section id="s8-15" data-group="Stage 8 · AI methods">
+  <h2><span class="num">8.15</span>Slot filling (BIO tags + Viterbi)</h2>
+  <p class="where"><code>maverick/brain/slots.py</code> · data <code>slots.tsv</code> · used by the files agent's <code>extract()</code></p>
+  <p>The brain answers “what?” (<code>files.copy</code>). Slot filling answers “with what?”. Every word gets a tag: this is <b>sequence labelling</b>.</p>
+  <div class="tw"><table>
+    <tr><th>copy</th><th>my</th><th>thesis</th><th>to</th><th>the</th><th>usb</th><th>drive</th><th>F:\</th></tr>
+    <tr><td>O</td><td>O</td><td><b>B-source</b></td><td>O</td><td>O</td><td>O</td><td>O</td><td><b>B-destination</b></td></tr>
+  </table></div>
+  <ul class="tight">
+    <li><b>B-</b> = beginning of an argument · <b>I-</b> = inside (continues it) · <b>O</b> = outside (not an argument).</li>
+    <li><b>Features per word</b>: the word, its neighbours (2 each side), its <b>shape</b> (drive / slashed / file / quoted / number / word), the operation, “have we seen <code>to</code> yet?”.</li>
+    <li><b>Softmax regression</b> (same maths as 8.2) scores every tag for every word.</li>
+    <li><b>Viterbi</b> picks the best <i>sequence</i> of tags and forbids broken ones (an <code>I-source</code> right after <code>O</code>). It keeps, for each word and each tag, the best score of any sequence ending there, plus a back-pointer; then walks back from the end.</li>
+    <li><code>slots</code> limits tags to the operation's arguments (rename has no destination).</li>
+  </ul>
+  <p><b>Result: 93.0%</b> of sentences fully right vs 79.0% for the regex (which took “can”, “you”, “pls” as file names).</p>
+  <div class="box remember"><span class="t">Remember</span>Tag every word B/I/O · softmax per word · <b>Viterbi = best valid sequence</b>. 93% vs 79%.</div>
+  <label class="learned"><input type="checkbox">I can explain this without looking</label>
+</section>
+
+<section id="s8-16" data-group="Stage 8 · AI methods">
+  <h2><span class="num">8.16</span>Several actions in one sentence (splitter)</h2>
+  <p class="where"><code>maverick/brain/multi.py</code> · data <code>multi.tsv</code> · orchestrator <code>chain()</code> + <code>fill_in()</code></p>
+  <p>“copy notes.txt to D:\backup <b>and</b> zip it” is two requests. “cut <b>and</b> paste notes.txt” is one. So is “cpu name <b>and</b> cores”. A rule “split at every and” breaks those, so the splitter <b>learns</b>.</p>
+  <ol class="steps">
+    <li><b>Candidates</b>: every gap before <code>and / then / also / plus</code>, or after a comma.</li>
+    <li><b>Features</b> per gap: the connector, words around it, how many words on each side, is there a path on each side, is there “it/them” on the right.</li>
+    <li><b>Stacking</b>: the intent brain reads each side too and says what action it is and how sure. “end them” is clearly <code>process.end</code>; “all its windows” is nothing alone. Those answers become features.</li>
+    <li>A logistic regression (8.2, reused) answers <b>cut / keep</b>: binary classification.</li>
+  </ol>
+  <h3>Then the orchestrator</h3>
+  <ul class="tight">
+    <li>Every piece must be understood <b>before the first one runs</b>; otherwise treat it as one request.</li>
+    <li><code>chain()</code> runs pieces in order. A failed piece stops the rest (“Stopped there, so I did not: …”). A y/n question pauses the chain until you answer.</li>
+    <li><code>fill_in()</code>: “it” / “them” in the next piece becomes the previous piece's <code>data["output"]</code>, in quotes: <code>zip it</code> → <code>zip "D:\backup\notes.txt"</code>.</li>
+  </ul>
+  <p><b>Result: 95.8%</b> of multi-action sentences cut right; 89.2% of one-action sentences with an “and” left whole.</p>
+  <div class="box remember"><span class="t">Remember</span>Candidate gaps → features + <b>brain's opinion of each side (stacking)</b> → cut/keep. All pieces understood first; “it” = previous output.</div>
+  <label class="learned"><input type="checkbox">I can explain this without looking</label>
+</section>
+
+<section id="s8-17" data-group="Stage 8 · AI methods">
+  <h2><span class="num">8.17</span>Local LLM setup (Ollama)</h2>
+  <p class="where"><code>maverick/llm/ollama.py</code></p>
+  <p>An <b>LLM</b> (large language model) predicts the next word, over and over, to write text. <b>Ollama</b> runs one on your own PC as a small web server at <code>http://localhost:11434</code>, loading <b>Llama 3.2 3B</b> (~2 GB) onto the graphics card. “localhost” = this computer: nothing leaves the PC.</p>
+  <ul class="tight">
+    <li>One question = one HTTP POST to <code>/api/chat</code> with messages: <b>system</b> (how to behave), <b>user</b> (the question), and optionally earlier <b>assistant</b> answers.</li>
+    <li><b>temperature 0</b> = always pick the most likely next word, so the same question gets the same answer.</li>
+    <li>Standard library only (<code>urllib</code> + <code>json</code>). Every failure becomes <code>LLMError</code>, so MAVERICK just works without it.</li>
+  </ul>
+  <p>~38 tokens/s, 0.7 s per short answer on the RTX 2050.</p>
+  <div class="box remember"><span class="t">Remember</span>Ollama = local LLM server on localhost:11434 · Llama 3.2 3B · POST /api/chat · temperature 0 · failures → LLMError → skip it.</div>
+  <label class="learned"><input type="checkbox">I can explain this without looking</label>
+</section>
+
+<section id="s8-18" data-group="Stage 8 · AI methods">
+  <h2><span class="num">8.18</span>LLM tool calling</h2>
+  <p class="where"><code>maverick/llm/tools.py</code></p>
+  <p>The LLM gets a <b>menu of tools</b> (16 actions with simple text arguments, like <code>files.copy(source, destination)</code>, <code>hardware.disks(drive?)</code>) and must answer with ONE as JSON. <code>format: "json"</code> forces valid JSON.</p>
+<pre>"pls back up notes.txt onto D:\safe"
+→ {"action": "files.copy", "args": {"source": "notes.txt", "destination": "D:\\safe"}}</pre>
+  <h3><code>check()</code>: the LLM only suggests</h3>
+  <ol class="steps">
+    <li>Find the first <code>{…}</code> even if wrapped in chatter or <code>```json</code> fences.</li>
+    <li>The action must be on the menu (“none” or a made-up action → ignored).</li>
+    <li>Keep only that action's arguments, and only strings.</li>
+    <li><b>Grounding</b>: every value must really appear in what you typed, <b>as whole words</b>. An invented path is dropped, so MAVERICK asks you for it instead.</li>
+    <li>Then it's a normal Intent: the orchestrator's <code>run()</code> still does missing/risky/safety.</li>
+  </ol>
+  <div class="box careful"><span class="t">Careful: a real bug it caught</span>The “c” inside “mu<b>c</b>h” counted as you typing drive C. Values must now match whole words (<code>(?&lt;!\w)…(?!\w)</code>).</div>
+  <div class="box remember"><span class="t">Remember</span>Menu → JSON → <b>check: on the menu? right args? typed by you?</b> → normal safety path. Hallucinated values are dropped.</div>
+  <label class="learned"><input type="checkbox">I can explain this without looking</label>
+</section>
+
+<section id="s8-19" data-group="Stage 8 · AI methods">
+  <h2><span class="num">8.19</span>Prompting / few-shot</h2>
+  <p class="where"><code>tools.EXAMPLES</code> · measured by <code>maverick/llm/evaluate.py</code> on <code>llm_eval.tsv</code> (42 requests)</p>
+  <p><b>Zero-shot</b> = only the menu and the rules. <b>Few-shot</b> = also 8 worked examples sent as if the model had already answered them. A small model copies the <b>pattern</b> of examples far more reliably than it follows written rules. Each example teaches one rule: copy paths exactly · leave out what wasn't given · “none” for off-menu requests.</p>
+  <p><b>Result: 88.1% → 95.2%</b> fully right (action + exact arguments). Examples are kept different from the test set, or the test would measure memory.</p>
+  <div class="box remember"><span class="t">Remember</span>Show, don't tell: 8 examples took tool calling from <b>88.1% to 95.2%</b>.</div>
+  <label class="learned"><input type="checkbox">I can explain this without looking</label>
+</section>
+
+<section id="s8-20" data-group="Stage 8 · AI methods">
+  <h2><span class="num">8.20</span>LoRA fine-tune</h2>
+  <p class="where"><code>maverick/llm/lora.py</code> · SmolLM2-360M-Instruct</p>
+  <p>Prompting <i>tells</i> a model; fine-tuning <i>teaches</i> it (the knowledge ends up in its weights). Full fine-tuning of 360M numbers doesn't fit a 4 GB card. <b>LoRA</b> (Low-Rank Adaptation) freezes them all and adds small trainable matrices next to the attention layers:</p>
+<pre>W x   becomes   W x + B (A x)      W: 960×960 frozen · A: 16×960 · B: 960×16 (trained)
+B starts at zero → before training, behaves exactly like the original.</pre>
+  <p>Only ~0.9% of the numbers train; the adapter is a few MB. Predicting: <b>score every real label</b> (“how likely is <code>Action: &lt;label&gt;</code>?”) instead of letting it write freely.</p>
+  <p><b>Result:</b> 81.5% vs the brain's 82.7% on the same split, 250 ms per sentence. Not used.</p>
+  <div class="box remember"><span class="t">Remember</span>LoRA = freeze the big matrix, train a tiny <b>B·A</b> beside it. Worked, but didn't beat the brain.</div>
+  <label class="learned"><input type="checkbox">I can explain this without looking</label>
+</section>
+
+<section id="s8-21" data-group="Stage 8 · AI methods">
+  <h2><span class="num">8.21</span>LLM agent loop</h2>
+  <p class="where"><code>maverick/llm/loop.py</code> · <code>AgentLoop</code> (used in <code>main.py</code> when Ollama is running)</p>
+  <figure class="fig">
+  <svg viewBox="0 0 640 230" width="640" role="img" aria-label="Agent loop">
+    <defs><marker id="ah6" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="mk"/></marker></defs>
+    <rect x="240" y="10" width="160" height="48" rx="10" class="bx-ai"/><text x="320" y="32" text-anchor="middle" class="md b">Think</text><text x="320" y="48" text-anchor="middle" class="sm">LLM picks next action</text>
+    <rect x="460" y="90" width="160" height="48" rx="10" class="bx-safe"/><text x="540" y="112" text-anchor="middle" class="md b">Check + Act</text><text x="540" y="128" text-anchor="middle" class="sm">check() → run()</text>
+    <rect x="240" y="170" width="160" height="48" rx="10" class="bx"/><text x="320" y="192" text-anchor="middle" class="md b">Observe</text><text x="320" y="208" text-anchor="middle" class="sm">“Result: …” sent back</text>
+    <rect x="20" y="90" width="160" height="48" rx="10" class="bx-ok"/><text x="100" y="112" text-anchor="middle" class="md b">Done</text><text x="100" y="128" text-anchor="middle" class="sm">one-sentence answer</text>
+    <path d="M400,40 C470,40 540,60 540,88" class="ln" marker-end="url(#ah6)"/>
+    <path d="M540,138 C540,180 470,194 402,194" class="ln" marker-end="url(#ah6)"/>
+    <path d="M240,194 C200,194 200,60 238,40" class="ln" marker-end="url(#ah6)"/>
+    <path d="M240,30 C160,30 100,50 100,88" class="ln-d" marker-end="url(#ah6)"/><text x="120" y="56" class="sm">{"action":"done"}</text>
+  </svg>
+  </figure>
+  <p>Some requests need one step's answer to choose the next: “how big is notes.txt, and zip it if it's over 1 MB”, “which is bigger, D:\a or D:\b?”. So the conversation continues: model → action → MAVERICK runs it → “Result: …” → model → next action or <code>done</code>.</p>
+  <h3>Safety stays with MAVERICK</h3>
+  <ul class="tight">
+    <li>Every action goes through <code>check()</code> and the orchestrator's <code>run()</code>.</li>
+    <li>A <b>risky action ends the loop</b>: its y/n question goes to <b>you</b>, never to the model.</li>
+    <li>A failed step ends it. At most <b>4 steps</b>. The <b>same action twice</b> ends it (small models go in circles).</li>
+    <li>Values may come from the request <b>or an earlier result</b>: “zip the biggest one” can only name a file a result actually showed.</li>
+  </ul>
+  <div class="box remember"><span class="t">Remember</span>The core of every “AI agent”: <b>a model in a loop with tools</b>. Think → check+act → observe → repeat (max 4) → done. Model never answers a y/n.</div>
+  <label class="learned"><input type="checkbox">I can explain this without looking</label>
+</section>
+
+<section id="s8-22" data-group="Stage 8 · AI methods">
+  <h2><span class="num">8.22</span>Anomaly detection (isolation forest)</h2>
+  <p class="where"><code>maverick/brain/anomaly.py</code> · used by “any unusual programs running?” (<code>process.unusual</code>)</p>
+  <p><b>Unsupervised</b>: no labels; nobody can label “this program behaves strangely”. The model only sees the data and finds what doesn't look like the rest.</p>
+  <p><b>Idea</b>: pick a random column and a random cut point; repeat inside each side until every point sits alone. A normal program sits in a crowd and needs many cuts; an odd one is cut off after a few. <b>Shorter path = more unusual.</b> 100 random trees, each on ≤ 256 points, vote: <code>score = 2^(−average path / c(n))</code>; ≈ 0.5 or less normal, near 1 unusual (MAVERICK flags ≥ 0.55 with a reason).</p>
+  <p><b>Features</b> (log scale, per copy): RAM, RAM growth (only growth counts), CPU, threads, handles per thread, network connections.</p>
+  <p><b>Result:</b> 3 planted fakes among 113 real programs ranked 3rd, 5th, 6th (vs ~57th sorted by RAM).</p>
+  <div class="box remember"><span class="t">Remember</span>Isolation forest: <b>odd points are isolated by fewer random cuts</b>. Unsupervised. Fakes ranked 3, 5, 6 of 113.</div>
+  <label class="learned"><input type="checkbox">I can explain this without looking</label>
+</section>
+
+<section id="s8-23" data-group="Stage 8 · AI methods">
+  <h2><span class="num">8.23</span>Clustering (k-means)</h2>
+  <p class="where"><code>maverick/brain/cluster.py</code> · used by “group the files in my downloads” (<code>search.group</code>)</p>
+  <ol class="steps">
+    <li>File names → words (<code>Invoice_March-2024.pdf</code> → invoice, march, ext:pdf, kind:document) → TF-IDF numbers.</li>
+    <li>Pick k starting centres, spread out (<b>k-means++</b>).</li>
+    <li>Give every file to its nearest centre; move every centre to the average of its files; repeat until nothing changes. Several restarts, keep the tightest.</li>
+    <li>Choose k with the <b>silhouette score</b>: <code>(b − a) / max(a, b)</code>, a = distance to own group, b = to nearest other group. Near 1 = clearly in the right group.</li>
+  </ol>
+  <p><b>Result:</b> 96.8% pair agreement vs 94.9% grouping by extension.</p>
+  <div class="box remember"><span class="t">Remember</span>k-means: <b>assign to nearest centre ↔ move centre to average</b>, repeat. k chosen by silhouette.</div>
+  <label class="learned"><input type="checkbox">I can explain this without looking</label>
+</section>
+
+<section id="s8-24" data-group="Stage 8 · AI methods">
+  <h2><span class="num">8.24</span>Regression / forecasting</h2>
+  <p class="where"><code>maverick/brain/forecast.py</code> · used by “when will C: be full” (<code>hardware.forecast</code>)</p>
+  <p>Classification predicts a category; <b>regression predicts a number</b>. Fit the straight line <code>used = intercept + slope × day</code> with <b>least squares</b> (smallest sum of squared misses). Exact formula, no training loop:</p>
+<pre>slope     = Σ(x − x̄)(y − ȳ) / Σ(x − x̄)²
+intercept = ȳ − slope × x̄</pre>
+  <p>Then follow the line until it reaches the drive's size. Honesty checks: <b>R²</b> (how much of the up-and-down the line explains) and a <b>slope range</b> (± 2 standard errors). Caveat: a line assumes you keep using the disk like you did lately.</p>
+  <p><b>Result:</b> off by 2.1 GB vs 7.3 GB (“no change”) and 35.5 GB (“repeat yesterday”).</p>
+  <div class="box remember"><span class="t">Remember</span>Regression = predict a number. Least-squares line through disk history, R² + uncertainty, needs ≥ 3 readings.</div>
+  <label class="learned"><input type="checkbox">I can explain this without looking</label>
+</section>
+
+<section id="s8-25" data-group="Stage 8 · AI methods">
+  <h2><span class="num">8.25</span>Ranking (learning to rank)</h2>
+  <p class="where"><code>maverick/brain/rank.py</code> · used by search results</p>
+  <p>Ranking puts things in <b>order</b>. Each found file → 9 features: exact name, starts with query, whole words, name coverage, recent, own folder, junk folder, depth, user file type. <code>score = Σ w × feature</code>.</p>
+  <p><b>Pairwise</b> learning (like RankNet): for every search we know the meant file; every other file gives a pair, and we want <code>score(meant) &gt; score(other)</code>. <code>P = sigmoid(difference)</code>, pushed towards 1 by gradient descent.</p>
+  <p><b>MRR</b> (mean reciprocal rank): meant file at place 1 → 1, place 2 → ½, place 5 → ⅕; averaged. <b>Result: 0.718</b> vs 0.571 hand-set, 0.422 newest first, 0.339 disk order.</p>
+  <div class="box careful"><span class="t">Honest limit</span>Trained on made-up searches built on assumptions. Logging which result you actually open would be the real data.</div>
+  <div class="box remember"><span class="t">Remember</span>9 features · learned weights from <b>pairs</b> (meant beats other) · graded by MRR 0.718.</div>
+  <label class="learned"><input type="checkbox">I can explain this without looking</label>
+</section>
+
+<section id="s8-26" data-group="Stage 8 · AI methods">
+  <h2><span class="num">8.26</span>Planning + utility scoring</h2>
+  <p class="where"><code>maverick/brain/plan.py</code> · used by “free up 5 GB” (<code>cleanup.free</code>)</p>
+  <p>A <b>goal</b> request: you say what you want in the end, not which files. Each candidate has a <b>benefit</b> (GB freed) and a <b>regret</b> (0 = temp junk … 1 = last week's photos). Find the set that frees <b>at least</b> the goal with the <b>least total regret</b>: a <b>knapsack problem</b>.</p>
+  <div class="tw"><table>
+    <tr><th>Method</th><th>How</th><th>Regret</th></tr>
+    <tr><td>Biggest first</td><td>Delete largest files until enough</td><td>2.90</td></tr>
+    <tr><td>Greedy</td><td>Lowest regret per GB first</td><td>2.15</td></tr>
+    <tr><td><b>Optimal (DP)</b></td><td><b>Dynamic programming</b>: <code>best[c]</code> = least regret that frees c more units (16 MB units, so 5 GB = 320 steps)</td><td><b>1.93</b></td></tr>
+  </table></div>
+  <div class="box remember"><span class="t">Remember</span>Goal → knapsack → <b>dynamic programming</b> beats greedy (1.93 vs 2.15). Then y/n, then Recycle Bin.</div>
+  <label class="learned"><input type="checkbox">I can explain this without looking</label>
+</section>
+
+<section id="s8-27" data-group="Stage 8 · AI methods">
+  <h2><span class="num">8.27</span>Constraint solving</h2>
+  <p class="where"><code>maverick/brain/constraints.py</code> · used by “plan maintenance between 10 pm and 2 am” (<code>jobs.plan</code>)</p>
+  <p>A <b>CSP</b> has <b>variables</b> (when each job starts), <b>domains</b> (every 15-minute slot that leaves room to finish) and <b>constraints</b> (disk-heavy jobs never overlap · at most 2 at once · clear temp before the junk scan). No score: it fits or it doesn't.</p>
+  <ul class="tight">
+    <li><b>Backtracking</b>: assign one job, go on; when a rule breaks, undo the last choice and try the next slot.</li>
+    <li><b>MRV</b> (most constrained first): decide the job with the fewest slots left first.</li>
+    <li><b>Forward checking</b>: after each choice, cross out slots it rules out for others; if any job has none left, back up at once.</li>
+  </ul>
+  <p><b>Result:</b> 509 choices vs 141,885 (~280× fewer). MRV <i>alone</i> was worse than plain backtracking. It only plans; it doesn't start jobs (the task scheduler was skipped).</p>
+  <div class="box remember"><span class="t">Remember</span>CSP = variables + domains + constraints. <b>Backtracking + MRV + forward checking</b> = 280× fewer tries.</div>
+  <label class="learned"><input type="checkbox">I can explain this without looking</label>
+</section>
+
+<section id="s9-release" data-group="Stage 8 · AI methods">
+  <h2><span class="num">v1.0</span>Release polish</h2>
+  <ul class="tight">
+    <li><b>README</b> rewritten; docs brought up to date, failures included (<code>docs/RESULTS.md</code>); demo script (<code>docs/DEMO.md</code>).</li>
+    <li><b>MIT license</b>.</li>
+    <li><b>Installable</b>: <code>pyproject.toml</code> → <code>pip install -e .</code> gives a <code>maverick</code> command; extras <code>[minilm]</code>, <code>[train]</code>, <code>[dev]</code>; private data excluded from packages.</li>
+    <li><b>CI</b> on Windows, Python 3.12 + 3.14.</li>
+    <li>Two fixes: the forecast message about readings; <code>numpy</code> missing from <code>requirements.txt</code>.</li>
+    <li><b>Release v1.0.0</b> on GitHub. Still open: the demo GIF.</li>
+  </ul>
+  <div class="box remember"><span class="t">Remember</span>README · docs · MIT · <code>pip install -e .</code> · CI · v1.0.0. Only the demo GIF is left.</div>
+  <label class="learned"><input type="checkbox">I can explain this without looking</label>
+</section>
+
+<div class="part" id="partD"><span class="tag">Part D</span><h2>The whole machine</h2><p>Everything connected: real traces through real functions, and how the files depend on each other.</p></div>
+
+<section id="d-trace1" data-group="D · Whole system">
+  <h2>Trace 1: “clone notes.txt into D:\backup and zip it”</h2>
+  <p class="lead">Every function call, in order, with the data at each step. This one request touches main, splitter, brain, orchestrator, slot tagger, files agent, safety, ops, pronoun fill-in, and the archive agent.</p>
+  <div class="tw"><table>
+    <tr><th>#</th><th>Where</th><th>What happens</th><th>Data after this step</th></tr>
+    <tr><td>1</td><td><code>main.repl()</code></td><td><code>input("You: ")</code></td><td><code>"clone notes.txt into D:\backup and zip it"</code></td></tr>
+    <tr><td>2</td><td><code>Orchestrator.handle()</code></td><td>Clear <code>pending</code>, <code>queue</code>, <code>done</code>. Not empty, not exit, not help.</td><td>—</td></tr>
+    <tr><td>3</td><td><code>Splitter.split()</code></td><td><code>tokens_of</code> → 7 tokens. <code>candidates</code> → the gap before “and”. Features + the brain's view of each side (“files.copy, high” | “archive.create, high”) → LR says <b>cut</b>. <code>tidy</code> drops “and”.</td><td><code>["clone notes.txt into D:\backup", "zip it"]</code></td></tr>
+    <tr><td>4</td><td><code>guess()</code> × 2 → <code>Brain.predict()</code></td><td>tokenize → MiniLM 384 numbers → LR head → softmax. Each logged to <code>inbox.tsv</code>.</td><td><code>("files.copy", 0.98)</code>, <code>("archive.create", 0.9x)</code></td></tr>
+    <tr><td>5</td><td><code>understands()</code> × 2</td><td>Both trusted (≥ 0.3) and both agents exist → run the chain.</td><td><code>queue = ["zip it"]</code></td></tr>
+    <tr><td>6</td><td><code>handle_one(piece 1)</code></td><td>Trusted → split label → <code>by_name["files"]</code>.</td><td>agent = FileAgent, operation = <code>"copy"</code></td></tr>
+    <tr><td>7</td><td><code>FileAgent.extract()</code> → <code>SlotTagger.fill()</code></td><td>Features per word → softmax per word → Viterbi (only source/destination allowed).</td><td><code>O B-source O B-destination</code> → <code>Intent("copy", {source: "notes.txt", destination: "D:\backup"}, [])</code></td></tr>
+    <tr><td>8</td><td><code>Orchestrator.run()</code></td><td>Nothing missing. <code>is_risky</code>? copy ∉ {move, rename} → no.</td><td>→ <code>safely(handle)</code></td></tr>
+    <tr><td>9</td><td><code>ops.copy()</code> → <code>safety</code></td><td><code>require_existing("notes.txt")</code> → <code>C:\Users\you\notes.txt</code>. <code>plan_destination</code>: D:\backup is a folder → <code>D:\backup\notes.txt</code>; parent exists, target doesn't, not same, not protected.</td><td>dest = <code>D:\backup\notes.txt</code></td></tr>
+    <tr><td>10</td><td><code>shutil.copy2</code></td><td>Copies bytes + timestamps.</td><td><code>Result(True, "Copied … -> D:\backup\notes.txt", {"output": "D:\backup\notes.txt"})</code></td></tr>
+    <tr><td>11</td><td><code>chain()</code></td><td>Success, no question, queue not empty → save message in <code>done</code>.</td><td><code>done = ["Copied …"]</code></td></tr>
+    <tr><td>12</td><td><code>fill_in("zip it", output)</code></td><td>Regex finds “it” → replaced by the quoted previous output (a function, so backslashes aren't read as escapes).</td><td><code>'zip "D:\backup\notes.txt"'</code></td></tr>
+    <tr><td>13</td><td><code>handle_one(piece 2)</code></td><td>Brain → <code>archive.create</code> → ArchiveAgent.extract → ops creates <code>notes.zip</code> (never overwrites).</td><td><code>Result(True, "Created D:\backup\notes.zip …")</code></td></tr>
+    <tr><td>14</td><td><code>chain()</code></td><td>Queue empty → join <code>done</code> + last message.</td><td>Two lines of output</td></tr>
+    <tr><td>15</td><td><code>ask_if_needed()</code> → <code>print</code></td><td>No <code>confirm</code> in data → print.</td><td><code>MAVERICK: Copied … \n Created …</code></td></tr>
+  </table></div>
+  <div class="box careful"><span class="t">Careful</span>If step 4 or 5 had failed for <i>either</i> piece (“zip it” alone not understood), MAVERICK would not run piece 1 at all; it would treat the whole sentence as one request. Nothing half-done.</div>
+  <div class="box remember"><span class="t">Remember</span>Split → guess all → understand all → run in order → “it” = previous output → join messages.</div>
+  <label class="learned"><input type="checkbox">I can explain this without looking</label>
+</section>
+
+<section id="d-trace2" data-group="D · Whole system">
+  <h2>Trace 2: a risky request — “get rid of chrome”</h2>
+  <div class="flow">
+    <div class="st ai"><b>Brain</b><small><code>("process.end", high)</code> (before MiniLM it said process.origin: a fixed wording)</small></div><div class="ar">↓</div>
+    <div class="st"><b>ProcessAgent.extract("end", …)</b><small><code>target_name</code> → <code>Intent("end", {"name": "chrome"})</code></small></div><div class="ar">↓</div>
+    <div class="st safe"><b>run(): is_risky → yes → describe()</b><small><code>plan_end("chrome")</code>: found? protected? MAVERICK itself? → “End chrome.exe (18 copies, using 2.10 GB RAM)? Unsaved work in it will be lost.”</small></div><div class="ar">↓</div>
+    <div class="st io"><b>pending = (ProcessAgent, intent) · ask_if_needed()</b><small>“(y/n)” → you type <code>y</code></small></div><div class="ar">↓</div>
+    <div class="st safe"><b>confirm(True) → handle → ops.end()</b><small><code>plan_end</code> again (check #2) → terminate → wait 3 s → kill leftovers → wait 2 s</small></div><div class="ar">↓</div>
+    <div class="st ok"><b>Result</b><small>“Ended chrome.exe (18 processes).”</small></div>
+  </div>
+  <div class="box remember"><span class="t">Remember</span>Risky path: <b>describe = check #1 + question · y · handle = check #2 + action</b>.</div>
+  <label class="learned"><input type="checkbox">I can explain this without looking</label>
+</section>
+
+<section id="d-trace3" data-group="D · Whole system">
+  <h2>Trace 3: nobody understood — the LLM steps in</h2>
+  <p>“which is heavier, D:\a or D:\b?”: suppose the brain is unsure and no agent's keyword rules match.</p>
+  <div class="flow">
+    <div class="st"><b>handle_one: brain below cut-off; every parse() returns None</b></div><div class="ar">↓</div>
+    <div class="st ai"><b>AgentLoop.solve(text, run_named)</b><small>LOOP_PROMPT (menu + rules) + 13 few-shot examples + your request</small></div><div class="ar">↓</div>
+    <div class="st ai"><b>Model: <code>{"action":"files.size","args":{"path":"D:\\a"}}</code></b><small><code>check()</code>: on menu ✓, value typed by you ✓ → run → “Result: D:\a is 1.20 GB”</small></div><div class="ar">↓</div>
+    <div class="st ai"><b>Model: files.size D:\b</b><small>checked, run → “Result: D:\b is 3.40 GB”</small></div><div class="ar">↓</div>
+    <div class="st ok"><b>Model: <code>{"action":"done","answer":"D:\\b is heavier (3.4 GB vs 1.2 GB)."}</code></b><small>Both results + the answer are returned</small></div>
+  </div>
+  <div class="box remember"><span class="t">Remember</span>The LLM never acts directly: it proposes JSON, <code>check()</code> filters it, <code>run()</code> applies all the normal rules.</div>
+  <label class="learned"><input type="checkbox">I can explain this without looking</label>
+</section>
+
+<section id="d-deps" data-group="D · Whole system">
+  <h2>Who imports whom (dependency map)</h2>
+  <figure class="fig">
+  <svg viewBox="0 0 820 430" width="820" role="img" aria-label="Module dependency map">
+    <defs><marker id="ah7" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="mk"/></marker></defs>
+    <rect x="320" y="10" width="180" height="40" rx="10" class="bx-io"/><text x="410" y="35" text-anchor="middle" class="md b">main.py</text>
+    <rect x="20" y="100" width="210" height="64" rx="10" class="bx-acc"/><text x="125" y="124" text-anchor="middle" class="md b">core/orchestrator.py</text><text x="125" y="142" text-anchor="middle" class="sm">routes, chains, confirms</text>
+    <rect x="300" y="100" width="220" height="64" rx="10" class="bx"/><text x="410" y="124" text-anchor="middle" class="md b">agents/*/agent.py</text><text x="410" y="142" text-anchor="middle" class="sm">14 agents (understanding)</text>
+    <rect x="590" y="100" width="210" height="64" rx="10" class="bx-ai"/><text x="695" y="124" text-anchor="middle" class="md b">brain/ + llm/</text><text x="695" y="142" text-anchor="middle" class="sm">Brain, SlotTagger, Splitter, AgentLoop</text>
+    <rect x="300" y="220" width="220" height="56" rx="10" class="bx-ok"/><text x="410" y="244" text-anchor="middle" class="md b">agents/*/ops.py</text><text x="410" y="262" text-anchor="middle" class="sm">doing (psutil, shutil, ctypes…)</text>
+    <rect x="20" y="320" width="230" height="90" rx="10" class="bx"/><text x="135" y="344" text-anchor="middle" class="md b">core/agent_base.py</text><text x="135" y="362" text-anchor="middle" class="sm">Intent · Result · SubAgent</text><text x="135" y="380" text-anchor="middle" class="sm">imported by almost everything</text>
+    <rect x="290" y="320" width="240" height="90" rx="10" class="bx-safe"/><text x="410" y="344" text-anchor="middle" class="md b">core/safety.py · windows.py</text><text x="410" y="362" text-anchor="middle" class="sm">SafetyError · plan_destination</text><text x="410" y="380" text-anchor="middle" class="sm">is_admin · powershell · quote</text>
+    <rect x="570" y="320" width="230" height="90" rx="10" class="bx"/><text x="685" y="344" text-anchor="middle" class="md b">core/background.py</text><text x="685" y="362" text-anchor="middle" class="sm">Job · Background thread</text><text x="685" y="380" text-anchor="middle" class="sm">used by watch, logs, jobs</text>
+    <line x1="360" y1="50" x2="150" y2="98" class="ln" marker-end="url(#ah7)"/>
+    <line x1="410" y1="50" x2="410" y2="98" class="ln" marker-end="url(#ah7)"/>
+    <line x1="460" y1="50" x2="670" y2="98" class="ln" marker-end="url(#ah7)"/>
+    <line x1="410" y1="164" x2="410" y2="218" class="ln" marker-end="url(#ah7)"/>
+    <line x1="520" y1="140" x2="588" y2="140" class="ln-d" marker-end="url(#ah7)"/><text x="524" y="132" class="sm">tagger, rank,</text><text x="524" y="182" class="sm">cluster, plan…</text>
+    <line x1="125" y1="164" x2="125" y2="318" class="ln" marker-end="url(#ah7)"/>
+    <line x1="410" y1="276" x2="410" y2="318" class="ln" marker-end="url(#ah7)"/>
+    <line x1="360" y1="276" x2="200" y2="318" class="ln" marker-end="url(#ah7)"/>
+    <line x1="470" y1="276" x2="640" y2="318" class="ln-d" marker-end="url(#ah7)"/>
+    <line x1="230" y1="132" x2="298" y2="132" class="ln-d"/><text x="236" y="124" class="sm">calls</text>
+  </svg>
+  <figcaption>Arrows point to what is imported. Nothing in core imports an agent: the core doesn't know agents exist until main.py hands them over.</figcaption>
+  </figure>
+  <div class="box why"><span class="t">Why this shape</span>Dependencies point <b>downwards</b> to small, stable files (agent_base, safety). Changing an agent can never break the orchestrator; changing the brain can never break an operation. That's what made 64 steps possible without rewrites.</div>
+  <div class="box remember"><span class="t">Remember</span>main → orchestrator / agents / brain · agent.py → ops.py → safety · everything → agent_base. Core never imports an agent.</div>
+  <label class="learned"><input type="checkbox">I can explain this without looking</label>
+</section>
+
+<section id="d-life" data-group="D · Whole system">
+  <h2>Two lifecycles: training time vs run time</h2>
+  <div class="two">
+    <div>
+      <h3>Training time (you run it once, or after review)</h3>
+      <div class="flow">
+        <div class="st io"><b>.venv: export_onnx</b><small>PyTorch → model.onnx + tokenizer.json (once per PC)</small></div><div class="ar">↓</div>
+        <div class="st ai"><b>brain.train</b><small>intents + learned → brain.json (+ head, + ensemble fallback)</small></div><div class="ar">↓</div>
+        <div class="st ai"><b>brain.multi</b><small>needs the brain → splitter.json</small></div><div class="ar">↓</div>
+        <div class="st ai"><b>brain.slots</b><small>slots.tsv → slots.json</small></div><div class="ar">↓</div>
+        <div class="st"><b>brain.rank (optional)</b><small>rank.json</small></div>
+      </div>
+    </div>
+    <div>
+      <h3>Run time (every start)</h3>
+      <div class="flow">
+        <div class="st"><b>record_disks()</b><small>disk_history.tsv, ≤ 1 row / hour</small></div><div class="ar">↓</div>
+        <div class="st ai"><b>Brain.load()</b><small>None → keyword rules only</small></div><div class="ar">↓</div>
+        <div class="st ai"><b>Ollama available?</b><small>AgentLoop or None</small></div><div class="ar">↓</div>
+        <div class="st"><b>build(…)</b><small>SlotTagger.load, Splitter.load(brain.model)</small></div><div class="ar">↓</div>
+        <div class="st"><b>background.load() → repl()</b></div>
+      </div>
+    </div>
+  </div>
+  <h3>Where things live on disk</h3>
+  <div class="tw"><table>
+    <tr><th>Path</th><th>Contents</th><th>In git?</th></tr>
+    <tr><td><code>maverick/brain/data/*.tsv</code></td><td>Training/eval data</td><td>Yes (except inbox, learned)</td></tr>
+    <tr><td><code>maverick/brain/models/</code></td><td>brain.json, splitter.json, slots.json, rank.json, minilm/</td><td>No (gitignored)</td></tr>
+    <tr><td><code>~/.maverick/jobs.json</code></td><td>Background jobs</td><td>No (your home folder)</td></tr>
+    <tr><td><code>~/.maverick/disk_history.tsv</code></td><td>Hourly disk readings for the forecast</td><td>No</td></tr>
+    <tr><td><code>~/.maverick/background.log</code></td><td>Messages from <code>--background</code> mode</td><td>No</td></tr>
+  </table></div>
+  <div class="box remember"><span class="t">Remember</span>Train order: <b>export → train → multi → slots</b> (splitter needs the brain). Every model file is optional: missing → simpler fallback.</div>
+  <label class="learned"><input type="checkbox">I can explain this without looking</label>
+</section>
+
+<section id="d-fallbacks" data-group="D · Whole system">
+  <h2>Graceful fallbacks everywhere</h2>
+  <p class="lead">A pattern worth memorising: every smart piece has a dumber, always-available backup.</p>
+  <div class="tw keep"><table>
+    <tr><th>If this is missing…</th><th>…MAVERICK uses</th></tr>
+    <tr><td>MiniLM files / onnxruntime</td><td>The 8.5 ensemble</td></tr>
+    <tr><td>Any trained brain</td><td>Keyword rules only</td></tr>
+    <tr><td>Brain unsure</td><td>Keyword rules</td></tr>
+    <tr><td>Slot tagger</td><td>Regex extraction in the agent</td></tr>
+    <tr><td>Splitter (or brain)</td><td>Every request is one action</td></tr>
+    <tr><td>Ollama / model</td><td>Skip the LLM; polite “I don't understand”</td></tr>
+    <tr><td>Admin rights</td><td>Clear message how to restart as Administrator</td></tr>
+    <tr><td>A background job breaks</td><td>Message “job N hit a problem”; other jobs keep running</td></tr>
+  </table></div>
+  <div class="box remember"><span class="t">Remember</span>Nothing smart is required. Remove any model and MAVERICK still works, just less cleverly.</div>
+  <label class="learned"><input type="checkbox">I can explain this without looking</label>
+</section>
+
+<section id="d-newagent" data-group="D · Whole system">
+  <h2>Putting it together: what adding a 15th agent touches</h2>
+  <p>The best test of understanding: could you add an agent? Here's every place, in order. (Example: a “clipboard” agent.)</p>
+  <ol class="steps">
+    <li><code>maverick/agents/clipboard/ops.py</code>: functions returning <code>Result</code>; system calls behind small helpers; <code>plan_…</code> for checks.</li>
+    <li><code>maverick/agents/clipboard/agent.py</code>: <code>class ClipboardAgent(SubAgent)</code> with <code>name</code>, <code>description</code>, keyword sets, <code>parse</code>, <code>extract</code>, <code>risky</code> + <code>describe</code> if it changes anything.</li>
+    <li><code>main.py</code> <code>build()</code>: insert it in the list at the right priority; write a comment why.</li>
+    <li><code>intents.tsv</code>: ~30 sentences per new label (<code>clipboard.show</code>…); a few <code>hard_cases.tsv</code>.</li>
+    <li><code>python -m maverick.brain.train</code>, <code>python -m maverick.brain.multi</code>, <code>python -m maverick.brain.evaluate</code>: no other label may get worse.</li>
+    <li>Optional: <code>tools.TOOLS</code> entry so the LLM can call it.</li>
+    <li><code>tests/test_clipboard_agent.py</code> with fakes; full suite green.</li>
+    <li>Try live · update <code>PROGRESS.md</code> · commit on build · PR.</li>
+  </ol>
+  <div class="box remember"><span class="t">Remember</span>ops → agent → build() → data → retrain + evaluate → (LLM menu) → tests → live → PROGRESS → PR.</div>
+  <label class="learned"><input type="checkbox">I can explain this without looking</label>
+</section>
+
+<div class="part" id="partE"><span class="tag">Part E</span><h2>Revision and memory</h2><p>Short, dense, built for re-reading.</p></div>
+
+<section id="e-cheat" data-group="E · Revision">
+  <h2>Every step in one line</h2>
+  <div class="tw keep"><table>
+    <tr><th>#</th><th>One line</th></tr>
+    <tr><td>1.1</td><td>Offline Windows assistant; 6 rules: same shape, read≠do, AI proposes, safe, measured, fakeable</td></tr>
+    <tr><td>1.2</td><td>Intent (operation, args, missing) · Result (success, message, data) · SubAgent (parse, extract, is_risky, describe, handle)</td></tr>
+    <tr><td>1.3</td><td>Orchestrator: brain → keywords → LLM → give up; run(): missing? risky? do; all via safely()</td></tr>
+    <tr><td>1.4</td><td>Safety: exists, not protected, not whole drive, never overwrite, not into itself; plan first</td></tr>
+    <tr><td>1.5</td><td>main.py: chat / one-shot / --background; agent order = keyword priority</td></tr>
+    <tr><td>1.6</td><td>pytest, tmp_path, monkeypatch fakes; never changes the PC</td></tr>
+    <tr><td>1.7</td><td>build → PR → CI (Windows, 3.12 + 3.14) → merge main</td></tr>
+    <tr><td>2.1–4</td><td>Files: rename › move › copy › size; risky move, rename; output path for “it”</td></tr>
+    <tr><td>2.5</td><td>Roadmap: new brain must beat old in evaluate.py</td></tr>
+    <tr><td>2.6</td><td>Data: intents (1,374) · hard (84) · slots · multi · llm_eval · inbox/learned private</td></tr>
+    <tr><td>2.7</td><td>Naive Bayes: count words per label, log prior + log likelihoods, +1 smoothing</td></tr>
+    <tr><td>2.8</td><td>train.py saves brain.json; evaluate.py vs keyword baseline, “as MAVERICK runs”</td></tr>
+    <tr><td>2.9</td><td>Brain wrapper: load or None, predict + log to inbox, model's own threshold</td></tr>
+    <tr><td>3.1</td><td>y/n: describe (check) → pending → yes → handle (check again)</td></tr>
+    <tr><td>4.1</td><td>Hardware: psutil + CIM JSON; disk history → forecast</td></tr>
+    <tr><td>4.2</td><td>Process tree: top (grouped copies), origin ↑, children ↓</td></tr>
+    <tr><td>4.6</td><td>Search: filters, skip junk, 20 s, top 20, ranked</td></tr>
+    <tr><td>5.1</td><td>Kill: protected list, never itself, terminate → 3 s → kill</td></tr>
+    <tr><td>5.3</td><td>Cleanup: temp &gt; 1 day, ≥ 500 MB, downloads &gt; 90 days; Recycle Bin only</td></tr>
+    <tr><td>5.4</td><td>Archive: zip/tar/tar.gz, AES-256, Zip Slip guard</td></tr>
+    <tr><td>5.6</td><td>Power: modes (powrprof) + brightness; reversible, no y/n</td></tr>
+    <tr><td>5.7</td><td>Hung apps: IsHungAppWindow; is_risky decided by args</td></tr>
+    <tr><td>6.1</td><td>Background: Job(kind, interval, tick), thread every 1 s, lock, jobs.json</td></tr>
+    <tr><td>6.2</td><td>Watcher: new only, skip partials, size stable 2 ticks, name (2)</td></tr>
+    <tr><td>6.5</td><td>Log rotator: dated .gz then truncate in place; copies kept</td></tr>
+    <tr><td>7.1</td><td>Services: changes need admin; protected core services</td></tr>
+    <tr><td>7.4</td><td>Network: IP/MAC/Wi-Fi; on/off with lose-internet warning</td></tr>
+    <tr><td>7.6</td><td>Devices: pnputil restart; never system/disk/CPU/firmware</td></tr>
+    <tr><td>7.13</td><td>Memory hogs: RAM rising at all 5 samples</td></tr>
+    <tr><td>7.14</td><td>Handle leaks: one process &gt; 10,000 handles</td></tr>
+    <tr><td>7.15</td><td>Admin audit: Administrators group by SID, read-only</td></tr>
+    <tr><td>8.1</td><td>Word pairs + TF-IDF; hurt NB, helped LR</td></tr>
+    <tr><td>8.2</td><td>Logistic regression: weights, softmax, cross-entropy, momentum, L2</td></tr>
+    <tr><td>8.3</td><td>SVM (margin), k-NN (5 neighbours), tree (Gini); none beat LR</td></tr>
+    <tr><td>8.4</td><td>Bernoulli NB: absence is evidence; smoothing 1 → 5.8%, 0.1 → 77.6%</td></tr>
+    <tr><td>8.5</td><td>Ensemble LR + BNB + SVM soft vote: 84.5% / hard 75%; fallback brain</td></tr>
+    <tr><td>8.6</td><td>5-fold CV: every sentence tested once</td></tr>
+    <tr><td>8.7</td><td>Precision / recall / F1 per label; macro F1</td></tr>
+    <tr><td>8.8</td><td>Hyperparameters chosen by CV sweeps</td></tr>
+    <tr><td>8.9</td><td>MLP 128 ReLU, dropout, Adam, backprop: tied LR</td></tr>
+    <tr><td>8.10</td><td>GloVe: swap failed; as features 84.0%; not used</td></tr>
+    <tr><td>8.11</td><td>MiniLM frozen + LR: 91.6% / hard 86%: current brain</td></tr>
+    <tr><td>8.11b–d</td><td>ONNX export once; onnxruntime 2.5 ms; ensemble fallback</td></tr>
+    <tr><td>8.12</td><td>MiniLM fine-tuned 92.3% / hard 81%; not shipped</td></tr>
+    <tr><td>8.13–14</td><td>inbox → review least confident first → learned.tsv → retrain</td></tr>
+    <tr><td>8.15</td><td>Slot tagger: BIO + softmax per word + Viterbi; 93% vs 79%</td></tr>
+    <tr><td>8.16</td><td>Splitter: candidate gaps + brain stacking → cut/keep; 95.8%</td></tr>
+    <tr><td>8.17</td><td>Ollama + Llama 3.2 3B on localhost</td></tr>
+    <tr><td>8.18</td><td>Tool calling: menu → JSON → check (menu, args, grounded)</td></tr>
+    <tr><td>8.19</td><td>Few-shot: 8 examples, 88.1% → 95.2%</td></tr>
+    <tr><td>8.20</td><td>LoRA on 360M: 81.5% vs brain 82.7%; not used</td></tr>
+    <tr><td>8.21</td><td>Agent loop: think → act → observe, max 4, y/n to the user</td></tr>
+    <tr><td>8.22</td><td>Isolation forest: short path = odd; fakes 3rd/5th/6th of 113</td></tr>
+    <tr><td>8.23</td><td>k-means++ on file names, k by silhouette; 96.8%</td></tr>
+    <tr><td>8.24</td><td>Least-squares line + R² → disk full date; off 2.1 GB</td></tr>
+    <tr><td>8.25</td><td>Pairwise learning to rank, 9 features; MRR 0.718</td></tr>
+    <tr><td>8.26</td><td>Knapsack DP, least regret; 1.93 vs greedy 2.15</td></tr>
+    <tr><td>8.27</td><td>CSP: backtracking + MRV + forward checking; ~280× fewer tries</td></tr>
+  </table></div>
+</section>
+
+<section id="e-numbers" data-group="E · Revision">
+  <h2>Numbers worth knowing by heart</h2>
+  <div class="tw keep"><table>
+    <tr><th>Number</th><th>Meaning</th></tr>
+    <tr><td><b>14</b></td><td>agents</td></tr>
+    <tr><td><b>41 + 1</b></td><td>operations + unknown = 42 labels</td></tr>
+    <tr><td><b>1,374 / 84</b></td><td>training sentences / hard cases</td></tr>
+    <tr><td><b>64 / 76</b></td><td>build steps / learning items in PROGRESS.md</td></tr>
+    <tr><td><b>490</b></td><td>tests (~5 min)</td></tr>
+    <tr><td><b>91.6% / 86%</b></td><td>current brain: as MAVERICK runs / hard cases</td></tr>
+    <tr><td><b>84.5% / 75%</b></td><td>ensemble fallback</td></tr>
+    <tr><td><b>0.3</b></td><td>MiniLM confidence cut-off (0.6 default, 0.5 suggest)</td></tr>
+    <tr><td><b>384</b></td><td>numbers per sentence from MiniLM</td></tr>
+    <tr><td><b>22.7M / 90 MB / 2.5 ms</b></td><td>MiniLM size / file / time per request</td></tr>
+    <tr><td><b>5</b></td><td>folds in cross-validation; also memory-hog samples; also k-NN neighbours</td></tr>
+    <tr><td><b>3 s</b></td><td>polite close before force-kill; also watcher tick</td></tr>
+    <tr><td><b>20 s / 20</b></td><td>search &amp; scan time limit / results shown</td></tr>
+    <tr><td><b>4</b></td><td>max LLM agent-loop steps</td></tr>
+    <tr><td><b>8</b></td><td>few-shot examples (88.1% → 95.2%)</td></tr>
+    <tr><td><b>16</b></td><td>actions on the LLM's tool menu</td></tr>
+    <tr><td><b>10,000</b></td><td>handles in one process = suspicious</td></tr>
+    <tr><td><b>500 MB / 90 days / 1 day</b></td><td>big file / stale download / temp age</td></tr>
+  </table></div>
+</section>
+
+<section id="e-glossary" data-group="E · Revision">
+  <h2>Glossary A–Z</h2>
+  <div class="tw keep"><table>
+    <tr><td><b>Active learning</b></td><td>The model chooses what to ask a human about: its least confident cases first.</td></tr>
+    <tr><td><b>Adam</b></td><td>Gradient descent with a self-adjusting step size per weight.</td></tr>
+    <tr><td><b>Agent</b></td><td>A worker with one job and a standard shape.</td></tr>
+    <tr><td><b>Attention</b></td><td>Inside a transformer: every word looks at every other word to build its meaning.</td></tr>
+    <tr><td><b>Backpropagation</b></td><td>Passing the error backwards through a network to get every weight's gradient.</td></tr>
+    <tr><td><b>Backtracking</b></td><td>Try a choice; if a rule breaks later, undo it and try the next.</td></tr>
+    <tr><td><b>Bag of words</b></td><td>Word counts, order ignored.</td></tr>
+    <tr><td><b>Baseline</b></td><td>The simple method a model must beat (here: keyword rules).</td></tr>
+    <tr><td><b>BIO tags</b></td><td>Begin / Inside / Outside labels for each word of a sentence.</td></tr>
+    <tr><td><b>CI</b></td><td>Tests run automatically on a fresh machine for every PR.</td></tr>
+    <tr><td><b>Classification</b></td><td>Input → one label from a fixed list.</td></tr>
+    <tr><td><b>Clustering</b></td><td>Grouping similar things without labels.</td></tr>
+    <tr><td><b>Confidence</b></td><td>The probability the model gives its own answer.</td></tr>
+    <tr><td><b>Confusion matrix</b></td><td>Table of real label vs predicted label; off-diagonal cells are mistakes.</td></tr>
+    <tr><td><b>Cosine similarity</b></td><td>How closely two vectors point the same way (1 = same meaning).</td></tr>
+    <tr><td><b>Cross-entropy</b></td><td>Loss = −log(probability of the right answer).</td></tr>
+    <tr><td><b>Cross-validation</b></td><td>k rounds of train-on-most, test-on-rest; average.</td></tr>
+    <tr><td><b>CSP</b></td><td>Constraint satisfaction problem: variables, domains, rules.</td></tr>
+    <tr><td><b>ctypes</b></td><td>Python's way to call Windows' C functions directly.</td></tr>
+    <tr><td><b>Dataclass</b></td><td>A class whose <code>__init__</code> Python writes for you.</td></tr>
+    <tr><td><b>Dropout</b></td><td>Randomly switching neurons off while training, against overfitting.</td></tr>
+    <tr><td><b>Dynamic programming</b></td><td>Solve a big problem by building up answers to smaller ones (knapsack).</td></tr>
+    <tr><td><b>Embedding</b></td><td>A word or sentence as a list of numbers that captures meaning.</td></tr>
+    <tr><td><b>Ensemble</b></td><td>Several models vote; here soft voting (average probabilities).</td></tr>
+    <tr><td><b>Epoch</b></td><td>One pass over all training data.</td></tr>
+    <tr><td><b>F1</b></td><td>Harmonic mean of precision and recall.</td></tr>
+    <tr><td><b>Few-shot</b></td><td>Showing an LLM worked examples in the prompt.</td></tr>
+    <tr><td><b>Fine-tuning</b></td><td>Further training a pretrained model on your own data.</td></tr>
+    <tr><td><b>Fixture</b></td><td>Something pytest prepares for a test (e.g. <code>tmp_path</code>).</td></tr>
+    <tr><td><b>Forward checking</b></td><td>After each choice, remove values it rules out for others.</td></tr>
+    <tr><td><b>Gradient descent</b></td><td>Repeatedly nudge weights in the direction that lowers the loss.</td></tr>
+    <tr><td><b>Grounding</b></td><td>Checking an LLM's values really appear in the user's text or a result.</td></tr>
+    <tr><td><b>Handle</b></td><td>Windows' ticket for an open file, key, thread or event.</td></tr>
+    <tr><td><b>Hard cases</b></td><td>Tricky sentences never trained on: the final exam.</td></tr>
+    <tr><td><b>Hinge loss</b></td><td>SVM's loss: zero once the right label wins by a margin.</td></tr>
+    <tr><td><b>Hyperparameter</b></td><td>A setting you choose (epochs, learning rate), not learned.</td></tr>
+    <tr><td><b>Intent</b></td><td>MAVERICK's “what you want”: operation + args + missing.</td></tr>
+    <tr><td><b>Isolation forest</b></td><td>Anomaly detector: odd points are isolated by fewer random cuts.</td></tr>
+    <tr><td><b>k-means</b></td><td>Clustering: assign to nearest centre, move centres, repeat.</td></tr>
+    <tr><td><b>k-NN</b></td><td>Label by majority vote of the k most similar examples.</td></tr>
+    <tr><td><b>Knapsack</b></td><td>Pick items under a constraint to minimise cost / maximise value.</td></tr>
+    <tr><td><b>L2</b></td><td>Penalty on large weights; keeps a model from memorising.</td></tr>
+    <tr><td><b>Laplace smoothing</b></td><td>+1 (or +α) on every count so nothing is ever probability 0.</td></tr>
+    <tr><td><b>Learning rate</b></td><td>Size of each gradient-descent step.</td></tr>
+    <tr><td><b>LLM</b></td><td>Large language model: predicts the next word repeatedly.</td></tr>
+    <tr><td><b>Lock</b></td><td>Lets only one thread at a time touch shared data.</td></tr>
+    <tr><td><b>LoRA</b></td><td>Fine-tune by training tiny B·A matrices beside frozen weights.</td></tr>
+    <tr><td><b>Loss</b></td><td>A number measuring how wrong the model is.</td></tr>
+    <tr><td><b>Macro F1</b></td><td>F1 averaged over labels, each label counting equally.</td></tr>
+    <tr><td><b>Momentum</b></td><td>Keep part of the last step's direction while descending.</td></tr>
+    <tr><td><b>MRR</b></td><td>Mean reciprocal rank: 1 / position of the right answer, averaged.</td></tr>
+    <tr><td><b>MRV</b></td><td>Most-constrained-variable-first heuristic in CSP search.</td></tr>
+    <tr><td><b>N-gram</b></td><td>A run of n words; bigrams = word pairs.</td></tr>
+    <tr><td><b>Naive Bayes</b></td><td>Classifier from word counts assuming words are independent.</td></tr>
+    <tr><td><b>One-hot</b></td><td>A row of 0s with a single 1 marking the right label.</td></tr>
+    <tr><td><b>ONNX</b></td><td>Portable file format for a trained model; run by onnxruntime.</td></tr>
+    <tr><td><b>Orchestrator</b></td><td>The manager agent that routes requests and applies shared rules.</td></tr>
+    <tr><td><b>Overfitting</b></td><td>Memorising training data instead of learning the pattern.</td></tr>
+    <tr><td><b>Precision</b></td><td>Of the answers given as X, the share that were really X.</td></tr>
+    <tr><td><b>PR</b></td><td>Pull request: a proposal to merge a branch, reviewable on GitHub.</td></tr>
+    <tr><td><b>Recall</b></td><td>Of the real X's, the share the model found.</td></tr>
+    <tr><td><b>Regression</b></td><td>Predicting a number (vs a category).</td></tr>
+    <tr><td><b>ReLU</b></td><td><code>max(0, x)</code>: the activation in MAVERICK's MLP.</td></tr>
+    <tr><td><b>Result</b></td><td>MAVERICK's “what happened”: success + message + data.</td></tr>
+    <tr><td><b>Sequence labelling</b></td><td>One label per word instead of one per sentence.</td></tr>
+    <tr><td><b>Silhouette</b></td><td>How well a point fits its own cluster vs the nearest other.</td></tr>
+    <tr><td><b>Slot filling</b></td><td>Finding the argument values in a sentence.</td></tr>
+    <tr><td><b>Softmax</b></td><td>Turns scores into probabilities summing to 1.</td></tr>
+    <tr><td><b>Stacking</b></td><td>One model's predictions used as features for another.</td></tr>
+    <tr><td><b>Stratified</b></td><td>Split that keeps each label's share the same in every part.</td></tr>
+    <tr><td><b>Supervised / unsupervised</b></td><td>Learning from labelled examples / from data alone.</td></tr>
+    <tr><td><b>SVM</b></td><td>Support vector machine: wins by a margin; borderline cases matter.</td></tr>
+    <tr><td><b>Temperature</b></td><td>LLM randomness; 0 = always the most likely word.</td></tr>
+    <tr><td><b>TF-IDF</b></td><td>How often here × how rare everywhere.</td></tr>
+    <tr><td><b>Thread</b></td><td>A second line of work running inside the same program.</td></tr>
+    <tr><td><b>Token</b></td><td>A piece of text a model works with (a word, or a word piece).</td></tr>
+    <tr><td><b>Tool calling</b></td><td>An LLM choosing an action from a menu and returning it as JSON.</td></tr>
+    <tr><td><b>Transfer learning</b></td><td>Reusing a model trained on a big task for a small one.</td></tr>
+    <tr><td><b>Transformer</b></td><td>Neural network built on attention (MiniLM, Llama).</td></tr>
+    <tr><td><b>Viterbi</b></td><td>Finds the highest-scoring valid sequence of tags.</td></tr>
+    <tr><td><b>Zip Slip</b></td><td>An archive entry whose path escapes the extraction folder.</td></tr>
+  </table></div>
+</section>
+
+<section id="e-commands" data-group="E · Revision">
+  <h2>Commands cheat sheet</h2>
+<pre class="keep"><span class="c"># run</span>
+maverick                                  <span class="c"># chat (or: python maverick\main.py)</span>
+maverick "copy notes.txt to D:\backup"    <span class="c"># one request, then exit</span>
+maverick --background                     <span class="c"># only background jobs</span>
+
+<span class="c"># train (in this order)</span>
+.venv\Scripts\python -m maverick.llm.export_onnx   <span class="c"># once per PC, needs PyTorch</span>
+python -m maverick.brain.train            <span class="c"># the brain (+ any learned.tsv)</span>
+python -m maverick.brain.multi            <span class="c"># the splitter (needs the brain)</span>
+python -m maverick.brain.slots            <span class="c"># the slot tagger</span>
+
+<span class="c"># measure and improve</span>
+python -m maverick.brain.evaluate         <span class="c"># every brain side by side</span>
+python -m maverick.brain.review           <span class="c"># correct uncertain real requests</span>
+python -m maverick.llm.evaluate           <span class="c"># LLM prompts (needs Ollama)</span>
+python -m pytest -q                       <span class="c"># all 490 tests</span>
+
+<span class="c"># each AI module has its own benchmark</span>
+python -m maverick.brain.anomaly | cluster | forecast | rank | plan | constraints</pre>
+</section>
+
+<section id="e-final" data-group="E · Revision">
+  <h2>The whole project in ten sentences</h2>
+  <ol class="steps keep">
+    <li>MAVERICK is an offline Windows assistant: you type English, it acts on your PC, nothing leaves the machine.</li>
+    <li>One orchestrator routes each request to one of 14 agents that all share the same shape.</li>
+    <li>Each agent splits understanding (<code>agent.py</code>) from doing (<code>ops.py</code>).</li>
+    <li>A trained brain (MiniLM + logistic regression, 91.6%) guesses <code>agent.operation</code>; if unsure, keyword rules decide; if nobody understands, a local LLM proposes a checked action.</li>
+    <li>A slot tagger finds the arguments and a splitter cuts multi-action sentences; “it” means the last result.</li>
+    <li>Safety checks run before anything happens; risky actions ask y/n and check again after “yes”.</li>
+    <li>Nothing is ever overwritten, deleted permanently, or done inside system folders.</li>
+    <li>A background thread runs saved jobs like folder watchers and log rotators.</li>
+    <li>Thirty AI methods were built from scratch and kept only when they measurably beat the previous one.</li>
+    <li>Every system call is faked in 490 tests, and every smart part has a simpler fallback.</li>
+  </ol>
+  <div class="box remember"><span class="t">Remember</span>If you can say these ten sentences and point to the file behind each one, you understand MAVERICK.</div>
+  <label class="learned"><input type="checkbox">I can explain this without looking</label>
+</section>
+
+</main>
+</div>
+<script>
+(function(){
+  var KEY = "maverick-guide-learned-v1";
+  var store = {};
+  try { store = JSON.parse(localStorage.getItem(KEY) || "{}") || {}; } catch (e) { store = {}; }
+  function save(){ try { localStorage.setItem(KEY, JSON.stringify(store)); } catch (e) {} }
+
+  var sections = Array.prototype.slice.call(document.querySelectorAll("main section[id]"));
+  var toc = document.getElementById("toc");
+  var links = {};
+  var lastGroup = null;
+  sections.forEach(function(sec){
+    var group = sec.getAttribute("data-group") || "Start here";
+    if (group !== lastGroup){
+      var g = document.createElement("div"); g.className = "grp"; g.textContent = group; toc.appendChild(g); lastGroup = group;
+    }
+    var h = sec.querySelector("h2");
+    var title = sec.id;
+    if (h){
+      var num = h.querySelector(".num");
+      var rest = Array.prototype.filter.call(h.childNodes, function(n){ return n !== num; })
+        .map(function(n){ return n.textContent; }).join("").replace(/\s+/g, " ").trim();
+      title = num ? num.textContent.trim() + "  " + rest : rest;
+    }
+    var a = document.createElement("a");
+    a.href = "#" + sec.id;
+    a.setAttribute("data-text", title.toLowerCase() + " " + sec.textContent.toLowerCase().slice(0, 4000));
+    var span = document.createElement("span"); span.textContent = title;
+    var tick = document.createElement("span"); tick.className = "tick";
+    a.appendChild(span); a.appendChild(tick);
+    toc.appendChild(a);
+    links[sec.id] = a;
+    var box = sec.querySelector(".learned input");
+    if (box){
+      box.checked = !!store[sec.id];
+      box.addEventListener("change", function(){ store[sec.id] = box.checked; if (!box.checked) delete store[sec.id]; save(); refresh(); });
+    }
+  });
+
+  function refresh(){
+    var boxes = document.querySelectorAll(".learned input");
+    var done = 0;
+    sections.forEach(function(sec){
+      var b = sec.querySelector(".learned input");
+      if (links[sec.id]) links[sec.id].querySelector(".tick").textContent = (b && b.checked) ? "✓" : "";
+      if (b && b.checked) done++;
+    });
+    document.getElementById("meterText").textContent = done + " of " + boxes.length + " learned";
+    document.getElementById("meterBar").style.width = (boxes.length ? (100 * done / boxes.length) : 0) + "%";
+  }
+  refresh();
+
+  document.getElementById("filter").addEventListener("input", function(e){
+    var q = e.target.value.trim().toLowerCase();
+    Array.prototype.forEach.call(toc.querySelectorAll("a"), function(a){
+      a.style.display = (!q || a.getAttribute("data-text").indexOf(q) >= 0) ? "" : "none";
+    });
+  });
+
+  var reviseBtn = document.getElementById("reviseBtn");
+  reviseBtn.addEventListener("click", function(){
+    var on = document.body.classList.toggle("revise");
+    reviseBtn.classList.toggle("on", on);
+    reviseBtn.textContent = on ? "Full mode" : "Revision mode";
+  });
+
+  var root = document.documentElement;
+  try { var t = localStorage.getItem("maverick-guide-theme"); if (t) root.setAttribute("data-theme", t); } catch (e) {}
+  document.getElementById("themeBtn").addEventListener("click", function(){
+    var dark = root.getAttribute("data-theme") ? root.getAttribute("data-theme") === "dark"
+      : window.matchMedia("(prefers-color-scheme: dark)").matches;
+    var next = dark ? "light" : "dark";
+    root.setAttribute("data-theme", next);
+    try { localStorage.setItem("maverick-guide-theme", next); } catch (e) {}
+  });
+
+  var side = document.getElementById("side");
+  document.getElementById("menuBtn").addEventListener("click", function(){ side.classList.toggle("open"); });
+  toc.addEventListener("click", function(e){ if (e.target.closest("a")) side.classList.remove("open"); });
+
+  if ("IntersectionObserver" in window){
+    var obs = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        if (en.isIntersecting){
+          Object.keys(links).forEach(function(k){ links[k].classList.remove("active"); });
+          var l = links[en.target.id]; if (l) l.classList.add("active");
+        }
+      });
+    }, {rootMargin: "-10% 0px -80% 0px"});
+    sections.forEach(function(s){ obs.observe(s); });
+  }
+})();
+</script>
+</body>
+</html>
