@@ -10,6 +10,8 @@
 understands it with its own trained models, hands it to one of 14 specialist agents, checks it for
 safety, asks before anything risky, and does it. No cloud, no API keys, nothing leaves your PC.
 
+**Website:** [redrighthand2007.github.io/MAVERICK](https://redrighthand2007.github.io/MAVERICK/)
+
 <p align="center"><img src="docs/demo.gif" alt="MAVERICK answering real requests: RAM, battery, copy, overwrite blocked, a two-step request, a y/n move, CPU, and an unknown request" width="800"></p>
 
 ```text
