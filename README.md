@@ -4,72 +4,72 @@
 ![Python 3.12+](https://img.shields.io/badge/python-3.12%2B-blue)
 ![Windows](https://img.shields.io/badge/platform-Windows%2010%2F11-0078D6)
 ![Offline](https://img.shields.io/badge/runs-100%25%20offline-success)
+[![Release](https://img.shields.io/github/v/release/redrighthand2007/MAVERICK)](https://github.com/redrighthand2007/MAVERICK/releases)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
 **An offline, multi-agent AI assistant for Windows.** Type what you want in plain English. MAVERICK
 understands it with its own trained models, hands it to one of 14 specialist agents, checks it for
 safety, asks before anything risky, and does it. No cloud, no API keys, nothing leaves your PC.
 
-**Website:** [redrighthand2007.github.io/MAVERICK](https://redrighthand2007.github.io/MAVERICK/)
-
 <p align="center"><img src="docs/demo.gif" alt="MAVERICK answering real requests: RAM, battery, copy, overwrite blocked, a two-step request, a y/n move, CPU, and an unknown request" width="800"></p>
+<p align="center"><sub>Real answers to real requests, on throwaway files in a demo folder.</sub></p>
 
-```text
-you> clone notes.txt into D:\backup
-MAVERICK: Copied C:\Users\you\notes.txt -> D:\backup\notes.txt
+| 91.6% | 14 agents | 2.5 ms | 491 tests |
+|:---:|:---:|:---:|:---:|
+| requests understood correctly<br>(5-fold cross-validation) | 46 operations, from files<br>to services and devices | per request for the<br>transformer brain, no PyTorch | every system call faked;<br>CI on Windows |
 
-you> duplicate notes.txt into D:\backup
-MAVERICK: Blocked for safety: D:\backup\notes.txt already exists; MAVERICK never overwrites.
-
-you> is my laptop charging
-MAVERICK: Battery: 80%, plugged in, charging
-
-you> free up 5 gb on c drive
-MAVERICK: To free 5.00 GB, the least-missed choice is 33 item(s), 5.24 GB in all:
-  -    1.08 GB  C:\idea-2026.1.2.exe  (would you miss it: 0.3)
-  ... (y/n)
-```
+**Contents:** [Highlights](#highlights) · [How it works](#how-a-request-flows) ·
+[Agents](#the-14-agents) · [Results](#results) · [Setup](#setup) · [Project layout](#project-layout)
 
 ## Highlights
 
-- **Own ML brain, built from scratch.** Intent classification climbed from 73% (Naive Bayes) to
-  **91.6%** (a pretrained MiniLM encoder plus logistic regression). Every model was measured the same
-  way, with 5-fold cross-validation, and replaced the old one only when it scored higher.
-- **Classic ML in pure NumPy.** Naive Bayes, logistic regression, SVM, k-NN, decision tree, MLP with
-  backpropagation, an ensemble, isolation forest, k-means, regression and learning-to-rank. No
-  scikit-learn.
-- **Local LLM as a last resort.** Llama 3.2 3B through Ollama, with tool calling, few-shot prompting
-  (88% → 95%) and a multi-step agent loop. Every value the LLM proposes is checked against what you
-  actually typed.
-- **Pretrained transformer shipped without PyTorch.** MiniLM is exported to ONNX (90 MB) and runs in
-  2.5 ms per request with `onnxruntime`. If it's missing, MAVERICK falls back to its own ensemble.
-- **Safety first.** It never overwrites, never touches system folders or whole drives, asks y/n before
-  risky actions, and deletes only to the Recycle Bin. Passwords are typed at a hidden prompt and never
-  logged.
-- **490 tests.** All system calls (processes, services, power, devices) are faked in tests, so the
-  suite never changes your PC.
+- **Its own ML brain, measured honestly.** Request understanding went from **84.5% to 91.6%**
+  (hard cases **75% → 86%**). Every model was scored the same way, with 5-fold cross-validation on
+  1,374 labelled sentences, and replaced the current one only when it scored higher.
+- **Classic ML written from scratch in NumPy, no scikit-learn:**
+  - classifiers: Naive Bayes, logistic regression, SVM, k-NN, decision tree, an MLP with
+    backpropagation, a soft-voting ensemble
+  - inside the agents: isolation forest, k-means, regression, learning-to-rank, knapsack planning,
+    constraint solving
+- **A pretrained transformer, shipped without PyTorch.** The MiniLM sentence encoder is exported to
+  ONNX (90 MB) and runs in 2.5 ms per request with `onnxruntime`. If it's missing, MAVERICK falls back
+  to its own ensemble.
+- **A local LLM as the last resort.** Llama 3.2 3B through Ollama, with tool calling, few-shot
+  prompting (88% → 95%) and a multi-step agent loop. Every value the LLM proposes is checked against
+  what you actually typed.
+- **Safety first.**
+  - It never overwrites, and never touches system folders or whole drives.
+  - It asks y/n before anything risky, and deletes only to the Recycle Bin.
+  - Passwords are typed at a hidden prompt and never logged.
+- **Built to be trusted:** 491 tests, all system calls (processes, services, power, devices) faked,
+  so the suite never changes your PC; CI on Windows with Python 3.12 and 3.14.
 
 ## How a request flows
 
 ```mermaid
 flowchart TD
-    A["You type a request"] --> S["Splitter (8.16)<br/>one action or several?"]
-    S --> B["Brain: MiniLM + logistic regression<br/>which agent.operation? + confidence"]
-    B -- "confident" --> O
+    A["You type<br/>a request"] --> S["Splitter<br/>one action or several?"]
+    S --> B["Brain<br/>MiniLM + logistic regression"]
+    B -- "confident" --> O["Orchestrator<br/>picks the agent"]
     B -- "unsure" --> K["Keyword rules"]
     K -- "understood" --> O
-    K -- "not understood" --> L["Local LLM (Ollama)<br/>tool calling + agent loop"]
+    K -- "not understood" --> L["Local LLM<br/>Llama 3.2 via Ollama"]
     L -- "checked action" --> O
-    O["Orchestrator<br/>picks the agent"] --> X["Agent extracts details<br/>(slot tagger 8.15 for file names)"]
+    O --> X["Slot tagger<br/>finds the file names"]
     X --> SF["Safety checks"]
     SF --> Y{"Risky?"}
-    Y -- "yes" --> Q["Ask y/n"] --> D
-    Y -- "no" --> D["Do it"]
-    D --> R["Result"]
+    Y -- "yes" --> Q["Ask y/n,<br/>check again"] --> D["Do it"]
+    Y -- "no" --> D
+    classDef ai fill:#dbe6ff,stroke:#2456d6,color:#111
+    classDef safe fill:#dcf3e4,stroke:#1d8148,color:#111
+    class S,B,L,X ai
+    class SF,Y,Q safe
 ```
 
-Only the brain, the slot tagger, the splitter and the LLM are "AI". The agents themselves are plain,
-testable Python: understanding (`agent.py`) is kept separate from doing (`ops.py`).
+The blue steps are the "AI", and they only **propose** an action. The green safety steps always run,
+whoever proposed it. Understanding (`agent.py`) is kept separate from doing (`ops.py`), so nine
+different models could be tried, and the brain replaced three times, without touching a single
+operation.
 
 ## The 14 agents
 
@@ -90,15 +90,18 @@ testable Python: understanding (`agent.py`) is kept separate from doing (`ops.py
 | Logs | `rotate server.log when it gets bigger than 50 mb` | Log rotation to dated `.gz` copies |
 | Jobs | `show background jobs`, `plan maintenance between 10 pm and 2 am` | Background jobs; schedule planning as a constraint problem |
 
+Several actions in one sentence work too: `copy report.txt to backup and then zip it` copies the file,
+then zips the copy ("it" means the previous step's result).
+
 ## Results
 
 5-fold cross-validation on 1,374 labelled sentences (46 operations + "unknown"), plus 84 hand-picked
-hard cases. "As MAVERICK runs" means brain + keyword rules together. Full write-up:
-[docs/RESULTS.md](docs/RESULTS.md).
+hard cases that are never trained on. "As MAVERICK runs" means the brain plus keyword rules, which is
+what you actually get.
 
 | Brain | As MAVERICK runs | Hard cases |
 |---|---|---|
-| Naive Bayes (first brain) * | 83.8% | 60% |
+| Naive Bayes (first brain) \* | 83.8% | 60% |
 | Logistic regression + word pairs, TF-IDF | 83.2% | 73% |
 | Ensemble: LR + Bernoulli NB + linear SVM | 84.5% | 75% |
 | **MiniLM (ONNX) + logistic regression (current)** | **91.6%** | **86%** |
@@ -111,6 +114,9 @@ hard cases. "As MAVERICK runs" means brain + keyword rules together. Full write-
 | Multi-action splitter (stacking) | 95.8% of multi-step sentences cut right |
 | LLM tool calling, zero-shot → few-shot | 88.1% → 95.2% fully right |
 | Learning-to-rank for search results | MRR 0.718 vs 0.339 in disk order |
+| Anomaly detection (isolation forest) | 3 planted programs ranked 3rd, 5th, 6th of 113 |
+
+Every experiment, including what failed and why: [docs/RESULTS.md](docs/RESULTS.md).
 
 ## Setup
 
@@ -126,10 +132,14 @@ maverick                      # or: python maverick\main.py
 ```
 
 `python -m maverick.brain.train` trains the brain. `python -m maverick.brain.multi` trains the
-splitter, which reads the brain's answers, so it goes second. Training takes about a minute; the
+splitter, which reads the brain's answers, so it goes second. Training takes about a minute, and the
 trained files stay on your PC (`maverick/brain/models/`, gitignored).
 
-**Optional extras:**
+Admin-only actions (services, network adapters, device restarts) say so, and need MAVERICK to run as
+Administrator.
+
+<details>
+<summary><b>Optional extras</b>: the MiniLM brain, the local LLM, the slot tagger</summary>
 
 | Extra | What it adds | How |
 |---|---|---|
@@ -137,10 +147,10 @@ trained files stay on your PC (`maverick/brain/models/`, gitignored).
 | Local LLM | Last-resort understanding, multi-step requests | Install [Ollama](https://ollama.com), then `ollama pull llama3.2:3b` |
 | Slot tagger | Learned file-name extraction | `python -m maverick.brain.slots` |
 
-Admin-only actions (services, network adapters, device restarts) say so and need MAVERICK to run as
-Administrator.
+</details>
 
-**Other ways to run it:**
+<details>
+<summary><b>Other ways to run it</b></summary>
 
 ```powershell
 maverick "copy notes.txt to D:\backup"   # one request, then exit
@@ -150,7 +160,9 @@ python -m maverick.brain.evaluate        # compare every brain kind side by side
 python -m maverick.brain.review          # correct the brain's least-confident real requests
 ```
 
-## Teaching it your own words
+</details>
+
+### Teaching it your own words
 
 Real requests are logged to `maverick/brain/data/inbox.tsv` (gitignored, stays on your PC).
 `python -m maverick.brain.review` shows the ones the brain was least sure about first (active
@@ -168,11 +180,10 @@ maverick/
   brain/data/          labelled training data (intents, hard cases, slots, multi-action, LLM eval)
   llm/                 Ollama client, tool calling, agent loop, LoRA experiment, MiniLM + ONNX export
 tests/                 pytest suite; system calls are faked
-docs/                  vision, brain roadmap, results, demo, project website
+docs/                  vision, brain roadmap, results, demo
 ```
 
-## Documentation
-
+**More reading:**
 - [docs/VISION.md](docs/VISION.md): what MAVERICK is and its design rules
 - [docs/BRAIN_ROADMAP.md](docs/BRAIN_ROADMAP.md): how the brain grew, from Naive Bayes to MiniLM
 - [docs/RESULTS.md](docs/RESULTS.md): every experiment and its numbers, including what failed

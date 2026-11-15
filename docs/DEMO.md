@@ -31,8 +31,8 @@ or works on throwaway files in a demo folder, so recording it never changes anyt
 
 ## After recording
 
-- Save it over `docs/demo.gif` (keep it under ~10 MB so GitHub shows it quickly). The README and the
-  website already show that file.
+- Save it over `docs/demo.gif` (keep it under ~10 MB so GitHub shows it quickly). The README already
+  shows that file.
 - Check the recording shows nothing private (file names in Downloads, user names, Wi-Fi names).
 - Your real requests during the recording are logged to `maverick/brain/data/inbox.tsv`, which stays
   on your PC and is never uploaded.
