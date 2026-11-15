@@ -74,7 +74,7 @@ Result(success, message, data) → printed; "it" in the next step means this res
 | 7 | Admin-level agents: services, network adapters, devices, memory and handle leaks, admin audit |
 | 8 | AI methods: 30 techniques, from TF-IDF to a shipped transformer encoder and a local LLM agent loop |
 
-Step-by-step detail: [PROGRESS.md](../PROGRESS.md).
+What each version contains: [CHANGELOG.md](../CHANGELOG.md). Every experiment: [RESULTS.md](RESULTS.md).
 
 ## Possible next steps
 

@@ -11,3 +11,6 @@ MAVERICK.code-workspace
 *.egg-info/
 build/
 dist/
+
+# your own learning tracker and study guide: stay on this PC only
+private/

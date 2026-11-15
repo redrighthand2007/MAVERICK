@@ -17,7 +17,7 @@ class Ensemble:
     # Cut-off sweep (5-fold, as MAVERICK runs / hard cases): 0.3 -> 84.5% / 75%, 0.4 -> 85.0% / 69%,
     # 0.5 -> 84.5% / 61%. Averaged confidences are lower than one model's, so a lower cut-off fits.
     threshold = 0.3
-    MEMBERS = ("logistic_regression", "bernoulli_nb", "linear_svm")  # picked in 8.5, see PROGRESS.md
+    MEMBERS = ("logistic_regression", "bernoulli_nb", "linear_svm")  # picked in 8.5, see docs/RESULTS.md
 
     def __init__(self, members: tuple[str, ...] = MEMBERS):
         self.member_kinds = members

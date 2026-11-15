@@ -169,8 +169,7 @@ maverick/
   brain/data/          labelled training data (intents, hard cases, slots, multi-action, LLM eval)
   llm/                 Ollama client, tool calling, agent loop, LoRA experiment, MiniLM + ONNX export
 tests/                 pytest suite; system calls are faked
-docs/                  vision, brain roadmap, results, demo script
-PROGRESS.md            every step, what it means and what it scored
+docs/                  vision, brain roadmap, results, demo, project website
 ```
 
 ## Documentation
@@ -178,7 +177,8 @@ PROGRESS.md            every step, what it means and what it scored
 - [docs/VISION.md](docs/VISION.md): what MAVERICK is and its design rules
 - [docs/BRAIN_ROADMAP.md](docs/BRAIN_ROADMAP.md): how the brain grew, from Naive Bayes to MiniLM
 - [docs/RESULTS.md](docs/RESULTS.md): every experiment and its numbers, including what failed
-- [PROGRESS.md](PROGRESS.md): the full build log, stage by stage
+- [CHANGELOG.md](CHANGELOG.md): what each version contains
+- [CONTRIBUTING.md](CONTRIBUTING.md): running the tests, adding an agent
 
 ## License
 
