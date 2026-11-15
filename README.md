@@ -1,6 +1,5 @@
 # MAVERICK
 
-[![tests](https://github.com/redrighthand2007/MAVERICK/actions/workflows/tests.yml/badge.svg)](https://github.com/redrighthand2007/MAVERICK/actions/workflows/tests.yml)
 ![Python 3.12+](https://img.shields.io/badge/python-3.12%2B-blue)
 ![Windows](https://img.shields.io/badge/platform-Windows%2010%2F11-0078D6)
 ![Offline](https://img.shields.io/badge/runs-100%25%20offline-success)
