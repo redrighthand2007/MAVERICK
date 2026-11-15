@@ -1,6 +1,8 @@
 # Demo script
 
-A 60–90 second recording of MAVERICK for the README or a portfolio. Every request below is read-only,
+[`demo.gif`](demo.gif) shows MAVERICK's real answers to real requests, run on throwaway files in a demo
+folder (shown as `C:\demo`). The steps below are for recording your own version: a 60–90 second
+recording of MAVERICK for the README or a portfolio. Every request below is read-only,
 or works on throwaway files in a demo folder, so recording it never changes anything that matters.
 
 ## Before recording
@@ -29,10 +31,8 @@ or works on throwaway files in a demo folder, so recording it never changes anyt
 
 ## After recording
 
-- Save the GIF as `docs/demo.gif` (keep it under ~10 MB so GitHub shows it quickly).
-- In `README.md`, find the `<!-- DEMO GIF` comment under the first paragraph. Delete its first two
-  lines and its last line (`-->`), so only the `<p align="center"><img src="docs/demo.gif" ...></p>`
-  line is left.
+- Save it over `docs/demo.gif` (keep it under ~10 MB so GitHub shows it quickly). The README and the
+  website already show that file.
 - Check the recording shows nothing private (file names in Downloads, user names, Wi-Fi names).
 - Your real requests during the recording are logged to `maverick/brain/data/inbox.tsv`, which stays
   on your PC and is never uploaded.

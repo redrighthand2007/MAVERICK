@@ -10,10 +10,9 @@
 understands it with its own trained models, hands it to one of 14 specialist agents, checks it for
 safety, asks before anything risky, and does it. No cloud, no API keys, nothing leaves your PC.
 
-<!-- DEMO GIF: record it with docs/DEMO.md and save it as docs/demo.gif. Then delete these two
-     lines and the closing line below the image, so the image line shows.
-<p align="center"><img src="docs/demo.gif" alt="MAVERICK demo" width="800"></p>
--->
+**Website:** [redrighthand2007.github.io/MAVERICK](https://redrighthand2007.github.io/MAVERICK/)
+
+<p align="center"><img src="docs/demo.gif" alt="MAVERICK answering real requests: RAM, battery, copy, overwrite blocked, a two-step request, a y/n move, CPU, and an unknown request" width="800"></p>
 
 ```text
 you> clone notes.txt into D:\backup
@@ -169,8 +168,7 @@ maverick/
   brain/data/          labelled training data (intents, hard cases, slots, multi-action, LLM eval)
   llm/                 Ollama client, tool calling, agent loop, LoRA experiment, MiniLM + ONNX export
 tests/                 pytest suite; system calls are faked
-docs/                  vision, brain roadmap, results, demo script
-PROGRESS.md            every step, what it means and what it scored
+docs/                  vision, brain roadmap, results, demo, project website
 ```
 
 ## Documentation
@@ -178,7 +176,8 @@ PROGRESS.md            every step, what it means and what it scored
 - [docs/VISION.md](docs/VISION.md): what MAVERICK is and its design rules
 - [docs/BRAIN_ROADMAP.md](docs/BRAIN_ROADMAP.md): how the brain grew, from Naive Bayes to MiniLM
 - [docs/RESULTS.md](docs/RESULTS.md): every experiment and its numbers, including what failed
-- [PROGRESS.md](PROGRESS.md): the full build log, stage by stage
+- [CHANGELOG.md](CHANGELOG.md): what each version contains
+- [CONTRIBUTING.md](CONTRIBUTING.md): running the tests, adding an agent
 
 ## License
 
