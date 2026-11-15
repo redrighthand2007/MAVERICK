@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-- Demo GIF in the README, rendered from MAVERICK's real answers
+- Demo GIF in the README, rendered from MAVERICK's real answers to real requests
 - Project website (GitHub Pages) from `docs/`
 - `CHANGELOG.md` and `CONTRIBUTING.md`
 - CI runs once per pull request and after merging, and skips docs-only changes
