@@ -45,8 +45,8 @@ Result(success, message, data) → printed; "it" in the next step means this res
 
    Adding an agent means one new folder plus one line in `main.py`.
 2. **Understanding is separate from doing.** `agent.py` only reads text; `ops.py` only acts. That's
-   why the brain could be swapped seven times (Naive Bayes → ... → MiniLM) without touching any
-   operation.
+   why nine different models could be tried, and the brain replaced three times (Naive Bayes →
+   logistic regression → ensemble → MiniLM), without touching any operation.
 3. **AI decides *what* you asked for, never *whether it's allowed*.** The brain, the slot tagger and
    the LLM only propose. Safety checks and the y/n prompt always run, whoever proposed the action.
 4. **Safe by default.**
